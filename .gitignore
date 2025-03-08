@@ -1,0 +1,8 @@
+*__pycache__*
+.env
+test.ipynb
+test.md
+*_dev.ipynb
+.DS_Store
+docs
+contexual_docs
