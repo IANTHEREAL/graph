@@ -3,7 +3,7 @@ import logging
 from google import genai
 from typing import Optional, Generator
 
-from llm_inference.base import BaseLLMProvider
+from llm.base import BaseLLMProvider
 
 logger = logging.getLogger(__name__)
 

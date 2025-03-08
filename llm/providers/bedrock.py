@@ -3,7 +3,7 @@ from typing import Optional, Generator
 import json
 import logging
 import boto3
-from llm_inference.base import BaseLLMProvider
+from llm.base import BaseLLMProvider
 
 logger = logging.getLogger(__name__)
 

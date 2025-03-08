@@ -1,8 +1,8 @@
 import logging
 from typing import Optional, Generator
 
-from llm_inference.base import BaseLLMProvider
-from llm_inference.providers import (
+from llm.base import BaseLLMProvider
+from llm.providers import (
     OpenAIProvider,
     OllamaProvider,
     GeminiProvider,
