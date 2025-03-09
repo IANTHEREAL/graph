@@ -21,7 +21,9 @@ class SubConcept:
     name: str = ""
     definition: str = ""
     parent_concept_id: str = ""
-    aspect_descriptor: str = ""  # Describes what aspect/dimension of the parent concept this subconcept covers
+    aspect_descriptor: str = (
+        ""  # Describes what aspect/dimension of the parent concept this subconcept covers
+    )
     knowledge_block_ids: List[str] = field(default_factory=list)
 
 

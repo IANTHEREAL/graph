@@ -48,8 +48,8 @@ class KnowledgeGraph:
                     source_type="concept",
                     target_id=subconcept.id,
                     target_type="subconcept",
-                    relation_type=subconcept.aspect_descriptor,
-                    attributes={"description": "Parent-child relationship"},
+                    relation_type="EXPLAINS",
+                    attributes={"description": subconcept.aspect_descriptor},
                 )
             )
 
@@ -62,7 +62,7 @@ class KnowledgeGraph:
                         source_type="subconcept",
                         target_id=kb_id,
                         target_type="knowledge_block",
-                        relation_type="REFERENCES",
+                        relation_type="DEPENDS_ON",
                         attributes={"description": "Derived from knowledge block"},
                     )
                 )
@@ -225,7 +225,7 @@ class KnowledgeGraph:
                 nx.draw_networkx_edges(
                     self.G, pos, edgelist=[(u, v)], edge_color="red", width=2
                 )
-            elif edge_type == "PART_OF":
+            elif edge_type == "REFERENCES":
                 nx.draw_networkx_edges(
                     self.G, pos, edgelist=[(u, v)], edge_color="green", width=2
                 )

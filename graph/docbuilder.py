@@ -2,19 +2,20 @@ import json
 from typing import Dict, List, Optional, Any, Union, Tuple
 from pathlib import Path
 
-from graph.models import Concept, SubConcept, KnowledgeBlock, Document, Relationship
+from graph.models import Concept, SubConcept, KnowledgeBlock, SourceData, Relationship
 from graph.graph import KnowledgeGraph
+from graph.spec import GraphSpec
+from utils.json_utils import extract_json_array
 
-from llm.interface import LLMInterface
+from llm.factory import LLMInterface
+
 
 class DocBuilder:
     """
     A builder class for constructing knowledge graphs from documents.
     """
 
-    def __init__(
-        self, graph: KnowledgeGraph, llm_client: LLMInterface
-    ):
+    def __init__(self, graph: KnowledgeGraph, llm_client: LLMInterface):
         """
         Initialize the builder with a graph instance and specifications.
 
@@ -22,11 +23,16 @@ class DocBuilder:
         - graph: The knowledge graph to populate
         - graph_spec: Configuration for extraction and analysis processes
         """
+
+        if llm_client is None:
+            raise ValueError("LLM client must be set before initializing DocBuilder")
+
         self.graph = graph
         self.llm_client = llm_client
         self.discovered_concepts = []
         self.knowledge_blocks = []
-        self.documents = []
+        self.sources = []
+        self.graph_spec = GraphSpec()
 
     def _read_file(self, file_path: str) -> str:
         """
@@ -69,10 +75,6 @@ class DocBuilder:
         Returns:
         - List of extracted KnowledgeBlock objects
         """
-        if self.llm_client is None:
-            raise ValueError(
-                "LLM client must be set before extracting knowledge blocks"
-            )
 
         # Handle single file or list of files
         if isinstance(file_path, str):
@@ -86,7 +88,7 @@ class DocBuilder:
             name, extension = self._extract_file_info(path)
             doc_content = self._read_file(path)
 
-            document = Document(
+            source_data = SourceData(
                 name=name,
                 definition=f"Document: {name}{extension}",
                 link=path,
@@ -94,31 +96,33 @@ class DocBuilder:
             )
 
             # Add document to graph
-            doc_id = self.graph.add_document(document)
-            self.documents.append(document)
+            source_data_id = self.graph.add_source_data(source_data)
+            self.sources.append(source_data)
 
             # Extract knowledge blocks using LLM
-            prompt = self.graph_spec.get_extraction_prompt("knowledge_block_extraction")
-            response = self.llm_client.complete(
-                prompt=f"{prompt}\n\nText:\n{doc_content[:10000]}"  # Limit text size
+            prompt_template = self.graph_spec.get_extraction_prompt(
+                "knowledge_block_extraction"
             )
+            prompt = prompt_template.format(text=doc_content)
+            response = self.llm_client.generate(prompt)
 
             try:
+                response_json_str = extract_json_array(response)
                 # Parse JSON response
-                extracted_blocks = json.loads(response)
+                extracted_blocks = json.loads(response_json_str)
 
                 # Create and add knowledge blocks
                 for block_data in extracted_blocks:
                     kb = KnowledgeBlock(
-                        name=block_data.get("name", ""),
-                        definition=block_data.get("definition", ""),
+                        name=block_data.get("name") or block_data.get("question", ""),
+                        definition=block_data.get("definition", "")
+                        or block_data.get("answer", ""),
                         source_version=metadata.get("doc_version", "1.0"),
-                        source_type="document",
-                        source_id=doc_id,
+                        source_ids=[source_data_id],
                     )
 
                     # Add knowledge block to graph
-                    kb_id = self.graph.add_knowledge_block(kb)
+                    self.graph.add_knowledge_block(kb)
                     blocks.append(kb)
                     self.knowledge_blocks.append(kb)
 
@@ -160,15 +164,11 @@ class DocBuilder:
                     self.graph.add_concept(concept)
                     concepts.append(concept)
 
-                self.discovered_concepts = concepts
+                self.discovered_concepts.extend(concepts)
                 return concepts
 
             except (json.JSONDecodeError, FileNotFoundError) as e:
                 print(f"Error loading concepts from file: {e}")
-
-        # If no concept file or error loading, discover concepts from knowledge blocks
-        if self.llm_client is None:
-            raise ValueError("LLM client must be set before analyzing concepts")
 
         if not self.knowledge_blocks:
             print("No knowledge blocks available for concept extraction")
@@ -178,19 +178,19 @@ class DocBuilder:
         combined_blocks = "\n\n".join(
             [
                 f"Block: {kb.name}\nContent: {kb.definition}"
-                for kb in self.knowledge_blocks[:10]  # Limit to avoid token limits
+                for kb in self.knowledge_blocks
             ]
         )
 
         # Extract concepts using LLM
-        prompt = self.graph_spec.get_extraction_prompt("concept_extraction")
-        response = self.llm_client.complete(
-            prompt=f"{prompt}\n\nKnowledge Blocks:\n{combined_blocks}"
-        )
+        prompt_format = self.graph_spec.get_extraction_prompt("concept_extraction")
+        prompt = prompt_format.format(text=combined_blocks)
+        response = self.llm_client.generate(prompt)
 
         try:
+            response_json_str = extract_json_array(response)
             # Parse JSON response
-            extracted_concepts = json.loads(response)
+            extracted_concepts = json.loads(response_json_str)
 
             # Create and add concepts
             for concept_data in extracted_concepts:
@@ -207,7 +207,7 @@ class DocBuilder:
         except (json.JSONDecodeError, TypeError):
             print("Failed to parse concepts from LLM response")
 
-        self.discovered_concepts = concepts
+        self.discovered_concepts.extend(concepts)
         return concepts
 
     def extend_concepts(
@@ -222,12 +222,8 @@ class DocBuilder:
         Returns:
         - Enhanced knowledge graph with sub-concepts
         """
-        if self.llm_client is None:
-            raise ValueError("LLM client must be set before extending concepts")
-
         # Use provided concepts or previously discovered ones
         target_concepts = concepts or self.discovered_concepts
-
         if not target_concepts:
             print("No concepts available to extend")
             return self.graph
@@ -240,37 +236,36 @@ class DocBuilder:
             # Combine knowledge blocks for analysis
             combined_blocks = "\n\n".join(
                 [
-                    f"Block: {kb.name}\nContent: {kb.definition}"
-                    for kb in self.knowledge_blocks[:5]  # Limit to avoid token limits
+                    f"Block {kb.id}, name: {kb.name}\nContent: {kb.definition}"
+                    for kb in self.knowledge_blocks
                 ]
             )
 
             # Extract subconcepts using LLM
-            prompt = self.graph_spec.format_extraction_prompt(
-                "subconcept_extraction",
+            prompt_format = self.graph_spec.get_extraction_prompt("extend_concept")
+            prompt = prompt_format.format(
                 concept_name=concept.name,
                 concept_definition=concept.definition,
+                text=combined_blocks,
             )
 
-            response = self.llm_client.complete(
-                prompt=f"{prompt}\n\nKnowledge Blocks:\n{combined_blocks}"
-            )
+            response = self.llm_client.generate(prompt)
 
             try:
                 # Parse JSON response
-                extracted_subconcepts = json.loads(response)
+                response_json_str = extract_json_array(response)
+                extracted_subconcepts = json.loads(response_json_str)
 
                 # Create and add subconcepts
                 for subconcept_data in extracted_subconcepts:
-                    # Assign to a random knowledge block for now (this could be improved)
-                    kb_id = self.knowledge_blocks[0].id if self.knowledge_blocks else ""
-
                     subconcept = SubConcept(
                         name=subconcept_data.get("name", ""),
                         definition=subconcept_data.get("definition", ""),
                         parent_concept_id=concept.id,
-                        subconcept_kind=subconcept_data.get("subconcept_kind", ""),
-                        knowledge_block_id=kb_id,
+                        aspect_descriptor=subconcept_data.get("description", ""),
+                        knowledge_block_ids=subconcept_data.get(
+                            "knowledge_block_ids", []
+                        ),
                     )
 
                     # Add subconcept to graph
@@ -300,8 +295,6 @@ class DocBuilder:
         - When parameters are None, discovers relationships among all concepts
         - When specified, focuses on relationships involving those concepts
         """
-        if self.llm_client is None:
-            raise ValueError("LLM client must be set before extending relationships")
 
         # Determine which concepts to analyze
         all_concepts = list(self.graph.concepts.values())
@@ -351,27 +344,39 @@ class DocBuilder:
         # Get available relation types
         relation_types = ", ".join(self.graph_spec.get_relation_types())
 
+        combined_blocks = "\n\n".join(
+            [
+                f"Block {kb.id}, name: {kb.name}\nContent: {kb.definition}"
+                for kb in self.knowledge_blocks
+            ]
+        )
+
         # Extract relationship using LLM
-        prompt = self.graph_spec.format_extraction_prompt(
-            "relationship_extraction",
+        prompt_format = self.graph_spec.get_extraction_prompt("extend_relationship")
+        prompt = prompt_format.format(
             concept_a_name=concept_a.name,
             concept_a_definition=concept_a.definition,
             concept_b_name=concept_b.name,
             concept_b_definition=concept_b.definition,
             relation_types=relation_types,
+            text=combined_blocks,
         )
 
         response = self.llm_client.complete(prompt=prompt)
 
         try:
+            response_json_str = extract_json_array(response)
             # Parse JSON response
-            extracted_relationship = json.loads(response)
+            extracted_relationship = json.loads(response_json_str)
 
             # Only add if relationship is found
             if extracted_relationship and "relation_type" in extracted_relationship:
                 relation_type = extracted_relationship.get("relation_type")
                 description = extracted_relationship.get("description", "")
                 confidence = extracted_relationship.get("confidence", 0.0)
+                knowledge_block_ids = extracted_relationship.get(
+                    "knowledge_block_ids", []
+                )
 
                 # Check confidence threshold
                 min_confidence = self.graph_spec.get_processing_parameter(
@@ -396,6 +401,7 @@ class DocBuilder:
                         attributes={
                             "description": description,
                             "confidence": confidence,
+                            "knowledge_block_ids": knowledge_block_ids,
                         },
                     )
 
