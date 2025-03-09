@@ -15,17 +15,10 @@ class DocBuilder:
     A builder class for constructing knowledge graphs from documents.
     """
 
-    def __init__(self, graph: KnowledgeGraph, llm_client: LLMInterface):
+    def __init__(self, llm_client: LLMInterface, graph: Optional[KnowledgeGraph] = None):
         """
         Initialize the builder with a graph instance and specifications.
-
-        Parameters:
-        - graph: The knowledge graph to populate
-        - graph_spec: Configuration for extraction and analysis processes
         """
-
-        if llm_client is None:
-            raise ValueError("LLM client must be set before initializing DocBuilder")
 
         self.graph = graph
         self.llm_client = llm_client
