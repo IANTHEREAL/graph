@@ -1,6 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+import json
+import os
 
 from graph.models import Concept, SubConcept, KnowledgeBlock, SourceData, Relationship
 
@@ -150,6 +152,144 @@ class KnowledgeGraph:
                 related_ids.append(rel.source_id)
 
         return [self.concepts[cid] for cid in related_ids if cid in self.concepts]
+
+    def save_to_disk(self, storage_path: str) -> None:
+        """
+        Save the knowledge graph data to disk.
+
+        Parameters:
+        - storage_path: Path where to save the data
+        """
+        # Convert all model objects to serializable dictionaries
+        data = {
+            "concepts": {},
+            "subconcepts": {},
+            "knowledge_blocks": {},
+            "source_data": {},
+            "relationships": [],
+        }
+
+        # Save concepts
+        for concept_id, concept in self.concepts.items():
+            data["concepts"][concept_id] = concept.to_dict()
+
+        # Save subconcepts
+        for subconcept_id, subconcept in self.subconcepts.items():
+            data["subconcepts"][subconcept_id] = subconcept.to_dict()
+
+        # Save knowledge blocks
+        for block_id, block in self.knowledge_blocks.items():
+            data["knowledge_blocks"][block_id] = block.to_dict()
+
+        # Save source data
+        for source_id, source in self.source_data.items():
+            data["source_data"][source_id] = source.to_dict()
+
+        # Save relationships
+        for relationship in self.relationships:
+            data["relationships"].append(relationship.to_dict())
+
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(storage_path), exist_ok=True)
+
+        # Save to file
+        with open(storage_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"Knowledge graph saved to {storage_path}")
+
+    def load_from_disk(self, storage_path: str) -> None:
+        """
+        Load the knowledge graph data from disk.
+
+        Parameters:
+        - storage_path: Path from where to load the data
+        """
+        try:
+            with open(storage_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            # Clear existing data
+            self.concepts = {}
+            self.subconcepts = {}
+            self.knowledge_blocks = {}
+            self.source_data = {}
+            self.relationships = []
+            self.G = nx.MultiDiGraph()
+
+            # Load source data first (they have no dependencies)
+            for source_id, source_dict in data.get("source_data", {}).items():
+                source = SourceData.from_dict(source_dict)
+                self.source_data[source_id] = source
+                self.G.add_node(
+                    source_id,
+                    type="source_data",
+                    name=source.name,
+                    definition=source.definition,
+                    link=source.link,
+                    version=source.version,
+                    data_type=source.type,
+                )
+
+            # Load knowledge blocks (they depend on source data)
+            for block_id, block_dict in data.get("knowledge_blocks", {}).items():
+                kb = KnowledgeBlock.from_dict(block_dict)
+                self.knowledge_blocks[block_id] = kb
+                self.G.add_node(
+                    block_id,
+                    type="knowledge_block",
+                    name=kb.name,
+                    definition=kb.definition,
+                    source_version=kb.source_version,
+                )
+
+            # Load concepts
+            for concept_id, concept_dict in data.get("concepts", {}).items():
+                concept = Concept.from_dict(concept_dict)
+                self.concepts[concept_id] = concept
+                self.G.add_node(
+                    concept_id,
+                    type="concept",
+                    name=concept.name,
+                    definition=concept.definition,
+                    version=concept.version,
+                )
+
+            # Load subconcepts (they depend on concepts and knowledge blocks)
+            for subconcept_id, subconcept_dict in data.get("subconcepts", {}).items():
+                subconcept = SubConcept.from_dict(subconcept_dict)
+                self.subconcepts[subconcept_id] = subconcept
+                self.G.add_node(
+                    subconcept_id,
+                    type="subconcept",
+                    name=subconcept.name,
+                    definition=subconcept.definition,
+                )
+
+            # Load relationships (they depend on all entities)
+            for rel_dict in data.get("relationships", []):
+                relationship = Relationship.from_dict(rel_dict)
+                self.relationships.append(relationship)
+                self.G.add_edge(
+                    relationship.source_id,
+                    relationship.target_id,
+                    type=relationship.relation_type,
+                    **relationship.attributes,
+                )
+
+            print(f"Knowledge graph loaded from {storage_path}")
+            print(
+                f"Loaded {len(self.concepts)} concepts, {len(self.subconcepts)} subconcepts, "
+                f"{len(self.knowledge_blocks)} knowledge blocks, {len(self.source_data)} sources, "
+                f"and {len(self.relationships)} relationships"
+            )
+
+        except FileNotFoundError:
+            print(f"No graph file found at {storage_path}")
+        except json.JSONDecodeError:
+            print(f"Error parsing graph file at {storage_path}")
+        except Exception as e:
+            print(f"Error loading graph: {str(e)}")
 
     def visualize(self, output_file="knowledge_graph.png", layout="spring"):
         """Visualize the knowledge graph"""

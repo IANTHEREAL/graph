@@ -15,17 +15,21 @@ class DocBuilder:
     A builder class for constructing knowledge graphs from documents.
     """
 
-    def __init__(self, llm_client: LLMInterface, graph: Optional[KnowledgeGraph] = None):
+    def __init__(
+        self, llm_client: LLMInterface, graph: Optional[KnowledgeGraph] = None
+    ):
         """
         Initialize the builder with a graph instance and specifications.
         """
-
-        self.graph = graph
+        if graph is None:
+            self.graph = KnowledgeGraph()
+        else:
+            self.graph = graph
         self.llm_client = llm_client
         self.discovered_concepts = []
         self.knowledge_blocks = []
         self.sources = []
-        self.graph_spec = GraphSpec()
+        self.graph_spec = GraphSpec(llm_client)
 
     def _read_file(self, file_path: str) -> str:
         """
@@ -334,77 +338,128 @@ class DocBuilder:
         - concept_a: First concept
         - concept_b: Second concept
         """
-        # Get available relation types
-        relation_types = ", ".join(self.graph_spec.get_relation_types())
 
-        combined_blocks = "\n\n".join(
-            [
-                f"Block {kb.id}, name: {kb.name}\nContent: {kb.definition}"
-                for kb in self.knowledge_blocks
-            ]
-        )
+        # Create a mapping from concept to its subconcepts
+        concept_to_subconcepts = {}
+        for subconcept_id, subconcept in self.graph.subconcepts.items():
+            parent_concept_id = subconcept.parent_concept_id
+            if parent_concept_id:
+                if parent_concept_id not in concept_to_subconcepts:
+                    concept_to_subconcepts[parent_concept_id] = []
+                concept_to_subconcepts[parent_concept_id].append(subconcept_id)
 
-        # Extract relationship using LLM
-        prompt_format = self.graph_spec.get_extraction_prompt("extend_relationship")
-        prompt = prompt_format.format(
-            concept_a_name=concept_a.name,
-            concept_a_definition=concept_a.definition,
-            concept_b_name=concept_b.name,
-            concept_b_definition=concept_b.definition,
-            relation_types=relation_types,
-            text=combined_blocks,
-        )
+        # Create a mapping from subconcept to knowledge blocks
+        subconcept_to_blocks = {}
+        for subconcept_id, subconcept in self.graph.subconcepts.items():
+            knowledge_block_ids = subconcept.knowledge_block_ids
+            if knowledge_block_ids:
+                subconcept_to_blocks[subconcept_id] = knowledge_block_ids
 
-        response = self.llm_client.complete(prompt=prompt)
+        # Skip if either concept has no subconcepts
+        if (concept_a.id not in concept_to_subconcepts) or (
+            concept_b.id not in concept_to_subconcepts
+        ):
+            continue
 
-        try:
-            response_json_str = extract_json_array(response)
-            # Parse JSON response
-            extracted_relationship = json.loads(response_json_str)
+        # Get knowledge blocks for each concept through its subconcepts
+        blocks_for_concept_a = set()
+        for subconcept_id in concept_to_subconcepts[concept_a.id]:
+            if subconcept_id in subconcept_to_blocks:
+                blocks_for_concept_a.update(subconcept_to_blocks[subconcept_id])
 
-            # Only add if relationship is found
-            if extracted_relationship and "relation_type" in extracted_relationship:
-                relation_type = extracted_relationship.get("relation_type")
-                description = extracted_relationship.get("description", "")
-                confidence = extracted_relationship.get("confidence", 0.0)
-                knowledge_block_ids = extracted_relationship.get(
-                    "knowledge_block_ids", []
+        blocks_for_concept_b = set()
+        for subconcept_id in concept_to_subconcepts[concept_b.id]:
+            if subconcept_id in subconcept_to_blocks:
+                blocks_for_concept_b.update(subconcept_to_blocks[subconcept_id])
+
+        # Find shared knowledge blocks
+        shared_blocks = blocks_for_concept_a.intersection(blocks_for_concept_b)
+        if not shared_blocks:
+            continue
+
+        # Collect knowledge block content for analysis
+        shared_blocks_content = []
+        for block_id in shared_blocks:
+            kb = self.graph.get_knowledge_block(block_id)
+            if kb:
+                shared_blocks_content.append(
+                    f"Block {kb.id}, name: {kb.name}\nContent: {kb.definition}"
                 )
 
-                # Check confidence threshold
-                min_confidence = self.graph_spec.get_processing_parameter(
-                    "relationship_discovery", "min_confidence"
-                )
+        # Analyze relationship using LLM if shared blocks are found
+        if shared_blocks_content:
+            shared_blocks_text = "\n\n".join(shared_blocks_content)
 
-                if confidence >= min_confidence:
-                    # Add new relation type to config if it doesn't exist
-                    relation_types_list = self.graph_spec.get_relation_types()
-                    if relation_type not in relation_types_list:
-                        self.graph_spec.add_relation_type(
-                            relation_type,
-                            f"Auto-discovered relationship: {description}",
-                        )
+            # Get available relation types
+            relation_types = ", ".join(self.graph_spec.get_relation_types())
 
-                    relationship = Relationship(
-                        source_id=concept_a.id,
-                        source_type="concept",
-                        target_id=concept_b.id,
-                        target_type="concept",
-                        relation_type=relation_type,
-                        attributes={
-                            "description": description,
-                            "confidence": confidence,
-                            "knowledge_block_ids": knowledge_block_ids,
-                        },
+            # Extract relationship using LLM
+            prompt_format = self.graph_spec.get_extraction_prompt("extend_relationship")
+            prompt = prompt_format.format(
+                concept_a_name=concept_a.name,
+                concept_a_definition=concept_a.definition,
+                concept_b_name=concept_b.name,
+                concept_b_definition=concept_b.definition,
+                relation_types=relation_types,
+                text=shared_blocks_text,
+            )
+
+            response = self.llm_client.complete(prompt=prompt)
+
+            try:
+                response_json_str = extract_json_array(response)
+                # Parse JSON response
+                extracted_relationship = json.loads(response_json_str)
+
+                # Only add if relationship is found
+                if extracted_relationship and "relation_type" in extracted_relationship:
+                    relation_type = extracted_relationship.get("relation_type")
+                    description = extracted_relationship.get("description", "")
+                    confidence = extracted_relationship.get("confidence", 0.0)
+
+                    # Check confidence threshold
+                    min_confidence = self.graph_spec.get_processing_parameter(
+                        "relationship_discovery", "min_confidence"
                     )
 
-                    # Add relationship to graph
-                    self.graph.add_relationship(relationship)
+                    if confidence >= min_confidence:
+                        # Add new relation type to config if it doesn't exist
+                        relation_types_list = self.graph_spec.get_relation_types()
+                        if relation_type not in relation_types_list:
+                            self.graph_spec.add_relation_type(
+                                relation_type,
+                                f"Auto-discovered relationship: {description}",
+                            )
 
-        except (json.JSONDecodeError, TypeError):
-            print(
-                f"Failed to parse relationship between {concept_a.name} and {concept_b.name}"
-            )
+                        relationship = Relationship(
+                            source_id=concept_a.id,
+                            source_type="concept",
+                            target_id=concept_b.id,
+                            target_type="concept",
+                            relation_type=relation_type,
+                            attributes={
+                                "description": description,
+                                "confidence": confidence,
+                                "knowledge_block_ids": list(shared_blocks),
+                            },
+                        )
+
+                        # Add relationship to graph
+                        self.graph.add_relationship(relationship)
+                        relationship_count += 1
+                        print(
+                            f"Added relationship between '{concept_a.name}' and '{concept_b.name}': {relation_type}"
+                        )
+
+            except (json.JSONDecodeError, TypeError):
+                print(
+                    f"Failed to parse relationship between {concept_a.name} and {concept_b.name}"
+                )
+
+        print(
+            f"Created {relationship_count} concept-to-concept relationships based on shared knowledge"
+        )
+        return self.graph
 
     def generate_graph(self) -> KnowledgeGraph:
         """Convenience method to generate the complete graph"""

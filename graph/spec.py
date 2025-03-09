@@ -45,14 +45,14 @@ Return your response in JSON array format with each item containing "question" a
 
 ```json
 [
-  {
+  {{
     "question": "Clear, contextual, and self-contained question here",
     "answer": "Your generated answer here with proper context, specific references to the document, and detailed information."
-  },
-  {
+  }},
+  {{
     "question": "Another contextual and user-relevant question here",
     "answer": "Another self-contained answer here, grounded in the document."
-  },
+  }},
   ... (More question-answer pairs as needed)
 ]
 """
@@ -71,10 +71,10 @@ Questions and Answers:
 JSON Output (surround with ```json and ```):
 ```json
 [
-    {
+    {{
         "name": "concept_name",
         "definition": "concept_definition"
-    },
+    }},
     ...
 ]
 ```"""
@@ -94,12 +94,12 @@ If no clear subconcepts are found, return an empty list.
 JSON Output: (surround with ```json and ```):
 ```json
 [
-    {
+    {{
         "name": "concept_name",
         "definition": "concept_definition",
         "description": "the description about which aspect this subconcept contributes to the main concept",
         "knowledge_block_ids": ["he knowledge blocks that are related to this subconcept, ...]
-    },
+    }},
     ...
 ]
 ```"""
@@ -121,12 +121,12 @@ Return the result in JSON format with 'relation_type', 'description', and 'confi
 
 JSON Output (surround with ```json and ```):
 ```json
-{
+{{
     "relation_type": "relationship_type",
     "description": "relationship_description",
     "confidence": 0.0-1.0,
     "knowledge_block_ids": ["the knowledge blocks that are related to this relationship, ..."]
-}
+}}
 ```"""
 
 
