@@ -7,7 +7,7 @@ def get_faq_index_prompt(faq: str, index_tree: List[Dict]) -> str:
     index_tree_json = json.dumps(index_tree, indent=4, ensure_ascii=False)
 
     # Construct the prompt
-    prompt = f"""Your task is to analyze a FAQ, break it down into subquestions, and identify appropriate index paths in a tree-structured index system for each subquestion.
+    prompt = f"""Your task is to analyze a FAQ, break it down into subquestions, and determine the most appropriate index path for each subquestion in the provided hierarchical index tree.
 
 ## Current Index Tree
 
@@ -15,55 +15,66 @@ def get_faq_index_prompt(faq: str, index_tree: List[Dict]) -> str:
 {index_tree_json}
 ```
 
+## Index Tree Structure
+- Each parent index node contains all documents that its child nodes have
+- The tree is hierarchical - higher nodes are more general, leaf nodes are more specific
+- When matching, prefer the most specific (deepest) node that can answer the question
+
 ## Instructions
 
 1. Subquestion Extraction:
-   - Carefully read the FAQ and break it down into distinct subquestions that users might have
+   - Carefully read the FAQ and break it down into distinct subquestions
    - Each subquestion should capture a single, specific information need
-   - Extract both explicit questions and implicit information needs
 
-2. Path Identification:
-   - For each subquestion:
-     * Start from the root node of the index tree
-     * Navigate through the tree to find the most specific path that matches the subquestion
-     * Record the complete path from root to the most specific applicable node
-     * If no suitable path exists, leave the index_path empty
+2. Index Matching Process:
+   - For each subquestion, find the MOST SPECIFIC node whose documents would best answer it
+   - Start from leaf nodes and work upward:
+     * First check if any leaf node directly addresses the subquestion
+     * If no leaf node matches, check intermediate nodes
+     * If no specific node matches, you can use a more general parent node
+   - Always prefer the deepest/most specific applicable node
 
-3. Matching Process:
-   - Always prioritize matching with specific categories over general ones
-   - Match with leaf nodes when applicable
-   - Consider the full context of the subquestion when determining the best path
-   - Include clear reasoning about why you selected each path
-
-4. Validation Rules:
-   - Have all important subquestions in the FAQ been identified?
-   - Does each identified path accurately represent the information needed for the subquestion?
-   - Are the paths specific enough (reaching leaf nodes when applicable)?
-   - Is your reasoning clear and justifiable?
+3. Match Evaluation:
+   - If ANY node in the tree contains documents that would answer the subquestion:
+     * Set "matched" to true
+     * Provide the complete "index_path" from root to the most specific matching node
+     * Explain in "reasoning" why this is the most appropriate node
+   - If NO node in the entire tree would contain relevant documents:
+     * Set "matched" to false
+     * Leave "index_path" as an empty array
+     * Explain why no node in the current index tree would have relevant information
 
 ## FAQ to Analyze
 
 {faq}
 
 Response Format:
-Return an array of objects, where each object represents a subquestion found in the FAQ, with the following structure:
+Return an array of objects with the following structure:
 
 ```json
 [
     {{
-        "subquestion": "What is the specific subquestion or information need?",
-        "reasoning": "Explanation of why this index path was chosen for this subquestion",
-        "index_path": ["Level 1 Node Text", "Level 2 Node Text"]
+        "subquestion": "What is the specific subquestion?",
+        "reasoning": "This node is the most specific location for documents about X. While parent nodes would also contain this information, this node specifically focuses on the requested details.",
+        "matched": true,
+        "index_path": ["Root Node", "Intermediate Node", "Most Specific Node"]
     }},
     {{
-        "subquestion": "Another subquestion extracted from the FAQ",
-        "reasoning": "Reasoning for this path selection",
-        "index_path": []  // Empty array if no suitable path exists in the current index tree
+        "subquestion": "Another subquestion from the FAQ",
+        "reasoning": "While no leaf node specifically addresses this topic, this parent node contains broader documentation that would include the answer to this question. More specific child nodes focus on different aspects.",
+        "matched": true,
+        "index_path": ["Root Node", "Parent Node"]
+    }},
+    {{
+        "subquestion": "A third subquestion without matches",
+        "reasoning": "No nodes in the current index tree, at any level, appear to contain documents related to this specific topic. The index structure doesn't include categories for this type of information.",
+        "matched": false,
+        "index_path": []
     }}
 ]
 ```
 
-Note: For the index_path, include only the text values of each node in the path, from root to the most specific node.
+Important: Always try to find the most specific appropriate node for each subquestion, but recognize that sometimes a parent node might be the best match if it contains the relevant information and no more specific child node is suitable.
 """
 
     return prompt

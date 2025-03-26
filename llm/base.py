@@ -12,7 +12,7 @@ class BaseLLMProvider(ABC):
     Abstract base class for LLM providers.
     """
 
-    def __init__(self, model: str, max_retries: int = 3, retry_delay: float = 1.0):
+    def __init__(self, model: str, max_retries: int = 1, retry_delay: float = 2):
         self.model = model
         self.max_retries = max_retries
         self.retry_delay = retry_delay
@@ -30,20 +30,20 @@ class BaseLLMProvider(ABC):
 
     @abstractmethod
     def generate(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Optional[str]:
         pass
 
     @abstractmethod
     def generate_stream(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Generator[str, None, None]:
         """
         Generate streaming response from the LLM.
 
         Args:
             prompt (str): The prompt to send to the LLM
-            context (Optional[str]): Optional context to prepend to the prompt
+            system_prompt (Optional[str]): Optional system prompt to prepend to the prompt
             **kwargs: Additional arguments to pass to the LLM
 
         Yields:

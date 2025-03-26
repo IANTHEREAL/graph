@@ -24,16 +24,20 @@ class OpenAIProvider(BaseLLMProvider):
         self.client = openai.OpenAI(api_key=api_key)
 
     def generate(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Optional[str]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
+        if system_prompt:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        else:
+            messages = [{"role": "user", "content": prompt}]
+
         response = self._retry_with_exponential_backoff(
             self.client.chat.completions.create,
             model=self.model,
-            messages=[
-                # {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": full_prompt},
-            ],
+            messages=messages,
             **self._update_kwargs(kwargs),
         )
         if response.choices is None:
@@ -51,17 +55,21 @@ class OpenAIProvider(BaseLLMProvider):
         return response.choices[0].message.content.strip()
 
     def generate_stream(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Generator[str, None, None]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
+        if system_prompt:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        else:
+            messages = [{"role": "user", "content": prompt}]
+
         try:
             response = self._retry_with_exponential_backoff(
                 self.client.chat.completions.create,
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": full_prompt},
-                ],
+                messages=messages,
                 stream=True,  # Enable streaming
                 **self._update_kwargs(kwargs),
             )

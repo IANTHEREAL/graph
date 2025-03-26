@@ -21,27 +21,20 @@ class OpenAILikeProvider(BaseLLMProvider):
         self.client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
     def generate(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Optional[str]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
+        if system_prompt:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        else:
+            messages = [{"role": "user", "content": prompt}]
         response = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                # {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": full_prompt},
-            ],
+            messages=messages,
             **self._update_kwargs(kwargs),
         )
-        """
-        client = openai.OpenAI(
-            base_url="http://192.168.206.136:1234/v1", api_key="lm-studio"
-        )
-        response = client.chat.completions.create(
-            model="deepseek-r1-distill-qwen-32b",
-            messages=[{"role": "user", "content": full_prompt}],
-            temperature=0.6,
-        )
-        """
 
         if response.choices is None:
             raise Exception(f"LLM response is None: {response.error}")
@@ -58,17 +51,20 @@ class OpenAILikeProvider(BaseLLMProvider):
         return response.choices[0].message.content.strip()
 
     def generate_stream(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Generator[str, None, None]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
+        if system_prompt:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        else:
+            messages = [{"role": "user", "content": prompt}]
         try:
             response = self._retry_with_exponential_backoff(
                 self.client.chat.completions.create,
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": full_prompt},
-                ],
+                messages=messages,
                 stream=True,  # Enable streaming
                 **self._update_kwargs(kwargs),
             )

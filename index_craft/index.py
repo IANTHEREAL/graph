@@ -1,15 +1,16 @@
-from dataclasses import dataclass
-from typing import List, Optional
-
 from index_craft.model import Node
 from index_craft.loader import parse_freemind
 
-@dataclass
-class Node:
-    text: str
-    id: Optional[str]
-    children: List['Node']
+def normalize_tree(node: Node) -> Node:
+    tree_dict = {
+        "entry": node.text,
+        "children": []
+    }
 
+    for child in node.children:
+        tree_dict["children"].append(normalize_tree(child))
+
+    return tree_dict
 
 def print_index(node: Node, level: int = 0):
     # Print the current node with proper indentation

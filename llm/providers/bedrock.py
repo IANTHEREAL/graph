@@ -53,38 +53,61 @@ class BedrockProvider(BaseLLMProvider):
             "claude-3-sonnet": "anthropic.claude-3-sonnet-20240229-v1:0",
             "claude-3-5-sonnet": "anthropic.claude-3-5-sonnet-20240620-v1:0",
             "claude-3-5-sonnet-v2": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+            "claude-3-7-sonnet": "anthropic.claude-3-7-sonnet-20250219-v1:0",
         }
 
         self.model = self.model_map.get(model.lower(), model)
 
     def generate(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Optional[str]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
-        messages = [
-            {"role": "user", "content": [{"type": "text", "text": full_prompt}]}
-        ]
+        messages = [{"role": "user", "content": [{"text": prompt}]}]
+        if system_prompt:
+            response = self.client.converse(
+                modelId=self.model,
+                inferenceConfig={
+                    "maxTokens": 30000,
+                    "temperature": 0.6,
+                },
+                system=[{"text": system_prompt}],
+                messages=messages,
+            )
+        else:
+            response = self.client.converse(
+                modelId=self.model,
+                inferenceConfig={
+                    "maxTokens": 30000,
+                    "temperature": 0.6,
+                },
+                messages=messages,
+            )
 
-        request_body = {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": 8192,
-            "messages": messages,
-        }
-
-        response = self._retry_with_exponential_backoff(
-            self.client.invoke_model, modelId=self.model, body=json.dumps(request_body)
-        )
-
-        response_body = json.loads(response["body"].read())
-        return response_body["content"][0]["text"]
+        answer = None
+        reasoning = None
+        for message in response["output"]["message"]["content"]:
+            if "text" in message:
+                answer = message["text"]
+            elif "reasoningContent" in message:
+                reasoning = message["reasoningContent"]["reasoningText"]["text"]
+        if reasoning:
+            return f"<think>{reasoning}</think>\n{answer}"
+        else:
+            return answer
 
     def generate_stream(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Generator[str, None, None]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
-        messages = [
-            {"role": "user", "content": [{"type": "text", "text": full_prompt}]}
-        ]
+        if system_prompt:
+            messages = [
+                {
+                    "role": "system",
+                    "content": [
+                        {"type": "text", "text": system_prompt + "\n" + prompt}
+                    ],
+                }
+            ]
+        else:
+            messages = [{"role": "user", "content": [{"type": "text", "text": prompt}]}]
 
         try:
             request_body = {

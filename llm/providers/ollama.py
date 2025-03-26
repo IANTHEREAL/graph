@@ -19,9 +19,12 @@ class OllamaProvider(BaseLLMProvider):
         self.ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
     def generate(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Optional[str]:
-        full_prompt = f"{context}\n{prompt}" if context else prompt
+        if system_prompt:
+            full_prompt = f"{system_prompt}\n{prompt}"
+        else:
+            full_prompt = prompt
         data = {"model": self.model, "prompt": full_prompt, "stream": False, **kwargs}
         response = self._retry_with_exponential_backoff(
             requests.post, f"{self.ollama_base_url}/api/generate", json=data
@@ -30,20 +33,23 @@ class OllamaProvider(BaseLLMProvider):
         return response.json()["response"].strip()
 
     def generate_stream(
-        self, prompt: str, context: Optional[str] = None, **kwargs
+        self, prompt: str, system_prompt: Optional[str] = None, **kwargs
     ) -> Generator[str, None, None]:
         """
         Generate streaming response from Ollama API.
 
         Args:
             prompt (str): The prompt to send to Ollama
-            context (Optional[str]): Optional context to prepend to the prompt
+            system_prompt (Optional[str]): Optional system prompt to prepend to the prompt
             **kwargs: Additional arguments to pass to Ollama API
 
         Yields:
             str: Chunks of the generated text
         """
-        full_prompt = f"{context}\n{prompt}" if context else prompt
+        if system_prompt:
+            full_prompt = f"{system_prompt}\n{prompt}"
+        else:
+            full_prompt = prompt
         try:
             data = {"model": self.model, "prompt": full_prompt, **kwargs}
 
