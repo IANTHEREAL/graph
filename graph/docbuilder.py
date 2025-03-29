@@ -6,6 +6,7 @@ from graph.models import Concept, SubConcept, KnowledgeBlock, SourceData, Relati
 from graph.graph import KnowledgeGraph
 from graph.spec import GraphSpec
 from utils.json_utils import extract_json_array
+from utils.token import calculate_tokens
 
 from llm.factory import LLMInterface
 
@@ -56,8 +57,66 @@ class DocBuilder:
         """
         path = Path(file_path)
         return path.stem, path.suffix
+    
+    def split_markdown_by_heading(self, path, metadata, heading_level=2, ):
+        # Split content by lines
+        name, extension = self._extract_file_info(path)
+        doc_content = self._read_file(path)
 
-    def extract_knowledge_blocks(
+        markdown_content = self._read_file(path)
+        lines = markdown_content.split('\n')
+        
+        sections = {}
+        current_section = []
+        current_title = "default"
+        
+        for line in lines:
+            # Check if line is a h2 heading
+            if line.startswith('#' * heading_level + ' '):
+                # Save current section if it has content
+                if current_section:
+                    sections[current_title] = '\n'.join(current_section)
+                    current_section = []
+                
+                # Update current title (remove '## ' prefix)
+                current_title = line[3:].strip()
+            else:
+                current_section.append(line)
+        
+        # Save the last section
+        if current_section:
+            sections[current_title] = '\n'.join(current_section)
+
+        for heading, content in sections.items():
+            tokens = calculate_tokens(content)
+            if tokens > 4096:
+                raise ValueError(f"Heading {heading} has {tokens} tokens, please split it into smaller chunks manually")
+            
+         # Add document to graph
+        source_data = SourceData(
+            name=name,
+            definition=f"Document: {name}{extension}, metadata: {metadata}",
+            link=path,
+            version=metadata.get("doc_version", "1.0"),
+        )
+        source_data_id = self.graph.add_source_data(source_data)
+        self.sources.append(source_data)
+    
+        for heading, content in sections.items():
+            kb = KnowledgeBlock(
+                name=heading,
+                definition=content,
+                source_version=metadata.get("doc_version", "1.0"),
+                source_ids=[source_data_id],
+            )
+
+        # Add knowledge block to graph
+        self.graph.add_knowledge_block(kb)
+        self.knowledge_blocks.append(kb)
+    
+        return sections
+
+    def extract_qa_blocks(
         self, file_path: Union[str, List[str]], metadata: Dict[str, Any]
     ) -> List[KnowledgeBlock]:
         """
@@ -359,7 +418,7 @@ class DocBuilder:
         if (concept_a.id not in concept_to_subconcepts) or (
             concept_b.id not in concept_to_subconcepts
         ):
-            continue
+            return
 
         # Get knowledge blocks for each concept through its subconcepts
         blocks_for_concept_a = set()
@@ -375,7 +434,7 @@ class DocBuilder:
         # Find shared knowledge blocks
         shared_blocks = blocks_for_concept_a.intersection(blocks_for_concept_b)
         if not shared_blocks:
-            continue
+            return
 
         # Collect knowledge block content for analysis
         shared_blocks_content = []
@@ -461,6 +520,3 @@ class DocBuilder:
         )
         return self.graph
 
-    def generate_graph(self) -> KnowledgeGraph:
-        """Convenience method to generate the complete graph"""
-        return self.graph
