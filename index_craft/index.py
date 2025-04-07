@@ -4,11 +4,11 @@ from index_craft.loader import parse_freemind
 def normalize_tree(node: Node) -> Node:
     tree_dict = {
         "entry": node.text,
-        "children": []
+        "children": {}
     }
 
     for child in node.children:
-        tree_dict["children"].append(normalize_tree(child))
+        tree_dict["children"][child.text] = normalize_tree(child)
 
     return tree_dict
 

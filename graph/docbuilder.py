@@ -1,13 +1,15 @@
 import json
-from typing import Dict, List, Optional, Any, Union, Tuple
+from typing import Dict, List, Optional, Any, Union, Tuple, Callable
 from pathlib import Path
+from math import ceil
+
 
 from graph.models import Concept, SubConcept, KnowledgeBlock, SourceData, Relationship
 from graph.graph import KnowledgeGraph
 from graph.spec import GraphSpec
 from utils.json_utils import extract_json_array
 from utils.token import calculate_tokens
-
+from setting.db import SessionLocal
 from llm.factory import LLMInterface
 
 
@@ -17,19 +19,15 @@ class DocBuilder:
     """
 
     def __init__(
-        self, llm_client: LLMInterface, graph: Optional[KnowledgeGraph] = None
+        self,
+        llm_client: LLMInterface,
+        embedding_func: Callable,
     ):
         """
         Initialize the builder with a graph instance and specifications.
         """
-        if graph is None:
-            self.graph = KnowledgeGraph()
-        else:
-            self.graph = graph
+        self.embedding_func = embedding_func
         self.llm_client = llm_client
-        self.discovered_concepts = []
-        self.knowledge_blocks = []
-        self.sources = []
         self.graph_spec = GraphSpec(llm_client)
 
     def _read_file(self, file_path: str) -> str:
@@ -57,107 +55,114 @@ class DocBuilder:
         """
         path = Path(file_path)
         return path.stem, path.suffix
-    
-    def split_markdown_by_heading(self, path, metadata, heading_level=2, ):
+
+    def split_markdown_by_heading(
+        self, path: str, metadata: Dict[str, Any], heading_level=2
+    ):
         # Split content by lines
         name, extension = self._extract_file_info(path)
         doc_content = self._read_file(path)
+        doc_version = metadata.get("doc_version", "1.0")
 
         markdown_content = self._read_file(path)
-        lines = markdown_content.split('\n')
-        
+        lines = markdown_content.split("\n")
+
         sections = {}
         current_section = []
         current_title = "default"
-        
+
         for line in lines:
             # Check if line is a h2 heading
-            if line.startswith('#' * heading_level + ' '):
+            if line.startswith("#" * heading_level + " "):
                 # Save current section if it has content
                 if current_section:
-                    sections[current_title] = '\n'.join(current_section)
+                    sections[current_title] = "\n".join(current_section)
                     current_section = []
-                
+
                 # Update current title (remove '## ' prefix)
                 current_title = line[3:].strip()
             else:
                 current_section.append(line)
-        
+
         # Save the last section
         if current_section:
-            sections[current_title] = '\n'.join(current_section)
+            sections[current_title] = "\n".join(current_section)
 
         for heading, content in sections.items():
             tokens = calculate_tokens(content)
             if tokens > 4096:
-                raise ValueError(f"Heading {heading} has {tokens} tokens, please split it into smaller chunks manually")
-            
-         # Add document to graph
-        source_data = SourceData(
-            name=name,
-            definition=f"Document: {name}{extension}, metadata: {metadata}",
-            link=path,
-            version=metadata.get("doc_version", "1.0"),
-        )
-        source_data_id = self.graph.add_source_data(source_data)
-        self.sources.append(source_data)
-    
-        for heading, content in sections.items():
-            kb = KnowledgeBlock(
-                name=heading,
-                definition=content,
-                source_version=metadata.get("doc_version", "1.0"),
-                source_ids=[source_data_id],
-            )
+                raise ValueError(
+                    f"Heading {heading} has {tokens} tokens, please split it into smaller chunks manually"
+                )
 
-        # Add knowledge block to graph
-        self.graph.add_knowledge_block(kb)
-        self.knowledge_blocks.append(kb)
-    
+        # Add document and knowledge blocks to database
+        with SessionLocal() as db:
+            source_data = db.query(SourceData).filter(SourceData.link == path).first()
+            if not source_data:
+                source_data = SourceData(
+                    name=name,
+                    content=markdown_content,
+                    link=path,
+                    version=doc_version,
+                    data_type="document",
+                    metadata=metadata,
+                )
+                db.add(source_data)
+                db.flush()
+                source_data_id = source_data.id
+                print(f"Source data created for {path}, id: {source_data_id}")
+            else:
+                print(f"Source data already exists for {path}, id: {source_data.id}")
+                source_data_id = source_data.id
+
+            knowledge_blocks = (
+                db.query(KnowledgeBlock)
+                .filter(
+                    KnowledgeBlock.source_id == source_data_id,
+                    KnowledgeBlock.knowledge_type == "paragraph",
+                    KnowledgeBlock.source_version == doc_version,
+                )
+                .all()
+            )
+            if knowledge_blocks:
+                print(f"Knowledge blocks already exist for {path}")
+                return sections
+
+            for heading, content in sections.items():
+                kb = KnowledgeBlock(
+                    name=heading,
+                    content="#" * heading_level + f" {heading}\n{content}",
+                    knowledge_type="paragraph",
+                    content_vec=self.embedding_func(content),
+                    source_version=metadata.get("doc_version", "1.0"),
+                    source_id=source_data_id,
+                )
+                db.add(kb)
+
+            db.commit()
+
         return sections
 
     def extract_qa_blocks(
         self, file_path: Union[str, List[str]], metadata: Dict[str, Any]
     ) -> List[KnowledgeBlock]:
-        """
-        Extract structured knowledge blocks from documents.
-
-        Parameters:
-        - file_path: Path to single file or list of files
-        - metadata: Additional information to attach to blocks, including:
-            - doc_version: Tracks document version for multi-version knowledge management
-            - visible_labels: Defines access rules for derived knowledge (e.g., "public", "internal-team")
-
-        Returns:
-        - List of extracted KnowledgeBlock objects
-        """
-
         # Handle single file or list of files
         if isinstance(file_path, str):
             file_paths = [file_path]
         else:
             file_paths = file_path
 
+        doc_version = metadata.get("doc_version", "1.0")
         blocks = []
         for path in file_paths:
             # Create document entity
             name, extension = self._extract_file_info(path)
             doc_content = self._read_file(path)
 
-            source_data = SourceData(
-                name=name,
-                definition=f"Document: {name}{extension}",
-                link=path,
-                version=metadata.get("doc_version", "1.0"),
-            )
-
-            # Add document to graph
-            source_data_id = self.graph.add_source_data(source_data)
-            self.sources.append(source_data)
 
             # Extract knowledge blocks using LLM
             prompt_template = self.graph_spec.get_extraction_prompt(
-                "knowledge_block_extraction"
+                "knowledge_qa_extraction"
             )
             prompt = prompt_template.format(text=doc_content)
             response = self.llm_client.generate(prompt)
@@ -167,20 +172,56 @@ class DocBuilder:
                 # Parse JSON response
                 extracted_blocks = json.loads(response_json_str)
 
-                # Create and add knowledge blocks
-                for block_data in extracted_blocks:
-                    kb = KnowledgeBlock(
-                        name=block_data.get("name") or block_data.get("question", ""),
-                        definition=block_data.get("definition", "")
-                        or block_data.get("answer", ""),
-                        source_version=metadata.get("doc_version", "1.0"),
-                        source_ids=[source_data_id],
+                with SessionLocal() as db:
+                    source_data = (
+                        db.query(SourceData).filter(SourceData.link == path).first()
                     )
+                    if not source_data:
+                        source_data = SourceData(
+                            name=name,
+                            content=doc_content,
+                            link=path,
+                            version=doc_version,
+                            data_type="document",
+                            metadata=metadata,
+                        )
+                        db.add(source_data)
+                        db.flush()
+                        source_data_id = source_data.id
+                        print(f"Source data created for {path}, id: {source_data_id}")
+                    else:
+                        print(f"Source data already exists for {path}, id: {source_data.id}")
+                        source_data_id = source_data.id
 
-                    # Add knowledge block to graph
-                    self.graph.add_knowledge_block(kb)
-                    blocks.append(kb)
-                    self.knowledge_blocks.append(kb)
+                    knowledge_blocks = (
+                        db.query(KnowledgeBlock)
+                        .filter(
+                            KnowledgeBlock.source_id == source_data_id,
+                            KnowledgeBlock.knowledge_type == "qa",
+                            KnowledgeBlock.source_version == doc_version,
+                        )
+                        .all()
+                    )
+                    if knowledge_blocks:
+                        print(f"Knowledge blocks already exist for {path}")
+                        continue
+
+                    # Create and add knowledge blocks
+                    for block_data in extracted_blocks:
+                        question = block_data.get("question", "")
+                        answer = block_data.get("answer", "")
+                        qa_content = question + "\n" + answer
+                        qa_block = KnowledgeBlock(
+                            name=question,
+                            definition=qa_content,
+                            source_version=doc_version,
+                            source_id=source_data_id,
+                            knowledge_type="qa",
+                            content_vec=self.embedding_func(qa_content),
+                        )
+                        db.add(qa_block)
+                        blocks.append(qa_content)
+                    db.commit()
 
             except (json.JSONDecodeError, TypeError):
                 print(f"Failed to parse knowledge blocks from {path}")
@@ -209,61 +250,93 @@ class DocBuilder:
                 with open(concept_file, "r") as f:
                     predefined_concepts = json.load(f)
 
-                for concept_data in predefined_concepts:
-                    concept = Concept(
-                        name=concept_data.get("name", ""),
-                        definition=concept_data.get("definition", ""),
-                        version=concept_data.get("version", "1.0"),
-                    )
+                with SessionLocal() as db:
+                    for concept_data in predefined_concepts:
+                        concept = Concept(
+                            name=concept_data.get("name", ""),
+                            definition=concept_data.get("definition", ""),
+                            definition_vec=self.embedding_func(concept_data.get("definition", "")),
+                            version=concept_data.get("version", "1.0"),
+                        )
+                        db.add(concept)
 
-                    # Add concept to graph
-                    self.graph.add_concept(concept)
-                    concepts.append(concept)
+                    db.commit()
 
-                self.discovered_concepts.extend(concepts)
-                return concepts
+                return predefined_concepts
+            except Exception as e:
+                raise ValueError(f"Error loading concepts from file: {e}")
 
-            except (json.JSONDecodeError, FileNotFoundError) as e:
-                print(f"Error loading concepts from file: {e}")
+        with SessionLocal() as db:
+            knowledge_blocks = db.query(KnowledgeBlock.name, KnowledgeBlock.content).filter().all()
+            if not knowledge_blocks:
+                print("No knowledge blocks available for concept extraction")
+                return []
 
-        if not self.knowledge_blocks:
-            print("No knowledge blocks available for concept extraction")
-            return []
 
-        # Combine knowledge blocks for analysis
-        combined_blocks = "\n\n".join(
-            [
-                f"Block: {kb.name}\nContent: {kb.definition}"
-                for kb in self.knowledge_blocks
-            ]
-        )
+            # split knowledges block into batches that have 10000 tokens
+            total_tokens = 0
+            for i, kb in enumerate(knowledge_blocks):
+                tokens = calculate_tokens(kb.content)
+                total_tokens += tokens
 
-        # Extract concepts using LLM
-        prompt_format = self.graph_spec.get_extraction_prompt("concept_extraction")
-        prompt = prompt_format.format(text=combined_blocks)
-        response = self.llm_client.generate(prompt)
+            knowledge_blocks_batches = []
+            index = 0
+            batch_size = ceil(total_tokens/(ceil(total_tokens/10000)))
+            for kb in knowledge_blocks:
+                if total_tokens > batch_size:
+                    knowledge_blocks_batches.append(knowledge_blocks[index:i+1])
+                    index = i+1
+                    total_tokens = 0
 
-        try:
-            response_json_str = extract_json_array(response)
-            # Parse JSON response
-            extracted_concepts = json.loads(response_json_str)
+            if index < len(knowledge_blocks):
+                knowledge_blocks_batches.append(knowledge_blocks[index:])
 
-            # Create and add concepts
-            for concept_data in extracted_concepts:
-                concept = Concept(
-                    name=concept_data.get("name", ""),
-                    definition=concept_data.get("definition", ""),
-                    version="1.0",
+            print(f"Splitted {len(knowledge_blocks_batches)} batches")
+
+            for batches in knowledge_blocks_batches:
+                # Combine knowledge blocks for analysis
+                combined_blocks = "\n\n".join(
+                    [
+                        f"Block: {kb.name}\nContent: {kb.content}"
+                        for kb in batches
+                    ]
                 )
 
-                # Add concept to graph
-                self.graph.add_concept(concept)
-                concepts.append(concept)
+                if combined_blocks.strip() == "":
+                    print(f"Skipping empty batch")
+                    continue
 
-        except (json.JSONDecodeError, TypeError):
-            print("Failed to parse concepts from LLM response")
+                # Extract concepts using LLM
+                prompt_format = self.graph_spec.get_extraction_prompt("concept_extraction")
+                prompt = prompt_format.format(text=combined_blocks)
+                try:
+                    response = self.llm_client.generate(prompt)
+                except Exception as e:
+                    print(f"Failed to extract concepts from {combined_blocks}, error: {e}")
+                    import time
+                    time.sleep(60)
+                    response = self.llm_client.generate(prompt)
 
-        self.discovered_concepts.extend(concepts)
+                try:
+                    response_json_str = extract_json_array(response)
+                    # Parse JSON response
+                    extracted_concepts = json.loads(response_json_str)
+
+                    # Create and add concepts
+                    for concept_data in extracted_concepts:
+                        concept = Concept(
+                            name=concept_data.get("name", ""),
+                            definition=concept_data.get("definition", ""),
+                            definition_vec=self.embedding_func(concept_data.get("definition", "")),
+                            version="1.0",
+                        )
+                        db.add(concept)
+                    concepts.append(extracted_concepts)
+                    print(f"Extracted {len(extracted_concepts)} concepts")
+                except (json.JSONDecodeError, TypeError):
+                    print("Failed to parse concepts from LLM response")
+            db.commit()
+
         return concepts
 
     def extend_concepts(
@@ -519,4 +592,3 @@ class DocBuilder:
             f"Created {relationship_count} concept-to-concept relationships based on shared knowledge"
         )
         return self.graph
-

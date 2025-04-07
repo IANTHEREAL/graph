@@ -156,7 +156,7 @@ class GraphSpec:
 
         # Initialize extraction prompts
         self._extraction_prompts = {
-            "knowledge_block_extraction": block_extraction_prompt,
+            "knowledge_qa_extraction": block_extraction_prompt,
             "concept_extraction": concept_extraction_prompt,
             "extend_concept": extend_concept_prompt,
             "extend_relationship": extend_relationship_prompt,

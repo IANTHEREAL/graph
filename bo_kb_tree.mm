@@ -13,7 +13,7 @@
         <node TEXT="What is Level 3 SPIFF?" ID="5d393cfc7f76d13c35980e9c03236904" STYLE="fork"/>
       </node>
       <node TEXT="What is Cloud Commitment Plan?" ID="ffcf7dccc229630b03bc339dfeac3480" STYLE="fork"/>
-      <node TEXT="How to calculate compensation? " ID="b32c1bfc957a88b3d314fbcc32e3521e" STYLE="fork">
+      <node TEXT="How to calculate compensation?" ID="b32c1bfc957a88b3d314fbcc32e3521e" STYLE="fork">
         <node TEXT="How does ACV factor into SPIFF bonus calculations?" ID="6137e874344b1169d5b83601df508bbb" STYLE="fork"/>
         <node TEXT="How is commission calculated for professional services deals?" ID="bcea628f155a74b4a3ca5c81c913c0b1" STYLE="fork"/>
         <node TEXT="Request ops for help" ID="530040f6e2a1d447d73dccc8a87333ef" STYLE="fork"/>
@@ -56,7 +56,9 @@
       </node>
       <node TEXT="Account" ID="97359fa4f263ebab9d493acb0f3cb788" STYLE="fork">
         <node TEXT="What is the definition of Customer Segmentation (SKA/KA)?" ID="abb032dfe02973abfdcb29ee1cf9ab7b" STYLE="fork">
-          <node TEXT="What is SKA criterion?" ID="010a299faf9b87024ae7afc36e59cca0" STYLE="fork"/>
+          <node TEXT="What is SKA/KA criterion?" ID="010a299faf9b87024ae7afc36e59cca0" STYLE="fork"/>
+          <node TEXT="How does ARR relate to customer classification?" ID="73bc2161d2725c10fa38e83eb5afd4bc" STYLE="fork"/>
+          <node TEXT="Which companies are included in the SKA/KA list?" ID="1cad58499d8073a3bc353b9ddb1bd8a5" STYLE="fork"/>
         </node>
         <node TEXT="What is the definition of Customer ICP/Industry?" ID="250449860e0a8e3ea79dc2b47b8479d6" STYLE="fork">
           <node TEXT="Which companies are included in the ICP list?" ID="f79971a74865fdc2eb99aee24b16a810" STYLE="fork"/>
@@ -83,7 +85,7 @@
     <node TEXT="Ops Portal" ID="afbb3419eeba2843cacd661df6f205b9" STYLE="bubble" POSITION="right">
       <node TEXT="Credits" ID="2ab8ea9002c8e5efa741630978463478" STYLE="fork">
         <node TEXT="What is credits?" ID="625a6a8682d7c7a6ec7c9a516baa3ac3" STYLE="fork"/>
-        <node TEXT="How to apply credist?" ID="6f8176909d585f7844d6f02a00af3861" STYLE="fork">
+        <node TEXT="How to apply credits?" ID="6f8176909d585f7844d6f02a00af3861" STYLE="fork">
           <node TEXT="External Use" ID="b86e1e1e1dec8da9467c0a837f7ab604" STYLE="fork"/>
           <node TEXT="Internal Use" ID="502ef7c740962b1cc2d412e801ffdaa3" STYLE="fork"/>
         </node>

@@ -8,6 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 openpyxl = "^3.1.5"
+sqlalchemy = "^2.0.40"
+pymysql = "^1.1.1"
+tidb-vector = "^0.0.14"
 
 
 [build-system]

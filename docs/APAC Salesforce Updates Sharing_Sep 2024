@@ -1,0 +1,131 @@
+# Salesforce Updates Sharing
+Vince Yao
+Business Enabling & Operation Sep 27, 2024
+
+
+## Agendas
+01 Opportunity Updates
+02 New Account Creation
+03 Lead Actions
+
+
+## Opportunity Updates Key Fields
+
+
+**Required at Qualification Stage**:
+1. Basic Information
+2. Contact Roles
+3. Why TiDB & Why Now
+4. Competition
+5. Next Key Action
+
+
+**Required at Negotiating Stage**:
+6. Top Issue and Support Needed
+7. Decision Process
+
+
+### Opportunity Updates Basic Information
+
+### Opportunity Updates Contact Roles
+
+
+How to Add a Contact Role in Salesforce
+
+
+1. Navigate to the Opportunity:
+- Go to the opportunity record you want to update (e.g., “Delhivery-Postgres migration - Subscription”).
+2. Locate the Contact Roles Section:
+- Scroll down to the “Related List Quick Links” section.
+- Click on Contact Roles (5) to view the current list of contact roles.
+3. Add a New Contact Role:
+- Click the Add Contact Roles button (highlighted in red in the image).
+4. Fill in the Details:
+- Enter the contact’s Name, Role, Title, Phone, Email, and other relevant details.
+- Use the Comments field to note any additional information about the contact.
+5. Save the Contact Role:
+- Review the entered details and click Save to add the contact role.
+6.  Edit Existing Roles (Optional):
+- If needed, click the Edit Contact Roles button to modify the information for existing contacts.
+Manual reference: https://pingcap.feishu.cn/wiki/ZgnQwtPUtir3dLkclN0cVeODnye
+
+
+
+
+
+
+
+### Opportunity Updates Why TiDB & Why Now
+
+
+
+
+
+
+
+
+
+### Opportunity Updates Competition
+
+
+
+
+
+### Opportunity Updates Next Key Action
+
+
+
+
+
+### Opportunity Updates Top Issue and Support
+Top Issue and Support Needed
+1. Top Issues
+2. Support Needed
+3. By When?
+4. Support request raised to whom?
+5. Current Status
+
+## 02 New Account Creation
+New Account Creation
+
+
+
+Details pls refer to: https://pingcap.feishu.cn/wiki/PaadwLg1DiXfBPkQvZ7cmbSzn8g
+
+
+New Account Creation
+
+
+
+
+
+## 03 Lead Actions
+
+
+
+
+
+1. The new Leads mapping to your Account/Lead will be assigned to you automatically.
+2. The new MQLs marked as “Priority 1” will be assigned to you by pre-defined territory automatically.
+a. Contact Us form filled out on the website
+b. The Demo Request form filled out on the website
+c. Trade Show Scanned Notes / Booth Demo
+
+
+### Lead Actions
+
+
+The MQLs are assigned to you as “Open” by default.
+1. If you receive it and plan to work on it, pls update to “Working” immediately.
+2. If you get engagements with the Lead (call, emails, WhatsApp, etc.), pls update to “Engaged”.
+3. If you schedule the first meeting with the Lead, pls update to “Meeting Scheduled”.
+4. If you complete the first meeting, pls update to “Meeting Completed”.
+5. If during the above steps, you find it’s disqualified, pls update to “Disqualified”.
+6. If during the above steps, you find it’s not disqualified but no Opp in the next 6~12 months, pls update to “Nurture”.
+7. If during the above steps, the Lead is qualified to be an Opp, pls convert it.
+8. If the Lead stays at “Open” for over 30 days, or stays at “Working” for over 3 months, it will be updated to “MKT Nurture” automatically.
+
+
+Additional Notes:
+- If any valid interactions with this Lead, pls log a note with brief description.
+- If this Lead cannot be touched, pls log a note with “Call failed”, etc.

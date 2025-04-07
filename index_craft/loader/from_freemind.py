@@ -8,7 +8,7 @@ def parse_freemind(file_path: str) -> Node:
     
     def parse_node(node_elem) -> Node:
         # Extract node attributes
-        text = node_elem.get('TEXT', '')
+        text = node_elem.get('TEXT', '').strip()
         node_id = node_elem.get('ID', None)
         
         # Recursively parse children

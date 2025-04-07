@@ -1,0 +1,397 @@
+{
+  "What is Compensation Metrics?": {
+    "files": [
+      {
+        "file": "FY25 Compensation Related Business Metrics (APAC).md",
+        "confidence": "high",
+        "reasoning": "This document's title explicitly mentions 'Compensation Related Business Metrics' and contains change records related to metric definitions (ATR), directly addressing the subject of compensation metrics."
+      },
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly outlines compensation structures including quotas, commission rates, and ACV (Annual Contract Value) metrics, which directly define key components of compensation metrics for sales roles."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "What is compensation plan structure?": {
+    "files": [
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly outlines components of a compensation plan structure including quotas, commission rates, and incentive buckets (e.g., 'Bucket 1 - New & Expansion ACV'), directly addressing the question."
+      },
+      {
+        "file": "WW Compensation Plan FY25, APAC Presales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly contains a section titled 'WW Compensation Plan FY25' with details about quotas, annual target variable weights, and a sales commission structure table, which directly addresses compensation plan structure."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "What will happen if windfall is triggered?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How different kind of product contributes to Compensation?": {
+    "files": [
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly outlines a commission structure based on 'New & Expansion ACV', directly linking different types of product contributions (new sales vs expansion of existing products) to compensation calculations."
+      },
+      {
+        "file": "FY25 Global SPIFF Program - MySQL Family Capture.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly states that the SPIFF program incentivizes teams to replace MySQL clusters with TiDB, directly linking a specific product type (TiDB) to compensation incentives."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "What is the Cloud Commitment Plan in SPIFF?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is Level 3 SPIFF?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is Cloud Commitment Plan?": {
+    "files": [
+      {
+        "file": "Standard TiDB Cloud Commitment Plan.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines the Standard TiDB Cloud Commitment Plan, including service periods (1-3 years) and commitment rules such as discount approval processes and usage tracking requirements."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "How does ACV factor into SPIFF bonus calculations?": {
+    "files": [
+      {
+        "file": "WW Compensation Plan FY25, APAC Presales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly lists 'Bucket 1 - ACV' with a quota and references a 'sales commission structure,' directly linking ACV to compensation calculations including SPIFF bonuses."
+      },
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "medium",
+        "reasoning": "This document explicitly references 'New & Expansion ACV' as part of the sales commission structure in Bucket 1, directly linking ACV to compensation calculations. While SPIFF is not explicitly named in the preview, the context of 'Global SPIFF Program List' and 'Sales Compensation Plan' implies this is part of SPIFF bonus calculations."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "How is commission calculated for professional services deals?": {
+    "files": [
+      {
+        "file": "WW Compensation Plan FY25, APAC Presales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly contains a 'sales commission structure' table and discusses variable compensation weights tied to ACV (Annual Contract Value), directly addressing commission calculation mechanisms for presales roles in professional services deals."
+      },
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "medium",
+        "reasoning": "This document contains a 'sales commission structure table' under the 'Bucket 1 - New & Expansion ACV' section, which directly addresses commission calculation mechanisms for sales deals."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "Compensation -> How to calculate compensation? -> Request ops for help": {
+    "files": [
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly contains a sales commission structure table and details about quota allocation for New & Expansion ACV, which directly addresses compensation calculation methods."
+      },
+      {
+        "file": "WW Compensation Plan FY25, APAC Presales (base version).md",
+        "confidence": "high",
+        "reasoning": "This document explicitly contains a 'sales commission structure' table and details about ACV quotas and target variable weights, which directly addresses compensation calculation methods."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "What is Collection?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is Revenue?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines financial metrics in its title and stated purpose, and its scope includes all employees, making it the authoritative source for fundamental financial definitions like Revenue."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What is ACV?": {
+    "files": [
+      {
+        "file": "WW Compensation Plan FY25, APAC Presales (base version).md",
+        "confidence": "medium",
+        "reasoning": "The document explicitly lists 'ACV' as a compensation metric under 'Bucket 1' with a quota and annual target variable weight, directly indicating ACV is a sales performance metric tied to annual targets."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "How to calculate ACV?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "The document explicitly states its purpose as defining and calculating financial metrics, which directly addresses ACV calculation methodology given ACV is a core financial metric."
+      },
+      {
+        "file": "WW Compensation Plan FY25, Sales (base version).md",
+        "confidence": "medium",
+        "reasoning": "This document explicitly references 'New & Expansion ACV' and a sales commission structure tied to ACV quotas, which implies ACV calculation methodology is defined in the commission table or quota context."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 2
+  },
+  "What is baseline ARR?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is starting ARR?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly states its purpose is to define financial metrics, and its title/content strongly imply it contains definitions for metrics like ARR (Annual Recurring Revenue). Starting ARR would logically be addressed in a financial metrics definition document."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What affect baseline ARR?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines financial metrics, which would inherently include factors affecting baseline ARR (Annual Recurring Revenue) as part of its core content about revenue calculations and definitions."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What are the different Net ARR scenarios?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "This document's title and scope explicitly indicate it defines financial metrics, which would inherently include Net ARR scenarios as a core financial calculation. While the preview doesn't show specifics, the document's purpose directly aligns with the question's requirements."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What are the criteria for revenue to be included in ARR?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines financial metrics and their calculations, which would logically include ARR inclusion criteria given its stated purpose of 'Financial Metrics Definition/Calculation' for all employees."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "Does TiDB Serverless Revenue meet ARR inclusion criteria?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is the impact of applying credits on ARR?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How is NetARR calculated?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How is ARR calculated for a contract starting in a future fiscal period?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "Why does NetARR differ from Contract Price (CP)?": {
+    "files": [
+      {
+        "file": "Financial Metrics Definition and Calculation.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly addresses financial metrics definitions and calculations, which would inherently include explanations of NetARR and Contract Price (CP) differences as core financial concepts."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What is Lead in SFDC?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is lead assignment process?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is SKA/KA criterion?": {
+    "files": [
+      {
+        "file": "FY26 SKA and KA Segmentation.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines SKA criteria under the 'SKA/KA Definition' section, listing specific quantitative thresholds like $1B+ Revenue and 1000+ employees."
+      },
+      {
+        "file": "FY25 SKA and KA Segmentation - Definition.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines SKA/KA criteria by stating accounts are selected based on ICP (Ideal Customer Profile) profiles, which directly answers the question about SKA/KA criterion."
+      },
+      {
+        "file": "FY25 Global SPIFF Program List.md",
+        "confidence": "medium",
+        "reasoning": "The document explicitly states 'Criteria: The renewal&expansion order...' in the context of the SKA/KA Focus program, directly addressing the operational criteria for SPIFF payouts related to SKA/KA initiatives."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 3
+  },
+  "How does ARR relate to customer classification?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "Which companies are included in the SKA/KA list?": {
+    "files": [
+      {
+        "file": "FY25 SKA and KA Segmentation - Definition.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly defines SKA/KA accounts based on PingCAP's ICP profile and states these are 'accounts to be focused in your target market in FY25,' which directly addresses the question about SKA/KA list inclusion criteria."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "Which companies are included in the ICP list?": {
+    "files": [
+      {
+        "file": "FY25 SKA and KA Segmentation - Definition.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly states that SKA/KA accounts are selected based on PingCAP's ICP (Ideal Customer Profile) and defines them as focus targets for FY25, directly addressing the question about ICP-listed companies."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "Which industry are included in the ICP list?": {
+    "files": [
+      {
+        "file": "FY26 ICP Definition.md",
+        "confidence": "high",
+        "reasoning": "This document explicitly lists 10 ICP (Ideal Customer Profile) industry verticals in a table format under the header 'ICP Industry Vertical,' directly answering the question."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What ARR threshold qualifies a customer as 'brand new'?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to create account?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What fields are the Opportunity contain?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to create Opportunity?": {
+    "files": [
+      {
+        "file": "FY25 SKA and KA Segmentation - Definition.md",
+        "confidence": "medium",
+        "reasoning": "Explicitly defines SKA/KA accounts as the prioritized targets for FY25, directly linking account targeting to opportunity creation in sales strategies."
+      }
+    ],
+    "sufficient": true,
+    "total_found": 1
+  },
+  "What are the Opportunity stages in Salesforce?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to create a quote for a Salesforce opportunity?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to handle Usage Issue?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is the definition of the Commit pipeline?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to register Salesforce Authenticator?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to apply for Salesforce access?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "What is credits?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "Ops Portal -> Credits -> How to apply credits? -> External Use": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "Ops Portal -> Credits -> How to apply credits? -> Internal Use": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "Who is the Sales ops representative for the EMEA team?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  },
+  "How to download salesforce in China?": {
+    "files": [],
+    "sufficient": true,
+    "total_found": 0
+  }
+}
