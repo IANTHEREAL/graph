@@ -1,0 +1,42 @@
+# How to Register and Use Salesforce Authenticator for Multi-Factor Authentication (MFA) Logins
+
+## Register Salesforce Authenticator
+
+To use Salesforce Authenticator as a verification method for MFA logins, you need to register the app and connect it to your Salesforce account. You can register the app at any time, even before MFA is turned on.
+
+To register Salesforce Authenticator the first time you log in after MFA is turned on, follow these steps:
+
+### Step-by-Step Instructions:
+
+1. Install the App: Download and install the Salesforce Authenticator app on your mobile device. It is available from the Apple App Store or Google Play Store.
+2. Log in to Salesforce: On your computer, log in to your Salesforce account. You may be prompted to verify your identity using a one-time passcode sent via email or text message.
+3. Register Prompt: After logging in, the screen to register Salesforce Authenticator will display automatically.
+4. Open the App: On your mobile device, open the Salesforce Authenticator app and tap Add an Account.
+5. Two-Word Phrase: The app will display a two-word phrase.
+6. Enter Phrase in Salesforce: On your computer, enter the two-word phrase into the appropriate field on the registration screen. Then click Connect.
+7. Confirm Connection: Salesforce Authenticator will connect to your Salesforce account. Confirm the connection details in the app.
+8. Complete Registration: In the Salesforce Authenticator app, verify the connection details and tap Connect. ✅ You’re done! You are now logged in and the app is registered.
+
+## How to Log in with Salesforce Authenticator
+
+1. Enter Login Credentials: On the Salesforce login screen, enter your username and password, as usual.
+2. Prompt for Verification: Salesforce will prompt you to use Salesforce Authenticator to verify your identity.
+3. Respond to Notification: On your mobile device, you will receive a push notification. Tap the notification to open the Salesforce Authenticator app.
+4. Approve the Login Request: In the Salesforce Authenticator app, verify that the login request details are correct. Then tap Approve.
+
+## Tips for Android Users in China
+
+For users without access to Google Play, the Salesforce Authenticator app can be downloaded by following the instructions below (note: steps may vary slightly depending on your device):
+
+Requirements:
+
+- Your device must be running Android OS 6.0 or higher.
+- The app will not run on phones with Android OS lower than 5.0.
+
+Installation Steps:
+
+1. Download the App: Click [here](https://sfa-android.herokuapp.com/bin/SalesforceAuthenticatorAndroid.apk) to download Salesforce Authenticator for Android v3.6.0 (MD5: d85ae18bb531ab51f325a43f14fbe0cb)
+2. Open the Downloaded File: Once the download is complete, open the file from the notification center or go to the Downloads app and tap on SalesforceAuthenticator.apk.
+Allow Installation from Unknown Sources
+3. If you see an error message saying you're not allowed to install apps from unknown sources: a) Go to Settings; b) Enable the option to allow app installs from "Unknown sources".
+4. Install the App: Follow the on-screen instructions to complete the installation.

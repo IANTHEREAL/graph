@@ -1,0 +1,69 @@
+# Background
+
+Currently, we have no review process on account creation, and account data is of lower quality and without compliance check. To ensure account data is clean and accurate and with a purpose of all new account creation should be reviewed and approved. We re-designed the account creation process via the route from Lead Conversion. Below guideline is provided to frontline team for reference.
+
+# Account Creation Process - Publish to Sales
+
+Scenario category:
+- Lead Creation (as normal, no change in current process).
+- For new account creation, sales need to create a new lead|Convert the Lead/Submit for Review|Approval Review|Approved|Converted|Active Account
+
+All new accounts will be created from Leads, follow the workflow procedure below:
+
+  - The process starts when Sales create a new lead or accept a lead from MKT in SFDC.
+  - Next, Sales convert the Lead.
+  - At this point, a decision is made:
+    - Path A: Create New Account:
+      - If a new account needs to be created, the process moves to Sales rep fill in mandatory account information.
+      - The information is then Submitted for Approval.
+      - From "Submitted for Approval", there are two potential paths for review:
+        - Path A.1 (For NA): The submission goes to Sales Manager Review and Approve (Regional Ops Delegation) for NA. After this review/approval, it proceeds to the next step.
+        - Path A.2 (General/After NA Review): The submission (or the result from the NA review) goes to Region Ops Review and Approve.
+      - During the Region Ops Review and Approve stage:
+        - If Reject to update, the process loops back to Sales rep fill in mandatory account information.
+        - If Approve, the process moves to Industry vertical verification.
+      - At the Industry vertical verification stage:
+        - If Legal approval required, the process moves to Legal Review and Approve. After legal approval, the Lead converted to an account status is reached.
+        - If Legal approval Not required, the process bypasses the legal review, and the Lead converted to an account status is reached directly.
+    - Path B: Choose Existing Account:
+      - If an existing account is chosen, the user proceeds to Submit.
+      - After submitting, the Lead converted to an account status is reached.
+
+# The Detail of the Workflow procedure
+
+1. Sales create a New lead, click Save - same as before. (Lead: Name, Title, Email and Company here are mandatory if you are to convert to an account later. Suggest to fill these info at this stage.)
+
+2. A new lead has been created. Sales click the Convert button on the upper-right of the page either from the newly created or an existing lead.
+
+3. A new pop-up window appears. Sales need to fill in all the mandatory fields or select from the existing account records. (i.e. Create New Account or Choose Existing Account), then click Submit.  Mandatory fields:
+  - Account - Company, Industry, Vertical, Employee Number, Annual Revenue, Address (Region calculated from address Country)
+  - Lead - Name, Title, Email
+
+4. The system verifies the fields and populates: The New Account will be created after approval.
+
+5. Regional Ops/Sales Manager (For NA, CC Ops) receives an Email/Salesforce notification to review the account info and approve/reject the request. Fill the comments and click Approve/Reject. 
+
+  - Simple Operation guideline
+
+    - Click the name of lead approval on the home page Or go to Lead detail page to find Ops Approval assigned to you:
+      - Salesforce notification (button "Item to Approve") on home page.
+      OR
+      - Open the lead page. Navigate to the Approval Queue section to view or process pending requests. 
+    - In the Lead Approval Page: Review lead details. Use options to Approve, Reject, or Reassign, with comments if required. Submit to finalize.
+
+  - Key information to note
+
+    - Account info:
+      - Company (Account Name) - Official name
+      - Industry and Scale - Industry/Vertical, Employee Numbers/Annual Revenue (Reference to Zoominfo, corporate website, LinkedIn to confirm industry vertical based on business nature) and reach to @Kevin Lu if need to reference Zoominfo account profile.
+      - Address/Region
+    - Lead info: Name, Title and Email.
+  - Notes: Regional Ops need to go to account page to update Segmentation tag based on [SKA/KA Segmentation Definition](https://pingcap.feishu.cn/wiki/VbQ4wSE6ri3OL3kYuC0cs7OOnBb) after account having been approved.
+
+6. Legal receives an Email/Salesforce notification to review the account info and approve/reject the request. (Same approval view as Ops)
+  - If account industry vertical = Gambling & Gaming OR Crypto Exchange, Legal will review and approve, as licence is required for Crypto Exchange and igaming. (Account Compliance Review)
+7. After all necessary approval granted, the Lead has been successfully converted to an active account.
+
+# Support:
+
+Sales reach to your regional operation for any clarification on process guide.

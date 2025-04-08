@@ -1,5 +1,9 @@
 # FY26 ICP Definition
 
+Draft by: Business Enabling and Operation
+Last Update: Feb 26th, 2025
+
+
 For FY26, we have defined 10 selected ICPs (Ideal Customer Profile) within PingCAP. These are the industry verticals to be focused in your target market in FY26. These ICPs are defined with priority or with use cases within regions.
 
 | #  | ICP Industry Vertical                           | 1st Level | 2nd Level            | 3rd Level                           | Example (i.e.)                           |
@@ -19,7 +23,7 @@ For FY26, we have defined 10 selected ICPs (Ideal Customer Profile) within PingC
 
 
 
-*E-Commerce - If accounts are E-Commerce based Logistics, then will be grouped to E-Commerce.
+**Note**: E-Commerce - If accounts are E-Commerce based Logistics, then will be grouped to E-Commerce.
 
 SFDC Tags Clarification:
 

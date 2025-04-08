@@ -41,8 +41,7 @@ These accounts are important but don't require as much strategic focus or tailor
 Non-KA is lower priority in our sales strategy.
 
 
-
-### SKA/KA criteria changelogs ()
+### SKA/KA criteria changelogs
 
 #### FY25 => FY26
 
@@ -60,8 +59,9 @@ OR
 OR
 3. (New in FY26) [Forbes 2000 list with Logo usage permission](https://www.forbes.com/lists/global2000/)
 
-Notes:
-- Logo Usage: Obtain Logo usage permission for marketing purposes. If the permit can't be obtained, there are 2 options as alternatives:   a) any video with customer's company name and could be published; or b) public article about TiDB under company's name.
+#### Additional explanation
+
+- Logo Usage: Obtain Logo usage permission for marketing purposes. If the permit can't be obtained, there are 2 options as alternatives:  a) any video with customer's company name and could be published; or b) public article about TiDB under company's name.
 - The preliminary requirement is that company info (Business Revenue and Employee #) must be filled for SKA and KA. BLANK is not accepted.
 
 Final - **FY26 Customer Segmentation is based on below criteria**: [FY26 ICP Definition](https://pingcap.feishu.cn/wiki/G0Bywpo9aitj4vkPic2caRksnud)
@@ -72,8 +72,7 @@ Final - **FY26 Customer Segmentation is based on below criteria**: [FY26 ICP Def
 |----|-----------------------------------------------|-----------|----------------------|----------------------------------|
 | 1  | FSI-Financial Software                        | FSI       | FinTech              | Financial Software               |
 | 2  | FSI-Payment                                   | FSI       | FinTech              | Payment                          |
-| 3  | **FSI-Web3**                                  | **FSI**   | **FinTech**          | **Web3**                         |
-|    |                                               |           |                      | **Crypto Exchange**              |
+| 3  | **FSI-Web3**                                  | **FSI**   | **FinTech**          | **Web3** and **Crypto Exchange** |
 | 4  | FSI-Banking                                   | FSI       | Financial Service    | Banking                          |
 | 5  | FSI-Credit Cards & Transaction Processing     | FSI       | Financial Service    | Credit Cards & Transaction Processing |
 | 6  | DNB-Gambling & Gaming                         | DNB       | Hospitality          | Gambling & Gaming                |
@@ -104,3 +103,23 @@ Approval Email needs to include the following justification (not limited to belo
 - Business Justification
 
 2. @Chen Du will process the change after the exception request has been approved.
+
+
+## SKA/KA Sales Incentive for FY26
+
+### **Commission**
+
+|                          | SKA | KA            | Non KA |
+|--------------------------|-----|---------------|--------|
+| TiDB Cloud ARR Growth    | Yes | Yes           | Yes    |
+| TiDB Self Host ARR Growth| Yes | Yes (on CSP*) | **No** |
+
+### **SPIFF**  
+
+|                          | SKA | KA            | Non KA |
+|--------------------------|-----|---------------|--------|
+| SKA/KA on Azure          | High| Low           | No     |
+| SKA/KA customer on TiDB next gen (H2 only) | Yes | Yes | No     |
+| SKA/KA Customer Testimony| High| Low           | No     |
+
+Also, regional teams will have different OKR targets for SKA or KA

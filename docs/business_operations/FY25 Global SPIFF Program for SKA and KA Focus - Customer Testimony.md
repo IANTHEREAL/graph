@@ -11,8 +11,27 @@ The duration of this SPIFF program is from April 1st, 2024 to September 30th, 20
 
 ### Qualifications
 - [FY25 SKA/KA Segmentation - Definition](https://pingcap.feishu.cn/wiki/VOxbwhAJiiXwdnk1ibzc5a8Hnbg)
-- Meet Level 1 or Level 2 or Level 3 Customer Testimony defined by Marketing Team in [SPIFF - SKA and KA Focus - Customer Testimonial](https://pingcap.feishu.cn/wiki/S621wdJfviLEvHkrePscbgQunMf)
+- Meet Level 1 or Level 2 or Level 3 customer Testimony.
 
+#### Customer Testimony definition
+
+##### Level 1
+
+- Obtain formal authorization from customers for PingCAP to display their logo on our websites or other designated areas.
+- Invite customers to deliver keynote speeches at PingCAP's annual conferences (e.g., HTAP Summit, TiDB User Day), securing their authorization to convert their speeches into various formats such as text transcripts, case studies, video clips for broader distribution across websites and social networks.
+- Encourage customers to write and publish detailed case studies on websites and social networks.
+- Collaborate with customers to co-host events at their company premises, where they participate as keynote speakers, and authorize PingCAP to repurpose their presentations into multiple promotional formats.
+
+##### Level 2
+
+- Invite customers to engage in regular webinars or meetups, sharing their TiDB experiences, with their consent for PingCAP to adapt these into multiple formats for extended distribution.
+- Encourage customers to create and record testimonial videos, which will be shared on our websites and social networks.
+
+##### Level 3
+
+- Invite customers to share their TiDB usage experiences and provide endorsements on prominent platforms such as Gartner Peer Insights and G2, with the endorsements officially published on these platforms. Customers should also provide a screenshot to our sales team after submission, ensuring it corresponds to the officially published content.
+
+Detail refer - [SPIFF - SKA and KA Focus - Customer Testimonial](https://pingcap.feishu.cn/wiki/S621wdJfviLEvHkrePscbgQunMf), or refer the 
 
 ### Bonus Structure
 - Level 1 Customer Testimony: earn a one-time incentive of $3,000 

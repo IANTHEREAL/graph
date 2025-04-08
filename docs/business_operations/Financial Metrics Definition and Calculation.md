@@ -2,12 +2,12 @@
 
 ## Basic Information 基本信息
 
-Policy Name｜ 文件名称	Financial Metrics Definition/Calculation
-Type｜文件类型	Policy
-Applicable Scope｜应用范围	All Employees in PingCAP
-Effective Date （YYYY/MM/DD）| 生效日期（YYYY/MM/DD）	2025/1/1
-Review Cycle｜检查周期	1 Year
-Next Review Time｜下次检查时间	2026/1/1
+- Type｜ Policy
+- Policy Name｜ Financial Metrics Definition/Calculation
+- Applicable Scope｜All Employees in PingCAP
+- Effective Date （YYYY/MM/DD）| 2025/1/1
+- Review Cycle｜1 Year
+- Next Review Time｜2026/1/1
 
 ## Metrics Definition
 
@@ -43,8 +43,6 @@ Types of Product Family Included: Subscription, TiDB Cloud, MA of Perpetual Lice
     - ARR = Average 3 months' revenue x 12 (to annualize)
 - TiDB Cloud
     - ARR = Average 3 months' revenue x 12 (to annualize)
-					
-
 
 #### ARR Recognition Time: 
 - It usually begins to be recognized starting from the first revenue recognition month—which is generally aligned with the start date of the subscription or contract.
