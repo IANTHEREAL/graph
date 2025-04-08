@@ -7,8 +7,7 @@ Last Update: April 23, 2024
 
 1. **Service Period** = 1, 2, or 3 Years.
 
-2. **Discount Approval**  
-   - The **net discount %** did not over the **RGM's approval range**, including any **free service credits, channel margin, or free service period**.
+2. **Discount Approval**: The **net discount %** did not over the **RGM's approval range**, including any **free service credits, channel margin, or free service period**.
 
 3. **Commitment Terms**  
    - Do not provide any special terms to allow the customer to lower the commitment number or terminate the commitment plan before they meet the total minimum commitment amount.
@@ -22,7 +21,7 @@ Last Update: April 23, 2024
    - The minimum commitment amount of the first year should be **more than 80% of on-demand spending** of the last billing month × 12. (Don't intentionally sign too small a deal, sign with a certainty of using more than 80% of the amount.)
    - If the on-demand spending of the last billing month is **lower than 2K**, the minimum commitment amount should also be **more than 80% of the predictable annual spending** on **TiDB Cloud**, based on the **Product Configuration, Discount, and Support Plan**.
 
-6. **Multi-Year Commitment Plan (CP)**
+6. **Multi-Year Commitment Plan (CP)**, there should be a minimum commitment amount for each year
    - For **two-year CP**, the minimum commitment amount of the first year should be at least **80% of the ACV**:
      1. **100K/100K** → The first year is **100%** of the ACV.
      2. **100K/150K** → The first year is **80%** of the ACV.
