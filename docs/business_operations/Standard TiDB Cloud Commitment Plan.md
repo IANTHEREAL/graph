@@ -1,4 +1,4 @@
-# Standard TiDB Cloud Commitment Plan
+## Standard TiDB Cloud Commitment Plan
 
 Draft by: Commerical Operation
 Last Update: April 23, 2024
@@ -36,7 +36,7 @@ Last Update: April 23, 2024
 
 ---
 
-## Special Rules for Renew and Early Renew CP
+### Special Rules for Renew and Early Renew CP
 
 1. The new **CP should be Renew or Early Renew**.  
    - Cancel and Replace is **not a standard CP**.

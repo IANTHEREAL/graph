@@ -1,3 +1,5 @@
+## How to apply for Feishu Contract Access
+
 If you have the need to submit, review and approve contracts in LARK, you will have to apply for the Feishu Contract Access with the steps listed below:
 
 1. Go to the LARK manual bar on the left and select "Approval"

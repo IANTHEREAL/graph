@@ -1,7 +1,5 @@
 # PingCAP FY25 Global SPIFF Program - MySQL Family Capture
 
-## Overview
-
 The PingCAP FY25 Global SPIFF Program - MySQL Family Capture is designed as an incentive for Project team (including Sales, Presales and TSE) to replace more MySQL clusters to TiDB.
 
 ## Program Details

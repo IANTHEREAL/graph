@@ -142,7 +142,7 @@ class DocBuilder:
 
         # Add document and knowledge blocks to database
         with SessionLocal() as db:
-            source_data = db.query(SourceData).filter(SourceData.link == path).first()
+            source_data = db.query(SourceData).filter(SourceData.link == doc_link).first()
             if not source_data:
                 source_data = SourceData(
                     name=name,

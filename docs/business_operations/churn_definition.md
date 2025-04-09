@@ -1,4 +1,4 @@
-# Churn Definition
+## Churn Definition
 
 Customer churn is a Cloud/SaaS business metric that measures the number of customers, accounts, contracts, bookings, etc. that a business has lost over a period of time. This metric is important because it directly affects revenue, growth, and profitability.
 

@@ -1,8 +1,10 @@
-# Background
+## Account Creation Process - Publish to Sales
+
 
 Currently, we have no review process on account creation, and account data is of lower quality and without compliance check. To ensure account data is clean and accurate and with a purpose of all new account creation should be reviewed and approved. We re-designed the account creation process via the route from Lead Conversion. Below guideline is provided to frontline team for reference.
 
-# Account Creation Process - Publish to Sales
+## The overview of the Workflow procedure
+
 
 Scenario category:
 - Lead Creation (as normal, no change in current process).
@@ -29,7 +31,7 @@ All new accounts will be created from Leads, follow the workflow procedure below
       - If an existing account is chosen, the user proceeds to Submit.
       - After submitting, the Lead converted to an account status is reached.
 
-# The Detail of the Workflow procedure
+## The Detail of the Workflow procedure
 
 1. Sales create a New lead, click Save - same as before. (Lead: Name, Title, Email and Company here are mandatory if you are to convert to an account later. Suggest to fill these info at this stage.)
 
@@ -64,6 +66,6 @@ All new accounts will be created from Leads, follow the workflow procedure below
   - If account industry vertical = Gambling & Gaming OR Crypto Exchange, Legal will review and approve, as licence is required for Crypto Exchange and igaming. (Account Compliance Review)
 7. After all necessary approval granted, the Lead has been successfully converted to an active account.
 
-# Support:
+### Support:
 
 Sales reach to your regional operation for any clarification on process guide.

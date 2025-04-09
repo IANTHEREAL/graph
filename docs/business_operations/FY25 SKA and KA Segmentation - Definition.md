@@ -18,7 +18,7 @@ These are the accounts **to be focused in your target market in FY25**.
 - **OR**  
 - **$250K+ ARR with PingCAP**  
 
-## Details refer to below:
+## Detail Definition
 
 Overall, we have two categories of measurement when we define SKA/KA, based on:  
 1) **Enterprise scale and ICP vertical**  

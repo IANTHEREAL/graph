@@ -25,7 +25,7 @@ The baseline for the customer will be set as:
 
 For multiple year commitment contracts, baseline equals current year/half year(x2) commitment value.
 
-### Net ARR Scenarios
+## Net ARR Scenarios
 
 #### Apply to TiDB Cloud and TiDB Self Host (Consumption Base), examples with values of K$USD
 

@@ -4,12 +4,10 @@ Draft by: Business Enabling & Operation
 
 Last Update: 24/7/2024
 
-
-## Background​
 In order to record PoC application and track PoC status, we optimize PoC application function in Salesforce and Lark/Feishu. Now all PoC requests shall go through Salesforce and be approved as below instructions. PoC status shall be updated by the PoC owner (Sales/Presales) in a timely manner. ​
 
 
-## TiDBCloud PoC​
+## Apply in TiDBCloud
 
 There are 2 ways to request TiDB Cloud PoC: requested directly by the Cloud User in the TiDB Cloud UI by clicking "Apply for a PoC Trial"; OR requested by Sales in Salesforce. The approvals flow as below:​
 
@@ -30,7 +28,7 @@ Credits adding approval process is: ​
 - If Credits Needed >3,000OR Accumulated Credits >10,000, Sales Trigger > Sales Manager (for APAC) > Regional Leader > RDG Product Readiness > Finance > End
 
 
-## Role, Responsibility and SLA (1st Response) for Each Approval Steps​
+### Role, Responsibility and SLA (1st Response) for Each Approval Steps​
 
 | No. | Role                                                                 | Responsibility                                              | SLA (Cloud PoC Requested by User) | SLA (Cloud PoC Requested by Sales) | SLA for Enterprise PoC     |
 |-----|----------------------------------------------------------------------|-------------------------------------------------------------|-----------------------------------|------------------------------------|-----------------------------|
@@ -44,7 +42,7 @@ Credits adding approval process is: ​
 | 8   | CEG - BE&O (@Vince Yao for APAC; @Kevin Lu for NA/EMEA; @Dexter Deng for JP) | Add Credits into the Tenant                                | 4 Hours                           | 4 Hours                            | N/A                         |
 
 
-## Salesforce​
+## Apply in Salesforce​
 
 1. If the PoC request was submitted by the Cloud User in TiDB Cloud UI, pls go to step 3. If you want to create a PoC application in Salesforce for this customer, pls go to PoC tab to create a new one, or go to your Opprotunity to create a new PoC.​
 
@@ -73,15 +71,17 @@ Credits adding approval process is: ​
     - Approve or Reject: pls click here when it's pending for your approval.
 
 
-## TiDB Cloud OPS Portal​
+## Addition for PoC Application
+
+### TiDB Cloud OPS Portal​
 
 If you want to check the status, remaining credits or bills of any TiDB Cloud User, pls log into ht tps://ops.tidbcloud.com/orgs to check. 
 
 
 Any questions pls contact ​ ​. Thanks!​ @Vince Yao
 
+## Reference
 
-## Reference​
 ​[PoC Auto Approved metric](https://pingcap.feishu.cn/wiki/wikcnGSMrbxpSh0E7oqYFRngOAx) ​​
 [PoC Auto Approved Guideline](https://pingcap.feishu.cn/wiki/wikcnldz7pJPGSBeO3ShrFXg7F7)
 

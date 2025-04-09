@@ -1,4 +1,4 @@
-# FY26 ICP Definition
+## FY26 ICP Definition
 
 Draft by: Business Enabling and Operation
 Last Update: Feb 26th, 2025

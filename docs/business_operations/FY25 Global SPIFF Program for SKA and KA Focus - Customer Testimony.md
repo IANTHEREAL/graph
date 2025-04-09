@@ -1,7 +1,5 @@
 # PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony
 
-## Overview
-
 The PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony is designed as an incentive for Sales Rep to Customer Testimony from SKA/KA customers.
 
 ## Program Details

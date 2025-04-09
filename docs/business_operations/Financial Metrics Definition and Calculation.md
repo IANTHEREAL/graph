@@ -1,6 +1,6 @@
 # Financial Metrics Definition/Calculation 
 
-## Basic Information 基本信息
+## Basic Information
 
 - Type｜ Policy
 - Policy Name｜ Financial Metrics Definition/Calculation
@@ -9,9 +9,7 @@
 - Review Cycle｜1 Year
 - Next Review Time｜2026/1/1
 
-## Metrics Definition
-
-### ACV 
+## ACV 
 - ACV is the average value of a contract across 1 year. Therefore ACV remains the same each year throughout contract duration.
     - ACV is recognized based on contract date, not service start date
     - ACV is after tax amount （China with tax)
@@ -28,7 +26,7 @@
     - Recognize TCV & ACV in the same period of contract signature date (not when service started)
     - ACV is only recognized at the contract signature date (i.e. No ACV will be recorded for prior fiscal year or quarter)
 
-### ARR
+## ARR
 
 ARR stands for Annual Recurring Revenue. It is a key metric often used by subscription-based businesses or companies with recurring revenue models to measure the predictable and recurring revenue generated over a 12-month period.
 
@@ -58,18 +56,18 @@ Example for recognition:
 | Revenue |        |        |  $598  | $204   | $204   | $197   | $204   | $197   | $204   | $204   | $184   | $204   | $2,400 |
 | ARR     |        |        | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 |
 
-#### Revenue
+## Revenue
 
 1. Revenue is calculated after taxes. It's prorated by # of days in the contract starting with service start date.
 2. For backdated contracts, revenue catchup for prior periods will be calculated at contract signature date.
 3. Revenue should be prorated across both paid and free service periods.
 
-#### RPO/Backlog
+## RPO/Backlog
 
 1. Remaining Performance Obligation (RPO) represents the total future performance obligations arising from contractual relationships 
 2. RPO = TCV minus revenue recognition to-date
 
-#### NRR 
+## NRR 
 
 1. Net Revenue Retention (NRR), aka net dollar retention, meansures how successful a company is at renewing or sustaining customer contracts and how well it is doing at generating additional revenue from this existing customer base.
 2. Applicable contracts: Subscription, pay-as-you-go and MA

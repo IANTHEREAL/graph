@@ -1,8 +1,8 @@
-# TiDB Cloud Credits Request for Internal Users
+## TiDB Cloud Credits Request for Internal Users
 
 Only credits for PingCAP internal accounts can be requested from this Approval Process. For other circumstances or any questions regarding this doc, pls contact your BE&O Partner (@Vince Yao @Kevin Lu or @Dexter Deng).
 
-## Apply for credits in Cloud Ops Portal​
+### Apply for credits in Cloud Ops Portal​
 
 - Step 0: before requesting credits, pls double check below 2 conditions:​
     - You have access to the Cloud Ops portal (https://ops.tidbcloud.com/orgs).​
@@ -23,7 +23,7 @@ Only credits for PingCAP internal accounts can be requested from this Approval P
 - Step 6: When the request is approved, the credits will be added into the Org automatically.
 
 
-## SLA (1st Response) for Each Approval Steps​
+### SLA (1st Response) for Each Approval Steps​
 
 
 **以下是一个markdown表格**
