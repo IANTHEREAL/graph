@@ -1,16 +1,13 @@
-from graph.models import Concept, SubConcept, KnowledgeBlock, SourceData, Relationship
-from graph.graph import KnowledgeGraph
+from graph.models import Concept, KnowledgeBlock, SourceData, Relationship
 from graph.docbuilder import DocBuilder
 
 __all__ = [
     # Data models
     "Concept",
-    "SubConcept",
     "KnowledgeBlock",
     "SourceData",
     "Relationship",
     # Core classes
-    "KnowledgeGraph",
     "DocBuilder",
 ]
 

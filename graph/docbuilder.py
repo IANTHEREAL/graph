@@ -4,9 +4,9 @@ from pathlib import Path
 from math import ceil
 
 
-from graph.models import Concept, SubConcept, KnowledgeBlock, SourceData, Relationship
-from graph.graph import KnowledgeGraph
-from graph.spec import GraphSpec
+from graph.models import Concept, KnowledgeBlock, SourceData, Relationship
+from graph.prompt import PromptHub
+from graph.utils import gen_situate_context
 from utils.json_utils import extract_json_array
 from utils.token import calculate_tokens
 from setting.db import SessionLocal
@@ -28,7 +28,7 @@ class DocBuilder:
         """
         self.embedding_func = embedding_func
         self.llm_client = llm_client
-        self.graph_spec = GraphSpec(llm_client)
+        self.prompt_hub = PromptHub()
 
     def _read_file(self, file_path: str) -> str:
         """
@@ -57,43 +57,88 @@ class DocBuilder:
         return path.stem, path.suffix
 
     def split_markdown_by_heading(
-        self, path: str, metadata: Dict[str, Any], heading_level=2
+        self, path: str, attributes: Dict[str, Any], heading_level=2
     ):
-        # Split content by lines
+        # Extract basic info
         name, extension = self._extract_file_info(path)
-        doc_content = self._read_file(path)
-        doc_version = metadata.get("doc_version", "1.0")
-
+        doc_version = attributes.get("doc_version", "1.0")
+        doc_link = attributes.get("doc_link", path)
         markdown_content = self._read_file(path)
         lines = markdown_content.split("\n")
 
         sections = {}
-        current_section = []
-        current_title = "default"
+        current_higher_level_context = []
+        current_section_content = []
+        current_section_title = None
 
         for line in lines:
-            # Check if line is a h2 heading
-            if line.startswith("#" * heading_level + " "):
-                # Save current section if it has content
-                if current_section:
-                    sections[current_title] = "\n".join(current_section)
-                    current_section = []
+            is_target_heading = line.startswith("#" * heading_level + " ")
+            is_higher_heading = False
+            # Check if the line is a heading with a level strictly less than heading_level
+            for level in range(1, heading_level):
+                if line.startswith("#" * level + " "):
+                    is_higher_heading = True
+                    break
 
-                # Update current title (remove '## ' prefix)
-                current_title = line[3:].strip()
+            if is_higher_heading:
+                # Finalize the previous target-level section if it exists, adding parent context
+                if current_section_title is not None:
+                    full_section_content = "\n".join(current_higher_level_context + current_section_content)
+                    sections[current_section_title] = full_section_content
+                    # Reset for the next section under the *new* higher context
+                    current_section_content = []
+                    current_section_title = None
+
+                # Start new higher-level context, including the heading line itself
+                current_higher_level_context = [line]
+
+            elif is_target_heading:
+                # Finalize the previous target-level section if it exists, adding parent context
+                if current_section_title is not None:
+                     full_section_content = "\n".join(current_higher_level_context + current_section_content)
+                     sections[current_section_title] = full_section_content
+
+                # Start new target-level section
+                current_section_title = line[heading_level + 1:].strip() # +1 for space
+                current_section_content = [line] # Start section content with its heading
+
             else:
-                current_section.append(line)
+                # Append line to the appropriate context
+                if current_section_title is not None:
+                    # We are inside a target-level section's content
+                    current_section_content.append(line)
+                else:
+                    # We are inside a higher-level section, before the first target-level heading (or between higher headings)
+                    # Append to the higher-level context only if it has started
+                    if current_higher_level_context:
+                        current_higher_level_context.append(line)
+                    # If no higher context started (e.g. file starts with text), ignore the line for context purposes.
+                    # It will be included once a target heading is found and includes its higher context.
 
-        # Save the last section
-        if current_section:
-            sections[current_title] = "\n".join(current_section)
+        # Save the last section after the loop
+        if current_section_title is not None:
+             full_section_content = "\n".join(current_higher_level_context + current_section_content)
+             sections[current_section_title] = full_section_content
 
+        # --- Post-processing and Database Interaction ---
+
+        # Validate token counts for each section (including parent context)
         for heading, content in sections.items():
             tokens = calculate_tokens(content)
             if tokens > 4096:
+                # Consider making 4096 configurable or handling splitting differently
                 raise ValueError(
-                    f"Heading {heading} has {tokens} tokens, please split it into smaller chunks manually"
+                    f"Section '{heading}' including parent context has {tokens} tokens, exceeding 4096. Please restructure the document."
                 )
+
+        # Generate situated context for each section
+        section_context = {}
+        for heading, full_content in sections.items():
+            # gen_situate_context expects the original doc and the specific block content
+            # We provide the full content of the section (including parent context) as the "block"
+            # This assumes gen_situate_context can handle this structure appropriately
+            context = gen_situate_context(markdown_content, full_content)
+            section_context[heading] = context
 
         # Add document and knowledge blocks to database
         with SessionLocal() as db:
@@ -101,22 +146,24 @@ class DocBuilder:
             if not source_data:
                 source_data = SourceData(
                     name=name,
-                    content=markdown_content,
-                    link=path,
+                    content=markdown_content, # Store original full content
+                    link=doc_link,
                     version=doc_version,
                     data_type="document",
-                    metadata=metadata,
+                    attributes=attributes,
                 )
                 db.add(source_data)
-                db.flush()
+                db.flush() # Flush to get the ID
                 source_data_id = source_data.id
                 print(f"Source data created for {path}, id: {source_data_id}")
             else:
+                # Optionally update existing source data content/version/attributes if needed
                 print(f"Source data already exists for {path}, id: {source_data.id}")
                 source_data_id = source_data.id
 
-            knowledge_blocks = (
-                db.query(KnowledgeBlock)
+            # Check if knowledge blocks for this version already exist
+            existing_kbs = (
+                db.query(KnowledgeBlock.name)
                 .filter(
                     KnowledgeBlock.source_id == source_data_id,
                     KnowledgeBlock.knowledge_type == "paragraph",
@@ -124,24 +171,49 @@ class DocBuilder:
                 )
                 .all()
             )
-            if knowledge_blocks:
-                print(f"Knowledge blocks already exist for {path}")
-                return sections
+            existing_kb_names = {kb.name for kb in existing_kbs}
 
-            for heading, content in sections.items():
+            if existing_kb_names == set(sections.keys()):
+                 print(f"Knowledge blocks already exist for {path} version {doc_version}")
+                 return sections # Return the newly structured sections
+
+
+            # If not all exist, or some are missing, consider deleting old ones or handling updates.
+            # For simplicity, let's assume we add missing ones or overwrite if behavior demands it.
+            # Current logic just checks if *any* blocks exist and skips all if true.
+            # Let's refine to add only if the set of names doesn't match exactly.
+            print(f"Generating knowledge blocks for {path} version {doc_version}")
+
+
+            for heading, content_str in sections.items():
+                # Skip if this specific block already exists for the version
+                # if heading in existing_kb_names:
+                #     continue # Or update logic here if needed
+
+                context = section_context.get(heading, None)
+
+                # Generate embedding based on context + section content
+                if context:
+                    embedding_input = f"<context>\n{context}</context>\n\n{content_str}"
+                else:
+                    embedding_input = content_str
+
+                content_vec = self.embedding_func(embedding_input)
+                 # Assuming embedding_func might return list/tuple, get first element
                 kb = KnowledgeBlock(
                     name=heading,
-                    content="#" * heading_level + f" {heading}\n{content}",
+                    context=context,
+                    content=content_str, # Store the full section content (with parent context)
                     knowledge_type="paragraph",
-                    content_vec=self.embedding_func(content),
-                    source_version=metadata.get("doc_version", "1.0"),
+                    content_vec=content_vec,
+                    source_version=doc_version,
                     source_id=source_data_id,
                 )
                 db.add(kb)
 
             db.commit()
 
-        return sections
+        return sections # Return the sections dictionary
 
     def extract_qa_blocks(
         self, file_path: Union[str, List[str]], metadata: Dict[str, Any]
@@ -158,7 +230,6 @@ class DocBuilder:
             # Create document entity
             name, extension = self._extract_file_info(path)
             doc_content = self._read_file(path)
-
 
             # Extract knowledge blocks using LLM
             prompt_template = self.graph_spec.get_extraction_prompt(
@@ -190,7 +261,9 @@ class DocBuilder:
                         source_data_id = source_data.id
                         print(f"Source data created for {path}, id: {source_data_id}")
                     else:
-                        print(f"Source data already exists for {path}, id: {source_data.id}")
+                        print(
+                            f"Source data already exists for {path}, id: {source_data.id}"
+                        )
                         source_data_id = source_data.id
 
                     knowledge_blocks = (
@@ -255,7 +328,9 @@ class DocBuilder:
                         concept = Concept(
                             name=concept_data.get("name", ""),
                             definition=concept_data.get("definition", ""),
-                            definition_vec=self.embedding_func(concept_data.get("definition", "")),
+                            definition_vec=self.embedding_func(
+                                concept_data.get("definition", "")
+                            ),
                             version=concept_data.get("version", "1.0"),
                         )
                         db.add(concept)
@@ -267,11 +342,12 @@ class DocBuilder:
                 raise ValueError(f"Error loading concepts from file: {e}")
 
         with SessionLocal() as db:
-            knowledge_blocks = db.query(KnowledgeBlock.name, KnowledgeBlock.content).filter().all()
+            knowledge_blocks = (
+                db.query(KnowledgeBlock.name, KnowledgeBlock.content).filter().all()
+            )
             if not knowledge_blocks:
                 print("No knowledge blocks available for concept extraction")
                 return []
-
 
             # split knowledges block into batches that have 10000 tokens
             total_tokens = 0
@@ -281,11 +357,11 @@ class DocBuilder:
 
             knowledge_blocks_batches = []
             index = 0
-            batch_size = ceil(total_tokens/(ceil(total_tokens/10000)))
+            batch_size = ceil(total_tokens / (ceil(total_tokens / 10000)))
             for kb in knowledge_blocks:
                 if total_tokens > batch_size:
-                    knowledge_blocks_batches.append(knowledge_blocks[index:i+1])
-                    index = i+1
+                    knowledge_blocks_batches.append(knowledge_blocks[index : i + 1])
+                    index = i + 1
                     total_tokens = 0
 
             if index < len(knowledge_blocks):
@@ -296,10 +372,7 @@ class DocBuilder:
             for batches in knowledge_blocks_batches:
                 # Combine knowledge blocks for analysis
                 combined_blocks = "\n\n".join(
-                    [
-                        f"Block: {kb.name}\nContent: {kb.content}"
-                        for kb in batches
-                    ]
+                    [f"Block: {kb.name}\nContent: {kb.content}" for kb in batches]
                 )
 
                 if combined_blocks.strip() == "":
@@ -307,13 +380,18 @@ class DocBuilder:
                     continue
 
                 # Extract concepts using LLM
-                prompt_format = self.graph_spec.get_extraction_prompt("concept_extraction")
+                prompt_format = self.graph_spec.get_extraction_prompt(
+                    "concept_extraction"
+                )
                 prompt = prompt_format.format(text=combined_blocks)
                 try:
                     response = self.llm_client.generate(prompt)
                 except Exception as e:
-                    print(f"Failed to extract concepts from {combined_blocks}, error: {e}")
+                    print(
+                        f"Failed to extract concepts from {combined_blocks}, error: {e}"
+                    )
                     import time
+
                     time.sleep(60)
                     response = self.llm_client.generate(prompt)
 
@@ -327,7 +405,9 @@ class DocBuilder:
                         concept = Concept(
                             name=concept_data.get("name", ""),
                             definition=concept_data.get("definition", ""),
-                            definition_vec=self.embedding_func(concept_data.get("definition", "")),
+                            definition_vec=self.embedding_func(
+                                concept_data.get("definition", "")
+                            ),
                             version="1.0",
                         )
                         db.add(concept)
@@ -339,77 +419,11 @@ class DocBuilder:
 
         return concepts
 
-    def extend_concepts(
-        self, concepts: Optional[List[Concept]] = None
-    ) -> KnowledgeGraph:
-        """
-        Expand concepts into related sub-concepts.
-
-        Parameters:
-        - concepts: List of concepts to expand, or None to use previously discovered concepts
-
-        Returns:
-        - Enhanced knowledge graph with sub-concepts
-        """
-        # Use provided concepts or previously discovered ones
-        target_concepts = concepts or self.discovered_concepts
-        if not target_concepts:
-            print("No concepts available to extend")
-            return self.graph
-
-        for concept in target_concepts:
-            # Skip if no knowledge blocks
-            if not self.knowledge_blocks:
-                continue
-
-            # Combine knowledge blocks for analysis
-            combined_blocks = "\n\n".join(
-                [
-                    f"Block {kb.id}, name: {kb.name}\nContent: {kb.definition}"
-                    for kb in self.knowledge_blocks
-                ]
-            )
-
-            # Extract subconcepts using LLM
-            prompt_format = self.graph_spec.get_extraction_prompt("extend_concept")
-            prompt = prompt_format.format(
-                concept_name=concept.name,
-                concept_definition=concept.definition,
-                text=combined_blocks,
-            )
-
-            response = self.llm_client.generate(prompt)
-
-            try:
-                # Parse JSON response
-                response_json_str = extract_json_array(response)
-                extracted_subconcepts = json.loads(response_json_str)
-
-                # Create and add subconcepts
-                for subconcept_data in extracted_subconcepts:
-                    subconcept = SubConcept(
-                        name=subconcept_data.get("name", ""),
-                        definition=subconcept_data.get("definition", ""),
-                        parent_concept_id=concept.id,
-                        aspect_descriptor=subconcept_data.get("description", ""),
-                        knowledge_block_ids=subconcept_data.get(
-                            "knowledge_block_ids", []
-                        ),
-                    )
-
-                    # Add subconcept to graph
-                    self.graph.add_subconcept(subconcept)
-
-            except (json.JSONDecodeError, TypeError):
-                print(f"Failed to parse subconcepts for concept: {concept.name}")
-
-        return self.graph
-
     def extend_relationships(
         self,
         source_concept: Optional[Concept] = None,
         target_concept: Optional[Concept] = None,
-    ) -> KnowledgeGraph:
+    ):
         """
         Discover and create relationships between concepts.
 

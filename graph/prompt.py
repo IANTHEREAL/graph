@@ -1,7 +1,7 @@
 from llm.factory import LLMInterface
 from typing import Any
 
-block_extraction_prompt = """You are an expert in knowledge extraction and question generation. Your goal is to read a document and create question-answer pairs that effectively capture the most important knowledge within it, addressing the likely interests of someone reading the document to learn.
+default_qa_extraction_prompt = """You are an expert in knowledge extraction and question generation. Your goal is to read a document and create question-answer pairs that effectively capture the most important knowledge within it, addressing the likely interests of someone reading the document to learn.
 
 Given the following document:
 
@@ -57,54 +57,33 @@ Return your response in JSON array format with each item containing "question" a
 ]
 """
 
-concept_extraction_prompt = """
-Based on the following questions and answers, identify the key concepts mentioned.
-For each concept, provide:
-1. The concept name
-2. A brief definition (if possible)
-
-Return the results in JSON format as a list of objects with 'name' and 'definition' fields.
-
-Questions and Answers:
+default_concept_extraction_prompt = """Based on the following context, identify the key concepts mentioned.
+Context (with source_id):
 {text}
 
+Focus on the concepts about: {topic}
+Please analyze the context carefully and extract all meaningful concepts about the topic, and ignore the rest.
+If the context is not related to the topic, just return an empty list. Don't make your response confusing, far away from the topic.
+
+
+For each concept, provide:
+1. The concept name
+2. A meaningful definition (as meaningful as possible)
+
+Return the results in JSON format as a list of objects with 'name', 'definition' and 'reference_ids' fields.
 JSON Output (surround with ```json and ```):
 ```json
 [
     {{
         "name": "concept_name",
-        "definition": "concept_definition"
-    }},
-    ...
-]
-```"""
-
-extend_concept_prompt = """Given this question and answer about {concept_name}:
-{text}
-
-Extract specific aspects or subconcepts of {concept_name} mentioned in this text.
-For each subconcept, provide:
-1. A name (e.g., "{concept_name} definition", "How to action on {concept_name}", etc.)
-2. A brief description extracted from the text
-3. The subconcept type (one of: definition, formula, example, note, application)
-
-Return the results in JSON format as a list of objects with 'name', 'definition', and 'sub_type' fields.
-If no clear subconcepts are found, return an empty list.
-
-JSON Output: (surround with ```json and ```):
-```json
-[
-    {{
-        "name": "concept_name",
         "definition": "concept_definition",
-        "description": "the description about which aspect this subconcept contributes to the main concept",
-        "knowledge_block_ids": ["he knowledge blocks that are related to this subconcept, ...]
+        "source_ids": ["id1", "id2", ...]
     }},
     ...
 ]
 ```"""
 
-extend_relationship_prompt = """I have two concepts that appear in the same QA pairs:
+default_extend_relationship_prompt = """I have two concepts that appear in the same QA pairs:
 Concept 1: {concept_a_name} - {concept_a_definition}
 Concept 2: {concept_b_name} - {concept_b_definition}
 
@@ -129,42 +108,22 @@ JSON Output (surround with ```json and ```):
 }}
 ```"""
 
-
-class GraphSpec:
+class PromptHub:
     """
-    A builder class for constructing knowledge graphs from documents.
+    A builder class for prompt hub.
     """
 
-    def __init__(self, llm_client: LLMInterface):
-        """
-        Initialize the builder with a graph instance and specifications.
-
-        Parameters:
-        - graph: The knowledge graph to populate
-        - graph_spec: Configuration for extraction and analysis processes
-        """
-
-        if llm_client is None:
-            raise ValueError("LLM client must be set before initializing GraphSpec")
-
-        self.llm_client = llm_client
-
-        # Initialize default processing parameters
-        self._processing_parameters = {
-            "relationship_discovery": {"min_confidence": 0.6}
-        }
-
+    def __init__(self):
         # Initialize extraction prompts
         self._extraction_prompts = {
-            "knowledge_qa_extraction": block_extraction_prompt,
-            "concept_extraction": concept_extraction_prompt,
-            "extend_concept": extend_concept_prompt,
-            "extend_relationship": extend_relationship_prompt,
+            "knowledge_qa_extraction": default_qa_extraction_prompt,
+            "concept_extraction": default_concept_extraction_prompt,
+            "extend_relationship": default_extend_relationship_prompt,
         }
 
-    def get_extraction_prompt(self, prompt_name: str) -> str:
+    def get_prompt(self, prompt_name: str) -> str:
         """
-        Get an extraction prompt by name.
+        Get an prompt by name.
 
         Parameters:
         - prompt_name: The name of the prompt to retrieve
@@ -176,38 +135,3 @@ class GraphSpec:
             raise ValueError(f"Unknown prompt name: {prompt_name}")
 
         return self._extraction_prompts[prompt_name]
-
-    def get_processing_parameter(self, category: str, parameter: str) -> Any:
-        """
-        Get a processing parameter by category and name.
-
-        Parameters:
-        - category: The parameter category
-        - parameter: The specific parameter name
-
-        Returns:
-        - The parameter value
-        """
-        if category not in self._processing_parameters:
-            raise ValueError(f"Unknown parameter category: {category}")
-
-        if parameter not in self._processing_parameters[category]:
-            raise ValueError(f"Unknown parameter: {parameter} in category {category}")
-
-        return self._processing_parameters[category][parameter]
-
-    def set_processing_parameter(
-        self, category: str, parameter: str, value: Any
-    ) -> None:
-        """
-        Set a processing parameter.
-
-        Parameters:
-        - category: The parameter category
-        - parameter: The specific parameter name
-        - value: The new parameter value
-        """
-        if category not in self._processing_parameters:
-            self._processing_parameters[category] = {}
-
-        self._processing_parameters[category][parameter] = value

@@ -2,7 +2,17 @@ import uuid
 from typing import Dict, List, Literal, Optional, Any, Union
 from dataclasses import dataclass, field
 from datetime import datetime
-from sqlalchemy import Column, String, Text, ForeignKey, DateTime, Enum, Index, JSON
+from sqlalchemy import (
+    Column,
+    String,
+    Text,
+    ForeignKey,
+    DateTime,
+    Enum,
+    Index,
+    JSON,
+    ForeignKeyConstraint,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import relationship
@@ -13,6 +23,30 @@ from tidb_vector.sqlalchemy import VectorType
 Base = declarative_base()
 
 
+class BestPractice(Base):
+    __tablename__ = "best_practices"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    source_id = Column(String(36), ForeignKey("source_data.id"), nullable=True)
+    tag = Column(String(255), nullable=True)
+    guideline = Column(Text, nullable=True)
+    guideline_vec = Column(VectorType(1536), nullable=True)
+    created_at = Column(DateTime, default=func.current_timestamp())
+    updated_at = Column(
+        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
+    )
+
+    __table_args__ = (
+        Index("idx_bp_source_id", "source_id"),
+        Index("idx_bp_tag", "tag"),
+    )
+
+    def __repr__(self):
+        return (
+            f"<BestPractice(id={self.id}, source_id={self.source_id}, tag={self.tag})>"
+        )
+
+
 class Concept(Base):
     """Core concept entity in the knowledge graph"""
 
@@ -21,54 +55,21 @@ class Concept(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(255), nullable=False)
     definition = Column(Text, nullable=True)
-    definition_vec = Column(
-        VectorType(1536), nullable=True
-    )  # Vector column for embeddings
+    definition_vec = Column(VectorType(1536), nullable=True)
     version = Column(String(50), nullable=True)
+    kb_ids = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
         DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
     )
 
-    # Relationships
-    subconcepts = relationship("SubConcept", back_populates="parent_concept")
+    __table_args__ = (
+        Index("idx_name", "name"),
+        Index("idx_version", "version"),
+    )
 
     def __repr__(self):
         return f"<Concept(id={self.id}, name={self.name})>"
-
-
-class SubConcept(Base):
-    """Sub-concept entity that relates to a parent concept"""
-
-    __tablename__ = "subconcepts"
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String(255), nullable=False)
-    definition = Column(Text, nullable=True)
-    definition_vec = Column(
-        VectorType(1536), nullable=True
-    )  # Vector column for embeddings
-    parent_concept_id = Column(String(36), ForeignKey("concepts.id"), nullable=True)
-    aspect_descriptor = Column(
-        String(255), nullable=True
-    )  # Describes aspect/dimension of parent concept
-    created_at = Column(DateTime, default=func.current_timestamp())
-    updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
-    )
-
-    # Relationships
-    parent_concept = relationship("Concept", back_populates="subconcepts")
-    knowledge_blocks = relationship(
-        "KnowledgeBlock",
-        secondary="subconcept_knowledge_mappings",
-        back_populates="subconcepts",
-    )
-
-    __table_args__ = (Index("fk_1", "parent_concept_id"),)
-
-    def __repr__(self):
-        return f"<SubConcept(id={self.id}, name={self.name}, parent_id={self.parent_concept_id})>"
 
 
 class SourceData(Base):
@@ -81,8 +82,10 @@ class SourceData(Base):
     content = Column(LONGTEXT, nullable=True)
     link = Column(String(512), nullable=True)
     version = Column(String(50), nullable=True)
-    data_type = Column(Enum("document", "code"), nullable=False, default="document")
-    meta_info = Column(JSON, nullable=True)
+    data_type = Column(
+        Enum("document", "code", "image", "video"), nullable=False, default="document"
+    )
+    attributes = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
         DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
@@ -91,10 +94,15 @@ class SourceData(Base):
     # Relationships
     knowledge_blocks = relationship("KnowledgeBlock", back_populates="source")
 
-    __table_args__ = (Index("idx_source_link", "link", unique=True),)
+    __table_args__ = (
+        Index("idx_source_link", "link", unique=True),
+        Index("idx_source_name", "name"),
+        Index("idx_version", "version"),
+        Index("idx_data_type", "data_type"),
+    )
 
     def __repr__(self):
-        return f"<SourceData(id={self.id}, name={self.name}, type={self.data_type})>"
+        return f"<SourceData(id={self.id}, name={self.name}, link={self.link})>"
 
 
 class KnowledgeBlock(Base):
@@ -104,13 +112,15 @@ class KnowledgeBlock(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(255), nullable=False)
-    knowledge_type = Column(Enum("qa", "paragraph", "synopsis"), nullable=False)
+    knowledge_type = Column(
+        Enum("qa", "paragraph", "synopsis", "image", "video", "code"), nullable=False
+    )
     content = Column(LONGTEXT, nullable=True)
-    content_vec = Column(
-        VectorType(1536), nullable=True
-    )  # Vector column for embeddings
+    context = Column(Text, nullable=True)
+    content_vec = Column(VectorType(1536), nullable=True)
+    attributes = Column(JSON, nullable=True)
     source_version = Column(String(50), nullable=True)
-    source_id = Column(String(36), ForeignKey("source_data.id"), nullable=True)
+    source_id = Column(String(36), ForeignKey("source_data.id"), nullable=False)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
         DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
@@ -118,40 +128,14 @@ class KnowledgeBlock(Base):
 
     # Relationships
     source = relationship("SourceData", back_populates="knowledge_blocks")
-    subconcepts = relationship(
-        "SubConcept",
-        secondary="subconcept_knowledge_mappings",
-        back_populates="knowledge_blocks",
-    )
 
-    __table_args__ = (Index("fk_1", "source_id"),)
+    __table_args__ = (
+        Index("idx_kb_source_version", "source_version"),
+        Index("idx_kb_knowledge_type", "knowledge_type"),
+    )
 
     def __repr__(self):
         return f"<KnowledgeBlock(id={self.id}, name={self.name})>"
-
-
-class SubconceptKnowledgeMapping(Base):
-    """Mapping table between subconcepts and knowledge blocks"""
-
-    __tablename__ = "subconcept_knowledge_mappings"
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    subconcept_id = Column(String(36), ForeignKey("subconcepts.id"), nullable=False)
-    knowledge_block_id = Column(
-        String(36), ForeignKey("knowledge_blocks.id"), nullable=False
-    )
-    created_at = Column(DateTime, default=func.current_timestamp())
-    updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
-    )
-
-    __table_args__ = (
-        Index("idx_subconcept_id", "subconcept_id"),
-        Index("idx_knowledge_block_id", "knowledge_block_id"),
-    )
-
-    def __repr__(self):
-        return f"<SubconceptKnowledgeMapping(subconcept_id={self.subconcept_id}, knowledge_block_id={self.knowledge_block_id})>"
 
 
 # Define standard relation types
@@ -162,7 +146,6 @@ STANDARD_RELATION_TYPES = [
     "PART_OF",
     "SIMILAR_TO",
 ]
-
 
 class Relationship(Base):
     """Relationship between entities in the knowledge graph"""
@@ -177,7 +160,10 @@ class Relationship(Base):
     relationship_desc = Column(
         Text, nullable=False, default="REFERENCES"
     )  # Changed to Text for natural language descriptions
-    attributes = Column(Text, nullable=True)  # Store as JSON string
+    relationship_desc_vec = Column(
+        VectorType(1536), nullable=True
+    )  # Vector column for embeddings
+    attributes = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
         DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
