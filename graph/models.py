@@ -3,6 +3,7 @@ from typing import Dict, List, Literal, Optional, Any, Union
 from dataclasses import dataclass, field
 from datetime import datetime
 from sqlalchemy import (
+    BigInteger,
     Column,
     String,
     Text,
@@ -119,6 +120,7 @@ class KnowledgeBlock(Base):
     context = Column(Text, nullable=True)
     content_vec = Column(VectorType(1536), nullable=True)
     attributes = Column(JSON, nullable=True)
+    position_in_source = Column(BigInteger, default=0)
     source_version = Column(String(50), nullable=True)
     source_id = Column(String(36), ForeignKey("source_data.id"), nullable=False)
     created_at = Column(DateTime, default=func.current_timestamp())
@@ -146,6 +148,7 @@ STANDARD_RELATION_TYPES = [
     "PART_OF",
     "SIMILAR_TO",
 ]
+
 
 class Relationship(Base):
     """Relationship between entities in the knowledge graph"""

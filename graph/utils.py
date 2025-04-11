@@ -19,7 +19,10 @@ Please give a short succinct context to situate this chunk within the overall do
 Answer only with the succinct context and nothing else.
 """
 
-def gen_situate_context(doc: str, chunk: str, model:str="us.anthropic.claude-3-7-sonnet-20250219-v1:0") -> str:
+
+def gen_situate_context(
+    doc: str, chunk: str, model: str = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+) -> str:
     credentials = BedrockProvider.get_credentials()
     client = boto3.client("bedrock-runtime", **credentials)
 
@@ -30,7 +33,7 @@ def gen_situate_context(doc: str, chunk: str, model:str="us.anthropic.claude-3-7
                 {"text": DOCUMENT_CONTEXT_PROMPT.format(doc_content=doc)},
                 {"cachePoint": {"type": "default"}},
                 {"text": CHUNK_CONTEXT_PROMPT.format(chunk_content=chunk)},
-            ]
+            ],
         }
     ]
 
@@ -44,8 +47,12 @@ def gen_situate_context(doc: str, chunk: str, model:str="us.anthropic.claude-3-7
     )
     logger.debug(f"Input tokens: {response['usage']['inputTokens']}")
     logger.debug(f"Output tokens: {response['usage']['outputTokens']}")
-    logger.debug(f"Cache creation input tokens: {response['usage']['cacheWriteInputTokens']}")
-    logger.debug(f"Cache read input tokens: {response['usage']['cacheReadInputTokens']}")
+    logger.debug(
+        f"Cache creation input tokens: {response['usage']['cacheWriteInputTokens']}"
+    )
+    logger.debug(
+        f"Cache read input tokens: {response['usage']['cacheReadInputTokens']}"
+    )
 
     answer = None
     reasoning = None

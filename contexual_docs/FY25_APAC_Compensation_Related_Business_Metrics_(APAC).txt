@@ -1,0 +1,118 @@
+<context>This document defines business metrics for APAC compensation in FY25, beginning with document metadata and a change log. The first section establishes criteria for "Brand New Cloud Customer" classification, including a definition of brand new customers (no Cloud Payment before FY25 with specific exceptions listed) and the threshold for Cloud Customer status (Quarterly Ending ARR >= $100K). This is followed by sections on High-Quality OP, SKA/KA segmentation, ATR (Available to Renew), Net ARR, and TiDB Cloud ACV calculation.</context>
+# FY25 Compensation Related Business Metrics (APAC)
+**Drafted by:** BE&O
+**Last Update:** May 21st, 2024
+| Date | Change Records |
+| -------------- | ---------------------------- |
+| May 21st, 2024 | Published |
+| Sep 12th, 2024 | ATR definition updated. |
+| Nov 1st, 2024 | ATR definition updated. |
+
+## Brand New Cloud Customer
+1. **Brand New definition:** No Cloud Payment before FY25. (Exception for whitelist customers as below)
+    - [Bit.com](https://bit.com)
+    - ADVANCE INTELLIGENCE PTE. LTD.
+    - DEBANK GLOBAL PTE. LTD.
+    - Ninja Logistics Pte. Ltd.
+    - Holla
+    - Velox Pay Singapore PTE LTD
+    - Snocko Technologies
+    - Adobe Systems India Private Ltd
+    - 模镜数聚（北京）信息技术有限公司
+    - YYDS
+2. **Cloud Customer criteria:** Quarterly Ending ARR >= $100K.
+---
+
+######
+<context>This chunk contains the document header and the definition of High-Quality OP (Opportunity) criteria for APAC compensation metrics, appearing early in a document that also covers Brand New Cloud Customer definitions, SKA/KA segmentation criteria, ATR (Available to Renew) metrics, and TiDB Cloud ACV calculation references.</context>
+# FY25 Compensation Related Business Metrics (APAC)
+**Drafted by:** BE&O
+**Last Update:** May 21st, 2024
+| Date | Change Records |
+| -------------- | ---------------------------- |
+| May 21st, 2024 | Published |
+| Sep 12th, 2024 | ATR definition updated. |
+| Nov 1st, 2024 | ATR definition updated. |
+
+## High-Quality OP
+1. **SKA/KA**
+**OR**
+2. Non-KA with accumulated ACV in FY25 >= $200k. **AND** deployment should be in a public cloud (AWS/GCP/Azure/Alicloud/Tencent Cloud)
+
+---
+######
+<context>This chunk contains the title and document metadata followed by the SKA/KA section which defines Strategic Key Account and Key Account criteria for PingCAP's APAC business. It appears in the middle of a document that outlines various business metrics related to compensation, including definitions for cloud customers, high-quality operations, ATR (Available to Renew), Net ARR, and TiDB Cloud ACV calculation.</context>
+# FY25 Compensation Related Business Metrics (APAC)
+**Drafted by:** BE&O
+**Last Update:** May 21st, 2024
+| Date | Change Records |
+| -------------- | ---------------------------- |
+| May 21st, 2024 | Published |
+| Sep 12th, 2024 | ATR definition updated. |
+| Nov 1st, 2024 | ATR definition updated. |
+
+## SKA/KA
+
+[SKA/KA Segmentation - Definition](https://pingcap.feishu.cn/wiki/VOxbwhAJiiXwdnk1ibzc5a8Hnbg)
+
+### SKA criteria:
+
+- ($500M+ Business or 1000+ Employees) **AND** unified ICP industry
+**OR**
+- $500K+ ARR with PingCAP
+
+### KA criteria:
+
+- ($250M+ Business or 500+ Employees) **AND** unified ICP industry
+**OR**
+- $250K+ ARR with PingCAP
+
+---
+
+######
+<context>This chunk contains the document header with metadata and update history, followed by the ATR (Available to Renew) definition section which explains how renewals are calculated for compensation purposes, including rules for early renewals and expansions.</context>
+# FY25 Compensation Related Business Metrics (APAC)
+**Drafted by:** BE&O
+**Last Update:** May 21st, 2024
+| Date | Change Records |
+| -------------- | ---------------------------- |
+| May 21st, 2024 | Published |
+| Sep 12th, 2024 | ATR definition updated. |
+| Nov 1st, 2024 | ATR definition updated. |
+
+## ATR
+ATR is **Available to Renew**, which is the ACV of all renewable orders with Service End Dates that fall within FY25.
+For Early Renewal of FY26 ATR booked in FY25, will get commission based on FY26 ATR * FY25 Renewal PCR.
+No quota attainment. If it's renewal with expansion, the expansion part can be counted into Bucket 1. FY26 ATR will be refreshed after the early renewal booking.
+
+---
+
+######
+<context>This chunk contains the document header with title, author information, and update history, followed by the Net ARR section which provides a reference link to the Sales documentation on Net ARR metrics. The document overall covers various business metrics related to compensation for the APAC region in FY25, including definitions for brand new cloud customers, high-quality operations, customer segmentation, and ATR (Available to Renew).</context>
+# FY25 Compensation Related Business Metrics (APAC)
+**Drafted by:** BE&O
+**Last Update:** May 21st, 2024
+| Date | Change Records |
+| -------------- | ---------------------------- |
+| May 21st, 2024 | Published |
+| Sep 12th, 2024 | ATR definition updated. |
+| Nov 1st, 2024 | ATR definition updated. |
+
+## Net ARR
+📈 [Net ARR Reference - Sales](https://pingcap.feishu.cn/wiki/Ruu6wc0vUi0N3xkjw6ecRQIYnwd)
+
+---
+
+######
+<context>This chunk contains the document header with title, drafting information, and update history, along with the final section about TiDB Cloud ACV Calculation which provides a link to metrics definitions for global business. It serves as both the introduction and conclusion to a document covering compensation-related business metrics for APAC region in FY25.</context>
+# FY25 Compensation Related Business Metrics (APAC)
+**Drafted by:** BE&O
+**Last Update:** May 21st, 2024
+| Date | Change Records |
+| -------------- | ---------------------------- |
+| May 21st, 2024 | Published |
+| Sep 12th, 2024 | ATR definition updated. |
+| Nov 1st, 2024 | ATR definition updated. |
+
+## TiDB Cloud ACV Calculation
+📄 [TiDB Cloud Metrics Definition/Calculation (for Global Business)](https://pingcap.feishu.cn/wiki/wikcnLjrzcqRT9r2x3MbZRcrnGd)

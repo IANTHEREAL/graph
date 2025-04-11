@@ -1,0 +1,221 @@
+<context>This is the introduction section of a sales compensation plan document that outlines the three main compensation buckets: New & Expansion ACV, Renewal ACV, and MBO. It establishes the commission structure, quota attainment ranges, and personal commission rates for each bucket, serving as the foundation for the detailed calculation methods and payment terms explained in later sections.</context>
+# Compensation Plan FY25 (April 1, 2024-March 31, 2025)
+
+
+## 1 Overview of Your Compensation Plan
+Name: XXX
+Job Role: Sales
+Region: NA / EMEA / Japan / APAC
+Effective Period: April 1, 2024-March 31, 2025
+
+
+### Bucket 1 - New & Expansion ACV
+
+Quota: $BBBBB
+
+** The below table is a sales commission structure for New & Expansion ACV, with a Quota: $BBBBB , setting different commission rates based on quota attainment and providing additional rewards for acquiring new cloud customers.**
+| - | Quota Attainment Range | Personal Commission Rate (PCR)  |
+| --- | --- | --- |
+| Base Rate | [0, 100%]  | C% |
+| Acceleration Rate - 1 | (100%, 200%] | C%*1.5 |
+| Acceleration Rate - 2 | (200%, 300%] | C%*2  |
+| Base Rate | (300%, ∞) | C% |
+| Cloud First Accelerator | Target: ## Brand New Cloud Customers | Extra 20% Commission for TiDB Cloud ACV * Base Rate |
+
+Remarks for Bucket 1:
+- Only TiDB Enterprise Subscriptions that meet the High-Quality (KA/SKA) OP (On-Opportunity) criteria will be eligible for compensation; those that do not meet these criteria will not be compensated.
+- Brand New Cloud Customer refer <FY25 Compensation Related Business Metrics>
+
+
+### Bucket 2 - Bucket 2 - Renewal ACV
+
+Quota: $DDDDD
+
+*The below table is a sales commission structure for Renewal ACV, with a quota of $DDDDD, setting a personal commission rate of 2% for quota attainment between 0% and 100%.**
+| - | Quota Attainment Range | Personal Commission Rate |
+| --- | --- | --- |
+| Base Rate | [0, 100%] | 2% |
+
+Remarks for Bucket 2:
+- Cap: 100% Quota Attainment. (Renewal ACV exceeding ATR will be calculated into Bucket 1).
+
+### Bucket 3 - MBO
+
+Quota - Regional Setup Annual Target Variable Weight: gg%
+
+
+######
+<context>This chunk outlines the OTE (On-Target Earnings) structure and quota composition for sales compensation, explaining how base salary and variable pay work, and detailing what products and services count toward different sales buckets (new/expansion vs. renewal) with specific rules for calculating ACV across TiDB Cloud and Enterprise products.</context>
+# Compensation Plan FY25 (April 1, 2024-March 31, 2025)
+
+
+## 2 OTE & Quota
+
+### 2.1 Annual On-Target Earnings (OTE) Split
+Your OTE for FY25, will be split into 2 parts: Base Salary and Annual Target Variable:
+- Your Base Salary, (a.k.a, wages), will be paid to youMonthly and for 12 months .
+-Your Annual Target Variable, will be calculated and paid to youMonthly or Quarterly in proportion to your Quota Attainment, details of which are shown below.
+-Your base salary and Target Variable will be prorated in your comp plan starting from the middle of the Plan Period.
+
+
+### 2.2 Quota Composition & Baseline
+Your Quota for Bucket 1 and Bucket 2 in FY25 is composed of deals of TiDB Cloud, PingCAP Enterprise Subscription, PingCAP Enterprise Services (including PingCAP Professional Services, PingCAP Consulting Services, PingCAP Training & Exam Services, etc.) and other products if applicable.
+The Quota Composition and Baseline are as follows:
+
+
+| Bucket | Products / Items | Quota Composition & Baseline |
+| --- | --- | --- |
+| Bucket 1 | TiDB Cloud | On-Demand ACV (Pay As You Go): -- Aggregated Revenue within effective Plan Period in FY25 |
+| Bucket 1 | TiDB Cloud | New/Expansion Commitment Plan ACV: -- Annual Commitment Amount (Note: Extra Revenue will be counted as in On-Demand model) |
+| Bucket 1 | PingCAP Enterprise Subscription | New ACV & Expansion ACV (Note: ACV= Annual Contract Value) |
+| Bucket 1 | PingCAP Enterprise Services | ACV |
+| Bucket 1 | Other Products or Services | ACV or other equivalent metrics |
+| Bucket 2 | TiDB Cloud | Renewal Commitment Plan ACV: -- Annual Commitment Amount (Note: Renewal ACV exceeding ATR will be calculated into Bucket 1) |
+| Bucket 2 | PingCAP Enterprise Subscription | Renewal ACV (Note: Renewal ACV exceeding ATR will be calculated into Bucket 1) |
+| Bucket 3 | MBO | Definition: Annually or Half-year setup by Regional GM. |
+
+
+Note:
+
+- If a deal’s term is less than 12 months, its ACV equals its TCV;
+- Cloud First Accelerator 20% will be added to Bucket 1 when you achieve the Target of Brand New Cloud Customers.
+- TiDB Enterprise Subscription satisfying High-Quality OP (On-Premises) Criteria will get Compensation; otherwise, it will not be compensated. Special approval reserved from Regional GM, Ops and CEO for deals unqualified for High-Quality OP (On-Premises).
+- 20% of ATR commission Churn Deduction will be applicable to the same Account for TiDB Enterprise Subscription Renewal Orders if (1) renewal order signed back more than 61 days after the service end date of the to-be-renewed order, OR (2) the service start date of the renewal order is over 1 day after the service end date of the to-be-renewed order.
+- Definition and Calculation of the Business Metrics pls refer to Compensation Related Business Metrics / Compensation Related Business Metrics / Compensation Related Business Metrics.
+- Interpretation of content of the Quota Composition & Baseline is up to PingCAP’s Business Enabling & Operation team.
+
+
+######
+<context>This section details the bonus calculation methodology for sales compensation, explaining how to classify transactions by bucket type, calculate ACV, determine commission rates based on quota attainment, handle accelerators, and process multi-year orders. It includes calculation examples for both new/expansion and renewal deals, complementing the compensation plan structure outlined in earlier sections.</context>
+# Compensation Plan FY25 (April 1, 2024-March 31, 2025)
+
+
+## 3 Target Bonus Calculation
+
+### Bonus Calculation Cheat Sheet
+
+1. **Identify the Appropriate Bucket**: Classify each transaction into one of the following categories:
+    
+    - **Bucket 1 - New & Expansion ACV**
+    - **Bucket 2 - Renewal ACV**
+    - **Bucket 3 - MBO (Management by Objectives)**
+
+2. **Calculate Annual Contract Value (ACV)**: Determine the ACV for each transaction based on the type of deal and contract duration.
+
+3. **Check for Quota Exceedance**: Compare the calculated ACV with the respective Bucket’s quota to determine if it exceeds the quota.
+
+4. **Determine Personal Commission Rate (PCR)**: Assign the appropriate commission rate based on quota attainment:
+    
+    - **Base Commission Rate**
+    - **Acceleration Commission Rate** (applies to excess portions)
+    - **Cloud First Accelerator** (only applicable to Bucket 1 for Brand New Cloud Customers)
+
+5. **Calculate Bonus for Each Portion**: Compute the bonus for each portion of ACV using the determined commission rates:
+
+    - **Bonus Part 1:** Base portion
+    - **Bonus Part 2:** Accelerated portion (if applicable)
+    - **Cloud First Accelerator Bonus:** (if applicable)
+
+6. **Handle Multi-Year Orders** *(if applicable)*: Determine if the order spans multiple years and calculate future years’ bonuses according to the following rules:
+
+    - **New & Expansion Orders:**
+        - **Year 1:** Calculate using Bucket 1
+        - **Years 2 & 3:** Calculate at 2% of ACV
+
+
+    - **Renewal Orders:**
+        - **Year 1:** Calculate using Bucket 2
+        - **Years 2 & 3:** Calculate at 2% of ACV
+
+
+    - **Multi-Year Cloud Commitment Plans:** Additional bonuses based on exceeded usage beyond the initial commitment
+
+7. **Aggregate All Bonuses**: Combine all calculated bonus portions to generate the final bonus summary.
+
+---
+
+### 3.1 Bucket 1 Total Target Bonus
+
+Based on your actual Quota Attainment in each Quarter, PingCAP calculates the aggregated ACVs in deals that you have closed and determines the Bucket 1 Total Target Bonus you are entitled to. In calculating your Bucket 1 Total Target Bonus, PingCAP will take into account the Acceleration Multiplier (as described in Section 1).
+
+Calculation examples are listed below for your reference.
+
+Assume Quota for FY25: 500k, Base Rate: 5%, Bucket 1 Total Target Bonus: 25K
+
+Q1:
+- Quota Attainment-Q1 (Cloud) = 100K
+- Quota Attainment-Q1 (non-Cloud) = 90K
+- Incentive Compensation-Q1 = (100K+90K)*5%=9.5K
+
+Q2:
+- Quota Attainment-Q2 (Cloud) = 250k
+- Quota Attainment-Q2 (non-Cloud) = 100K
+- Incentive Compensation-Q2 =  500K*5%+(350K+190K-500K)*7.5%-9.5K = 18.5K
+
+Note:Within the above calculation, all data is sample for reference only.
+
+### 3.2 Bucket 2 Total Target Bonus
+Based on your actual Quota Attainment in each Quarter, PingCAP calculates the aggregated ACVs in deals that you have closed and determines the Bucket 2 Total Target Bonus you are entitled to.
+
+Calculation examples are listed below for your reference.
+
+Assume Quota for FY25 = 300k, Base Rate = 2%, Bucket 1 Total Target Bonus = 6K
+
+Q1:
+- Quota Attainment-Q1 (Cloud): 100K
+- Quota Attainment-Q1 (non-Cloud): 90K
+- Incentive Compensation-Q1  = (100K+90K)*2% = 3.8K
+
+Q2:
+- Quota Attainment-Q2 (Cloud): 100k
+- Quota Attainment-Q2 (non-Cloud): 0K
+- Incentive Compensation-Q2 = (100K+100K+90K)*2% -3.8K = 2K
+
+Note: Within the above calculation, all data is sample for reference only. Any ACV Bookings over the corresponding ATR from a single customer will be calculated to Bucket 1 as New & Expansion ACV.
+
+### 3.3 Multi-year Orders’ Compensation
+
+When calculating incentives for multi-year deals, it’s crucial to understand the compensation structure, which is divided into two main categories with an additional note for Cloud Commitment Plans:
+
+- Multi-year New and Expansion Orders
+- Multi-year Renewal Orders
+- Addit
+
+1. Multi-year New and Expansion Orders
+
+For Multi-year New and Expansion Orders, besides being compensated for Bucket 1 Target Bonus on your Quota Attainment (for Bucket 1) for the 1st year, you are also entitled to another 2% of ACV for the 2nd year and 2% of ACV for the 3rd year. e.g. in FY25, you closed-won a new 2-year-term deal with ACV as of Y (TCV= 2Y); then for Year 1, your compensation is Y * Bucket 1 Personal Commission Rate, for Year 2, your compensation is Y*2%.
+
+2. Multi-year Renewal Orders
+
+Applicability: Primarily for On-Premises (OP) deployments involving renewals of existing contracts.
+
+For Multi-year Renewal Orders, besides being compensated for Bucket 2 Target Bonus for the 1st renewal year, you are also entitled to another 2% of ACV for the 2nd year and 2% of ACV for the 3rd year. E.g. in FY25, you closed-won a renewal 2-year-term deal with ACV as of Z (TCV=2Z); then for Year 1, your compensation is Z*2%, for Year 2, your compensation is Z*2%.
+
+3. Additional Rules for Multi-year Cloud Commitment Plans
+
+For deals under the Cloud Commitment Plan, there are special considerations due to the variable nature of cloud usage. These rules apply in addition to the above compensation structures for both new/expansion and renewal orders:
+- if the first year’s usage is over the ACV, the exceeded amount will be considered as the 2nd year’s ACV;
+- if the first 2 years’ usage is over 2*ACV, the exceeded amount will be considered as the 3rd year’s ACV.
+
+Notes:
+
+- These additional rules encourage and reward you for driving higher cloud usage beyond the customer’s initial commitment.
+- The additional compensation for exceeded usage is on top of the standard multi-year compensation for the committed ACV.
+
+---
+
+
+######
+<context>This is the final section of the compensation plan document that details the payment schedule and conditions for sales commissions, including revenue recognition requirements, payment triggers for different product types, and rules governing compensation when a salesperson changes roles or leaves the company.</context>
+# Compensation Plan FY25 (April 1, 2024-March 31, 2025)
+
+
+## 4 Compensation & Bonus Payment
+
+4.1 Compensation & Bonus Calculation and Payment months, please refer to
+Compensation & Bonus Payment Calendar / Compensation & Bonus Payment Calendar / Compensation & Bonus Payment Calendar / Compensation & Bonus Payment Calendar.
+4.2 Your Compensation & Bonus for Bucket 1 and Bucket 2 shall be paid in proportion to the amount that’s been RevReced or Collected by PingCAP.
+4.2.1 Your Compensation for TiDB Cloud deals will be paid to you only after
+PingCAP recognizes the revenue. If a Cloud Commitment Plan has an upfront payment, the commission of upfront payment will be triggered at the time of booking, provided that there is no earlier termination clause in the contract, and the commission for the remaining payment will be triggered by Revenue. 4.2.2For the other deals (TiDB Enterprise Subscription, PingCAP Enterprise Service, etc.), 50% of Commission (50% of first year commission for multi-year orders) will be triggered at the booking following the standard commission calculation cycle under the condition that there is no earlier termination clause in the contract, and the commission for the remaining will be triggered by cash-in.
+4.2.3 If you transfer to a non-Sales role or do not act as the Account Owner to any
+specific customer before the order amount is fully revrec’ed or collected, you are entitled to the to-be-paid compensation after PingCAP recognizes or collects the remaining order amount within 1) 90 days after your transfer date, 2) 45 days after the next payment due date from the invoices of your active orders, which one is earlier. After this date, the new sales account owner will get compensation based on 2% commission rate and the remaining revenue or collection, which one is less; if the new sales account owner is not onboard, the original sales account owner will get compensation based on 2% commission rate and the remaining revenue or collection, which one is less. However, if you resign from PingCAP before the receivable order amount is fully RevReced or Collected, you shall not be entitled to the to-be-paid compensation any longer. There will be a true-up or true-down based on the actual ACV, revenue and collections as of your last working day; if the commission amount calculated based on the actual ACV, revenue or collections is lower than the commission already paid, the overpaid commission will be clawed back. The unpaid compensation as of your last working day, will be paid to you according to PingCAP's scheduled commission pay dates, subject to terms and conditions provided hereunder; if local law provides otherwise, local law shall prevail.

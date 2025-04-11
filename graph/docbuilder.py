@@ -66,10 +66,11 @@ class DocBuilder:
         markdown_content = self._read_file(path)
         lines = markdown_content.split("\n")
 
-        sections = {}
+        blocks = {}
+        current_block_position = 0
         current_higher_level_context = []
-        current_section_content = []
-        current_section_title = None
+        current_block_content = []
+        current_block_title = None
 
         for line in lines:
             is_target_heading = line.startswith("#" * heading_level + " ")
@@ -81,49 +82,65 @@ class DocBuilder:
                     break
 
             if is_higher_heading:
-                # Finalize the previous target-level section if it exists, adding parent context
-                if current_section_title is not None:
-                    full_section_content = "\n".join(current_higher_level_context + current_section_content)
-                    sections[current_section_title] = full_section_content
-                    # Reset for the next section under the *new* higher context
-                    current_section_content = []
-                    current_section_title = None
+                # Finalize the previous target-level block if it exists, adding parent context
+                if current_block_title is not None:
+                    full_block_content = "\n".join(
+                        current_higher_level_context + current_block_content
+                    )
+                    blocks[current_block_title] = {
+                        "content": full_block_content,
+                        "position": current_block_position,
+                    }
+                    # Reset for the next block under the *new* higher context
+                    current_block_content = []
+                    current_block_title = None
+                    current_block_position += 1
 
                 # Start new higher-level context, including the heading line itself
                 current_higher_level_context = [line]
 
             elif is_target_heading:
-                # Finalize the previous target-level section if it exists, adding parent context
-                if current_section_title is not None:
-                     full_section_content = "\n".join(current_higher_level_context + current_section_content)
-                     sections[current_section_title] = full_section_content
+                # Finalize the previous target-level block if it exists, adding parent context
+                if current_block_title is not None:
+                    full_block_content = "\n".join(
+                        current_higher_level_context + current_block_content
+                    )
+                    blocks[current_block_title] = {
+                        "content": full_block_content,
+                        "position": current_block_position,
+                    }
+                    current_block_content = []
+                    current_block_title = None
+                    current_block_position += 1
 
-                # Start new target-level section
-                current_section_title = line[heading_level + 1:].strip() # +1 for space
-                current_section_content = [line] # Start section content with its heading
+                # Start new target-level block
+                current_block_title = line[heading_level + 1 :].strip()  # +1 for space
+                current_block_content = [line]  # Start block content with its heading
 
             else:
                 # Append line to the appropriate context
-                if current_section_title is not None:
-                    # We are inside a target-level section's content
-                    current_section_content.append(line)
+                if current_block_title is not None:
+                    current_block_content.append(line)
+                elif current_higher_level_context:
+                    current_higher_level_context.append(line)
                 else:
-                    # We are inside a higher-level section, before the first target-level heading (or between higher headings)
-                    # Append to the higher-level context only if it has started
-                    if current_higher_level_context:
-                        current_higher_level_context.append(line)
-                    # If no higher context started (e.g. file starts with text), ignore the line for context purposes.
-                    # It will be included once a target heading is found and includes its higher context.
+                    raise ValueError(f"not found suitable block for {line}")
 
-        # Save the last section after the loop
-        if current_section_title is not None:
-             full_section_content = "\n".join(current_higher_level_context + current_section_content)
-             sections[current_section_title] = full_section_content
+        # Save the last block after the loop
+        if current_block_title is not None:
+            full_block_content = "\n".join(
+                current_higher_level_context + current_block_content
+            )
+            blocks[current_block_title] = {
+                "content": full_block_content,
+                "position": current_block_position,
+            }
 
         # --- Post-processing and Database Interaction ---
 
         # Validate token counts for each section (including parent context)
-        for heading, content in sections.items():
+        for heading, block in blocks.items():
+            content = block["content"]
             tokens = calculate_tokens(content)
             if tokens > 4096:
                 # Consider making 4096 configurable or handling splitting differently
@@ -133,7 +150,7 @@ class DocBuilder:
 
         # Generate situated context for each section
         section_context = {}
-        for heading, full_content in sections.items():
+        for heading, full_content in blocks.items():
             # gen_situate_context expects the original doc and the specific block content
             # We provide the full content of the section (including parent context) as the "block"
             # This assumes gen_situate_context can handle this structure appropriately
@@ -142,18 +159,20 @@ class DocBuilder:
 
         # Add document and knowledge blocks to database
         with SessionLocal() as db:
-            source_data = db.query(SourceData).filter(SourceData.link == doc_link).first()
+            source_data = (
+                db.query(SourceData).filter(SourceData.link == doc_link).first()
+            )
             if not source_data:
                 source_data = SourceData(
                     name=name,
-                    content=markdown_content, # Store original full content
+                    content=markdown_content,  # Store original full content
                     link=doc_link,
                     version=doc_version,
                     data_type="document",
                     attributes=attributes,
                 )
                 db.add(source_data)
-                db.flush() # Flush to get the ID
+                db.flush()  # Flush to get the ID
                 source_data_id = source_data.id
                 print(f"Source data created for {path}, id: {source_data_id}")
             else:
@@ -173,10 +192,11 @@ class DocBuilder:
             )
             existing_kb_names = {kb.name for kb in existing_kbs}
 
-            if existing_kb_names == set(sections.keys()):
-                 print(f"Knowledge blocks already exist for {path} version {doc_version}")
-                 return sections # Return the newly structured sections
-
+            if existing_kb_names == set(blocks.keys()):
+                print(
+                    f"Knowledge blocks already exist for {path} version {doc_version}"
+                )
+                return blocks  # Return the newly structured blocks
 
             # If not all exist, or some are missing, consider deleting old ones or handling updates.
             # For simplicity, let's assume we add missing ones or overwrite if behavior demands it.
@@ -184,13 +204,14 @@ class DocBuilder:
             # Let's refine to add only if the set of names doesn't match exactly.
             print(f"Generating knowledge blocks for {path} version {doc_version}")
 
-
-            for heading, content_str in sections.items():
+            for heading, block in blocks.items():
                 # Skip if this specific block already exists for the version
                 # if heading in existing_kb_names:
                 #     continue # Or update logic here if needed
 
                 context = section_context.get(heading, None)
+                content_str = block.get("content")
+                content_position = block.get("position")
 
                 # Generate embedding based on context + section content
                 if context:
@@ -199,21 +220,22 @@ class DocBuilder:
                     embedding_input = content_str
 
                 content_vec = self.embedding_func(embedding_input)
-                 # Assuming embedding_func might return list/tuple, get first element
+                # Assuming embedding_func might return list/tuple, get first element
                 kb = KnowledgeBlock(
                     name=heading,
                     context=context,
-                    content=content_str, # Store the full section content (with parent context)
+                    content=content_str,  # Store the full section content (with parent context)
                     knowledge_type="paragraph",
                     content_vec=content_vec,
                     source_version=doc_version,
                     source_id=source_data_id,
+                    position_in_source=content_position,
                 )
                 db.add(kb)
 
             db.commit()
 
-        return sections # Return the sections dictionary
+        return blocks  # Return the sections dictionary
 
     def extract_qa_blocks(
         self, file_path: Union[str, List[str]], metadata: Dict[str, Any]

@@ -2,12 +2,12 @@ import json
 from typing import Dict, List
 
 
-def get_faq_index_prompt(faq: str, index_tree: List[Dict]) -> str:
+def get_question_index_prompt(question: str, index_tree: List[Dict]) -> str:
     # Convert the index tree to a JSON string with indentation for readability
     index_tree_json = json.dumps(index_tree, indent=4, ensure_ascii=False)
 
     # Construct the prompt
-    prompt = f"""Your task is to analyze a FAQ, break it down into subquestions, and determine the most appropriate index path for each subquestion in the provided hierarchical index tree.
+    prompt = f"""Your task is to analyze a question, break it down into subquestions, and determine the most appropriate index path for each subquestion in the provided hierarchical index tree.
 
 ## Current Index Tree
 
@@ -23,7 +23,7 @@ def get_faq_index_prompt(faq: str, index_tree: List[Dict]) -> str:
 ## Instructions
 
 1. Subquestion Extraction:
-   - Carefully read the FAQ and break it down into distinct subquestions
+   - Carefully read the question and break it down into distinct subquestions
    - Each subquestion should capture a single, specific information need
 
 2. Index Matching Process:
@@ -44,9 +44,9 @@ def get_faq_index_prompt(faq: str, index_tree: List[Dict]) -> str:
      * Leave "index_path" as an empty array
      * Explain why no node in the current index tree would have relevant information
 
-## FAQ to Analyze
+## question to Analyze
 
-{faq}
+{question}
 
 Response Format:
 Return an array of objects with the following structure:
@@ -60,7 +60,7 @@ Return an array of objects with the following structure:
         "index_path": ["Root Node", "Intermediate Node", "Most Specific Node"]
     }},
     {{
-        "subquestion": "Another subquestion from the FAQ",
+        "subquestion": "Another subquestion from the question",
         "reasoning": "While no leaf node specifically addresses this topic, this parent node contains broader documentation that would include the answer to this question. More specific child nodes focus on different aspects.",
         "matched": true,
         "index_path": ["Root Node", "Parent Node"]
@@ -85,7 +85,7 @@ def get_index_reference_prompt(content: str, index_tree: List[Dict]) -> str:
     index_tree_json = json.dumps(index_tree, indent=4, ensure_ascii=False)
 
     # Construct the prompt
-    prompt = f"""Your task is to identify all index paths in a tree-structured index system that are relevant to the given content. Unlike classifying a FAQ into categories, your goal is to find all nodes in the index tree that this content could serve as a reference for.
+    prompt = f"""Your task is to identify all index paths in a tree-structured index system that are relevant to the given content. Unlike classifying a question into categories, your goal is to find all nodes in the index tree that this content could serve as a reference for.
 
 ## Current Index Tree
 
@@ -134,14 +134,14 @@ Return an array of objects, where each object represents a relevant index path f
 [
     {{
         "topic": "Specific topic/concept from the content that matches this path",
-        "relevance": "high|medium|low", 
         "reasoning": "Explanation of why this content is relevant to this index path",
+        "relevance": "high|medium|low", 
         "index_path": ["Level 1 Node Text", "Level 2 Node Text", "Most Specific Level Node Text"]
     }},
     {{
         "topic": "Another topic from the content",
+        "reasoning": "Explanation of why this content is relevant to this index path",
         "relevance": "medium",
-        "reasoning": "Reasoning for this path's relevance",
         "index_path": ["Different Level 1 Node", "Different Level 2 Node"]
     }}
 ]
