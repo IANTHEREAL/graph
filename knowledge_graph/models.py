@@ -24,30 +24,6 @@ from tidb_vector.sqlalchemy import VectorType
 Base = declarative_base()
 
 
-class BestPractice(Base):
-    __tablename__ = "best_practices"
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    source_id = Column(String(36), ForeignKey("source_data.id"), nullable=True)
-    tag = Column(String(255), nullable=True)
-    guideline = Column(Text, nullable=True)
-    guideline_vec = Column(VectorType(1536), nullable=True)
-    created_at = Column(DateTime, default=func.current_timestamp())
-    updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
-    )
-
-    __table_args__ = (
-        Index("idx_bp_source_id", "source_id"),
-        Index("idx_bp_tag", "tag"),
-    )
-
-    def __repr__(self):
-        return (
-            f"<BestPractice(id={self.id}, source_id={self.source_id}, tag={self.tag})>"
-        )
-
-
 class Concept(Base):
     """Core concept entity in the knowledge graph"""
 
@@ -58,7 +34,7 @@ class Concept(Base):
     definition = Column(Text, nullable=True)
     definition_vec = Column(VectorType(1536), nullable=True)
     version = Column(String(50), nullable=True)
-    kb_ids = Column(JSON, nullable=True)
+    knowledge_bundle = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
         DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
@@ -142,6 +118,7 @@ class KnowledgeBlock(Base):
 
 # Define standard relation types
 STANDARD_RELATION_TYPES = [
+    "IS_CHILD_OF",
     "EXPLAINS",
     "DEPENDS_ON",
     "REFERENCES",
@@ -184,3 +161,25 @@ class Relationship(Base):
     def is_standard_relation(self) -> bool:
         """Check if the relation type is a standard type"""
         return self.relationship_desc in STANDARD_RELATION_TYPES
+
+
+class BestPractice(Base):
+    __tablename__ = "best_practices"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    source_id = Column(String(36), ForeignKey("source_data.id"), nullable=True)
+    labels = Column(String(255), nullable=True)
+    guideline = Column(Text, nullable=True)
+    guideline_vec = Column(VectorType(1536), nullable=True)
+    created_at = Column(DateTime, default=func.current_timestamp())
+    updated_at = Column(
+        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
+    )
+
+    __table_args__ = (
+        Index("idx_bp_source_id", "source_id"),
+        Index("idx_bp_labels", "labels"),
+    )
+
+    def __repr__(self):
+        return f"<BestPractice(id={self.id}, source_id={self.source_id}, tag={self.labels})>"
