@@ -1,13 +1,18 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, Optional, List, Union
+
+
+@dataclass
+class Index:
+    name: str
+    children: List = field(default_factory=list)
 
 
 @dataclass
 class Block:
     name: str
     content: str
-    children: Optional[List["Block"]] = None
     position: Optional[int] = 0
 
 
@@ -15,7 +20,8 @@ class Block:
 class FileData:
     name: str
     content: str
-    blocks: Union[Block, List[Block], None]
+    blocks: List[Block] = field(default_factory=list)
+    indexes: Union[Index, List[Index], None] = None
 
 
 class BaseParser(ABC):
