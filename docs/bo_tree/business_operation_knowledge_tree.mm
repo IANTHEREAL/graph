@@ -15,11 +15,7 @@
             <node TEXT="FY25 APAC WW Compensation Plan, Presales (base version)" ID="17c732768d2edb6538f0a7fb0db5e273" STYLE="fork"/>
           </node>
         </node>
-        <node TEXT="What will happen if windfall is triggered?" ID="fe25584c0667355a6b8aef81196f0001" STYLE="fork">
-          <node TEXT="Reference" ID="699a566e486ee618f0c96a058bedc656" STYLE="fork">
-            <node TEXT="No relevant files found." ID="e1c513d439f7539bbbfe3c98cf4e776e" STYLE="fork"/>
-          </node>
-        </node>
+        <node TEXT="What will happen if windfall is triggered?" ID="fe25584c0667355a6b8aef81196f0001" STYLE="fork"/>
         <node TEXT="How different kind of product contributes to Compensation?" ID="73c98c6517e828ca83e620fe25bfc3c9" STYLE="fork">
           <node TEXT="Reference" ID="547fea43566e3cb63a9e7c26c648d0d0" STYLE="fork">
             <node TEXT="FY25 WW Compensation Plan, Sales (base version)" ID="7a93f2f057db75d81a76df88e3eb7c51" STYLE="fork"/>
@@ -29,7 +25,7 @@
       </node>
       <node TEXT="What is SPIFF?" ID="259131cee7d9d0407d5ffae264b30922" STYLE="fork">
         <node TEXT="Reference" ID="1447edb3cab0ea12a2389546d997d59b" STYLE="fork">
-          <node TEXT="​SPIFF - SKA/KA Focus - Customer Testimonial​" ID="9113520307070955ccbdb55ce2ac2b5e" STYLE="fork"/>
+          <node TEXT="​PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony​" ID="9113520307070955ccbdb55ce2ac2b5e" STYLE="fork"/>
           <node TEXT="​PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Expansion​ " ID="c874a14bcc0fbe2e62d2b5b810d2556d" STYLE="fork"/>
           <node TEXT="​PingCAP FY25 Global SPIFF Program List​" ID="4e948e35194169b92f2339cded6fd0f2" STYLE="fork"/>
           <node TEXT="​PingCAP FY25 Global SPIFF Program - MySQL Family Capture​ " ID="0f0549c50de81685a447168885bcde05" STYLE="fork"/>
@@ -43,7 +39,7 @@
         <node TEXT="What is Level 3 SPIFF?" ID="5d393cfc7f76d13c35980e9c03236904" STYLE="fork">
           <node TEXT="Reference" ID="31e5d3eb3d30c0b72147c2ec03df1366" STYLE="fork">
             <node TEXT="​PingCAP FY25 Global SPIFF Program List​" ID="d269409a0349967bb07ae770e70f8404" STYLE="fork"/>
-            <node TEXT="​SPIFF - SKA/KA Focus - Customer Testimonial​" ID="33179b14f520e65af9425df093278790" STYLE="fork"/>
+            <node TEXT="​PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony​" ID="315b417cefe238e981ee8344c457f02f" STYLE="fork"/>
           </node>
         </node>
       </node>
@@ -69,7 +65,7 @@
     <node TEXT="Key Business Metrics" ID="2c197814088b5197f9e20242f1157b0a" STYLE="bubble" POSITION="right">
       <node TEXT="Collection" ID="8e672b7dc06f55609ad4a5dfc3d950b1" STYLE="fork">
         <node TEXT="What is Collection?" ID="79a135059d8a8b2cee82d9e7f82b3d20" STYLE="fork">
-          <node TEXT="Reference" ID="a2b5b64ecc1f86f8b15ca15c3a1d6bbd" STYLE="fork">
+          <node TEXT="Definition" ID="a2b5b64ecc1f86f8b15ca15c3a1d6bbd" STYLE="fork">
             <node TEXT="The actual cash or funds received from customers or debtors, representing the process of converting accounts receivable into available funds." ID="d900c4e025bfb445e5b6a62a48f63b0d" STYLE="fork"/>
           </node>
         </node>
@@ -125,12 +121,12 @@
             </node>
           </node>
           <node TEXT="Does TiDB Serverless Revenue meet ARR inclusion criteria?" ID="0db04df35567e2bab76c9eb37745c752" STYLE="fork">
-            <node TEXT="Reference" ID="0f5ad02cf09457f1661096bde470bc6e" STYLE="fork">
+            <node TEXT="Annotation" ID="0f5ad02cf09457f1661096bde470bc6e" STYLE="fork">
               <node TEXT="Need to understand the logic: TiDB Serverless -&gt; TiDB Cloud -&gt; contribute to ARR" ID="10a85a5e9410fdcc87d1a78570416368" STYLE="fork"/>
             </node>
           </node>
           <node TEXT="[Hard] What is the impact of applying credits on ARR?" ID="e1fc2b3ec15acc3dbecf5e99d35ece5b" STYLE="fork">
-            <node TEXT="Reference" ID="76ee58fb03d9224a32eaa090f65c19c0" STYLE="fork">
+            <node TEXT="Annotation" ID="76ee58fb03d9224a32eaa090f65c19c0" STYLE="fork">
               <node TEXT="Hard query, need deep research to collect relevant information" ID="b1ea8f5ac4c3eaa6e42ed74a258a7e93" STYLE="fork"/>
             </node>
           </node>
@@ -162,7 +158,7 @@
         <node TEXT="What is the definition of Customer Segmentation (SKA/KA)?" ID="abb032dfe02973abfdcb29ee1cf9ab7b" STYLE="fork">
           <node TEXT="What is SKA/KA criterion?" ID="010a299faf9b87024ae7afc36e59cca0" STYLE="fork">
             <node TEXT="Reference" ID="b93f4d3820fcd1c3e7c5f051651433da" STYLE="fork">
-              <node TEXT="​FY26 SKA/KA Segmentation​ " ID="2ef468d84cbaa90977e52582bf7a2393" STYLE="fork"/>
+              <node TEXT="​FY26 SKA/KA Segmentation - Definition​" ID="41fcdfabfefc7190e33b726d85474c7c" STYLE="fork"/>
               <node TEXT="​FY25 SKA/KA Segmentation - Definition​" ID="9e4bf15d718669da8724cb851569aa27" STYLE="fork"/>
               <node TEXT="​PingCAP FY25 Global SPIFF Program List​ " ID="74650253e6cf87ddcaefcedc8c02412d" STYLE="fork"/>
             </node>
@@ -174,9 +170,8 @@
             </node>
           </node>
           <node TEXT="Which companies are included in the SKA/KA list?" ID="1cad58499d8073a3bc353b9ddb1bd8a5" STYLE="fork">
-            <node TEXT="Reference" ID="6afa2fb70f718e87a4f1217ab944e570" STYLE="fork">
-              <node TEXT="​FY26 SKA/KA Segmentation​ " ID="f37e554e4a984bd3ccfd56cb00a3e34c" STYLE="fork"/>
-            </node>
+            <node TEXT="Reference" ID="6afa2fb70f718e87a4f1217ab944e570" STYLE="fork"/>
+            <node TEXT="​FY26 SKA/KA Segmentation - Definition​" ID="76cc52bd849068fbdeb2983f035d8851" STYLE="fork"/>
           </node>
         </node>
         <node TEXT="What is the definition of Customer ICP/Industry?" ID="250449860e0a8e3ea79dc2b47b8479d6" STYLE="fork">

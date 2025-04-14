@@ -134,8 +134,8 @@ class KnowledgeBuilder:
         self, file_path: Union[str, List[str]], attributes: Dict[str, Any], **kwargs
     ) -> List[KnowledgeBlock]:
         doc_version = attributes.get("doc_version", "1.0")
-        doc_link = attributes.get("doc_link", path)
-        doc_knowledge = self.parser(path, **kwargs)
+        doc_link = attributes.get("doc_link", file_path)
+        doc_knowledge = self.parser(file_path, **kwargs)
         doc_content = doc_knowledge.content
         name = doc_knowledge.name
 
@@ -149,11 +149,11 @@ class KnowledgeBuilder:
         try:
             response_json_str = extract_json_array(response)
             # Parse JSON response
-            extracted_blocks = json.loads(response_json_str)
+            extracted_qa_pairs = json.loads(response_json_str)
 
             with SessionLocal() as db:
                 source_data = (
-                    db.query(SourceData).filter(SourceData.link == path).first()
+                    db.query(SourceData).filter(SourceData.link == file_path).first()
                 )
                 if not source_data:
                     source_data = SourceData(
@@ -162,15 +162,15 @@ class KnowledgeBuilder:
                         link=doc_link,
                         version=doc_version,
                         data_type="document",
-                        metadata=metadata,
+                        attributes=attributes,
                     )
                     db.add(source_data)
                     db.flush()
                     source_data_id = source_data.id
-                    print(f"Source data created for {path}, id: {source_data_id}")
+                    print(f"Source data created for {file_path}, id: {source_data_id}")
                 else:
                     print(
-                        f"Source data already exists for {path}, id: {source_data.id}"
+                        f"Source data already exists for {file_path}, id: {source_data.id}"
                     )
                     source_data_id = source_data.id
 
@@ -184,10 +184,10 @@ class KnowledgeBuilder:
                     .all()
                 )
                 if knowledge_blocks:
-                    raise ValueError(f"Knowledge blocks already exist for {path}")
+                    raise ValueError(f"Knowledge blocks already exist for {file_path}")
 
                 # Create and add knowledge blocks
-                for block_data in extracted_blocks:
+                for block_data in extracted_qa_pairs:
                     question = block_data.get("question", "")
                     answer = block_data.get("answer", "")
                     qa_content = question + "\n" + answer
@@ -200,20 +200,19 @@ class KnowledgeBuilder:
                         content_vec=self.embedding_func(qa_content),
                     )
                     db.add(qa_block)
-                    blocks.append(qa_content)
                 db.commit()
 
         except (json.JSONDecodeError, TypeError):
-            print(f"Failed to parse knowledge blocks from {path}")
+            print(f"Failed to parse knowledge blocks from {file_path}")
 
-        return blocks
+        return extracted_qa_pairs
 
     def extract_knowledge_index(
-        self, path: str, attributes: Dict[str, Any], disbale_split=False, **kwargs
+        self, path: str, attributes: Dict[str, Any], **kwargs
     ):
         # Extract basic info
-        doc_version = attributes.get("version", "1.0")
-
+        doc_version = attributes.get("doc_version", "1.0")
+        doc_link = attributes.get("doc_link", path)
         # find suitable parser to parse knowledge
         parser = get_parser(path)
         knowledge_indexes = parser.parse(path, **kwargs)

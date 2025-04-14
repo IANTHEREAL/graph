@@ -79,7 +79,7 @@ class FreemindParser(BaseParser):
             return FileData(
                 name=name,
                 content=json_content,  # JSON string instead of raw XML
-                indexes=root_node_index,
+                indexes=root_node_index.children, # Exclude the title node
             )
 
         except ET.ParseError as e:
