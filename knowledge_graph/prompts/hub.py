@@ -108,6 +108,113 @@ JSON Output (surround with ```json and ```):
 }}
 ```"""
 
+default_extract_graph_from_knowledge_index = """You are an expert knowledge graph architect. Your task is to analyze the provided 'knowledge' object and its referenced document content ('reference_documents') to create concept node entities and their relationships for a knowledge graph.
+
+**Inputs:**
+
+1.  **`knowledge` Object:** Contains the `path` (representing the topic's context or hierarchy) and `references` (names of source documents).
+    {knowledge}
+
+2.  **`reference_documents` List:** A list of objects, each containing the `id`, `name`, `link`, `version`, and `content` of the documents referenced in the `knowledge` object.
+    {reference_documents}
+
+**Task:**
+
+Based *strictly* on the information found within the `content` of the provided `reference_documents` that correspond to the `knowledge` object's topic (indicated by its `path`), generate concept node entities and their relationships.
+
+1.  **Analyze Complexity:** Evaluate the information related to the `knowledge['path']` topic within the document `content`.
+    * Consider a topic SIMPLE if: it can be fully explained in 1-2 paragraphs, has a single clear definition, and doesn't contain distinct subtopics.
+    * Consider a topic COMPLEX if: it requires extensive explanation, contains multiple aspects or dimensions, has hierarchical components, or is discussed from different perspectives in the documents.
+
+2.  **For Each Entity:**
+    * **Generate a `name`:** Create a concise, descriptive, and accurate name for the concept represented by the entity. Use terminology found in the documents or derived logically from the `knowledge['path']` and content.
+    * **Generate a `definition`:** Write a professional, clear, detailed, coherent, and logically structured definition (or description) for the entity. This definition MUST:
+        * Be derived *exclusively* from the provided `content` of the relevant `reference_documents`. Do not infer information or use external knowledge.
+        * Accurately synthesize the relevant information from the source(s).
+        * Explain the concept thoroughly.
+        * Include explanations of domain-specific terms within the definition when necessary.
+
+3.  **Information Prioritization Guidelines:**
+    * Prioritize more recent versions of documents when available.
+    * Look for consensus across multiple sources.
+    * If conflicting information exists, note the discrepancy in the definition and present the most supported view.
+
+4.  **Validation Requirements:**
+    * Ensure all key points from the source documents are represented.
+    * Verify that no information contradicts the source material.
+    * Include only information that is explicitly stated or directly implied in the source documents.
+
+5.  **Relationship Identification and Definition:**
+    * Identify meaningful relationships between entities based on the document content.
+    * For each relationship:
+        * Determine the source and target entities.
+        * Assign an appropriate relationship type that best describes the connection.
+        * Create a detailed definition explaining the nature of the relationship.
+    * Common relationship types include (but are not limited to):
+        * Hierarchical (is_part_of, contains, belongs_to)
+        * Causal (causes, results_in, depends_on)
+        * Functional (interacts_with, supports, enables)
+        * Temporal (precedes, follows, occurs_during)
+        * Comparative (is_similar_to, differs_from)
+    * Relationship definitions should:
+        * Be as detailed and professional as entity definitions
+        * Explain the specific nature of how entities interact or relate
+        * Be derived exclusively from the source documents
+        * Include directional clarity (how source affects target and vice versa)
+    * Ensure all relationships are explicitly supported by information in the source documents.
+
+6.  **Edge Case Handling:**
+    * If the referenced documents contain insufficient information:
+        * Create a minimal entity with the available information.
+        * Note in the definition that the information is limited based on the provided documents.
+    * If the topic is not clearly addressed in the documents:
+        * Create an entity based on any relevant information that can be found.
+        * Indicate areas where more information would be beneficial.
+    * If relationships are implied but not explicitly stated:
+        * Only create relationships with reasonable confidence based on the text.
+        * Note the level of certainty in the relationship definition.
+
+**Output Format:**
+
+Provide the output as a JSON object with two main sections:
+
+1. **`entities`**: A list of objects, each representing a concept node with:
+   * `name`: (String) The generated name for the entity.
+   * `definition`: (String) The generated professional definition for the entity.
+
+2. **`relationships`**: A list of objects, each representing a relationship between entities with:
+   * `source_entity`: (String) The name of the source entity.
+   * `target_entity`: (String) The name of the target entity.
+   * `type`: (String) A concise label describing the type of relationship (e.g., "is_part_of", "depends_on", "influences").
+   * `definition`: (String) A detailed, professional description of the relationship, explaining how the source entity relates to the target entity, based strictly on the provided document content.
+
+**Example Output Structure:**
+
+```json
+{{
+  "entities": [
+    {{
+      "name": "Entity Name 1",
+      "definition": "Detailed, professional definition for Entity 1 based strictly on the provided document content..."
+    }},
+    {{
+      "name": "Entity Name 2",
+      "definition": "Detailed, professional definition for Entity 2 based strictly on the provided document content..."
+    }}
+  ],
+  "relationships": [
+    {{
+      "source_entity": "Entity Name 1",
+      "target_entity": "Entity Name 2",
+      "type": "is_component_of",
+      "definition": "Detailed explanation of how Entity 1 functions as a component of Entity 2, including specific interactions and dependencies described in the source documents..."
+    }}
+  ]
+}}
+```
+Remember: Quality over quantity. It's better to have fewer well-defined entities and relationships than many superficial ones. Your entities and relationships should represent distinct, meaningful concepts that would be valuable in a knowledge graph. All information must be derived exclusively from the provided documents.
+"""
+
 
 class PromptHub:
     """
@@ -120,6 +227,7 @@ class PromptHub:
             "knowledge_qa_extraction": default_qa_extraction_prompt,
             "concept_extraction": default_concept_extraction_prompt,
             "extend_relationship": default_extend_relationship_prompt,
+            "from_knowledge_index_graph_extraction": default_extract_graph_from_knowledge_index,
         }
 
     def get_prompt(self, prompt_name: str) -> str:

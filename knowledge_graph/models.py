@@ -24,31 +24,6 @@ from tidb_vector.sqlalchemy import VectorType
 Base = declarative_base()
 
 
-class Concept(Base):
-    """Core concept entity in the knowledge graph"""
-
-    __tablename__ = "concepts"
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String(255), nullable=False)
-    definition = Column(Text, nullable=True)
-    definition_vec = Column(VectorType(1536), nullable=True)
-    version = Column(String(50), nullable=True)
-    knowledge_bundle = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=func.current_timestamp())
-    updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
-    )
-
-    __table_args__ = (
-        Index("idx_name", "name"),
-        Index("idx_version", "version"),
-    )
-
-    def __repr__(self):
-        return f"<Concept(id={self.id}, name={self.name})>"
-
-
 class SourceData(Base):
     """Source document entity"""
 
@@ -127,6 +102,31 @@ STANDARD_RELATION_TYPES = [
 ]
 
 
+class Concept(Base):
+    """Core concept entity in the knowledge graph"""
+
+    __tablename__ = "concepts"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String(255), nullable=False)
+    definition = Column(Text, nullable=True)
+    definition_vec = Column(VectorType(1536), nullable=True)
+    version = Column(String(50), nullable=True)
+    knowledge_bundle = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=func.current_timestamp())
+    updated_at = Column(
+        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
+    )
+
+    __table_args__ = (
+        Index("idx_name", "name"),
+        Index("idx_version", "version"),
+    )
+
+    def __repr__(self):
+        return f"<Concept(id={self.id}, name={self.name})>"
+
+
 class Relationship(Base):
     """Relationship between entities in the knowledge graph"""
 
@@ -137,12 +137,12 @@ class Relationship(Base):
     source_type = Column(String(50), nullable=False)
     target_id = Column(String(36), nullable=False)
     target_type = Column(String(50), nullable=False)
-    relationship_desc = Column(
-        Text, nullable=False, default="REFERENCES"
-    )  # Changed to Text for natural language descriptions
+    relationship_type = Column(String(255), nullable=False, default="REFERENCES")
+    relationship_desc = Column(Text, nullable=False)
     relationship_desc_vec = Column(
         VectorType(1536), nullable=True
     )  # Vector column for embeddings
+    knowledge_bundle = Column(JSON, nullable=True)
     attributes = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(

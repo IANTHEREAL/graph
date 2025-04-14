@@ -1,4 +1,5 @@
 import json
+import copy
 from typing import Dict, List, Any, Union, Callable
 
 from knowledge_graph.models import Concept, KnowledgeBlock, SourceData, Relationship
@@ -8,6 +9,7 @@ from utils.token import calculate_tokens
 from setting.db import SessionLocal
 from llm.factory import LLMInterface
 from knowledge_graph.parser import BaseParser, Block, get_parser
+from knowledge_graph.prompts.hub import PromptHub
 
 
 class KnowledgeBuilder:
@@ -21,6 +23,7 @@ class KnowledgeBuilder:
         """
         self.embedding_func = embedding_func
         self.llm_client = llm_client
+        self.prompt_hub = PromptHub()
 
     def extract_knowledge_blocks(self, path: str, attributes: Dict[str, Any], **kwargs):
         # Extract basic info of source
@@ -140,9 +143,7 @@ class KnowledgeBuilder:
         name = doc_knowledge.name
 
         # Extract knowledge blocks using LLM
-        prompt_template = self.graph_spec.get_extraction_prompt(
-            "knowledge_qa_extraction"
-        )
+        prompt_template = self.prompt_hub.get_prompt("knowledge_qa_extraction")
         prompt = prompt_template.format(text=doc_content)
         response = self.llm_client.generate(prompt)
 
@@ -207,13 +208,130 @@ class KnowledgeBuilder:
 
         return extracted_qa_pairs
 
-    def extract_knowledge_index(
-        self, path: str, attributes: Dict[str, Any], **kwargs
-    ):
+    def extract_knowledge_index(self, path: str, attributes: Dict[str, Any], **kwargs):
         # Extract basic info
         doc_version = attributes.get("doc_version", "1.0")
         doc_link = attributes.get("doc_link", path)
         # find suitable parser to parse knowledge
         parser = get_parser(path)
-        knowledge_indexes = parser.parse(path, **kwargs)
-        return knowledge_indexes
+        kb = parser.parse(path, **kwargs)
+
+        def get_node_attributes(node):
+            references = []
+            for child in node.children:
+                if len(child.children) > 0:
+                    raise ValueError(
+                        "Reference node should be the leaf node without any children"
+                    )
+
+                references.append(child.name)
+
+            return references
+
+        def depth_traversal(root, current_path: list):
+            if root.name == "Reference":
+                return [
+                    {
+                        "path": copy.deepcopy(current_path),
+                        "references": get_node_attributes(root),
+                    }
+                ]
+            elif root.name == "Definition":
+                return [
+                    {
+                        "path": copy.deepcopy(current_path),
+                        "definition": get_node_attributes(root),
+                    }
+                ]
+            elif root.name == "Annotation":
+                return [
+                    {
+                        "path": copy.deepcopy(current_path),
+                        "annotation": get_node_attributes(root),
+                    }
+                ]
+
+            all_paths = []
+            for child in root.children:
+                curent_path_copy = copy.deepcopy(current_path)
+                all_paths.extend(depth_traversal(child, curent_path_copy + [root.name]))
+
+            return all_paths
+
+        # Process all knowledge indexes
+        all_knowledges = {}
+        for index in kb.indexes:
+            paths = depth_traversal(index, [])
+            for path_data in paths:
+                if not path_data:  # Skip empty results
+                    continue
+                path_str = "->".join(path_data["path"])
+                if path_str not in all_knowledges:
+                    all_knowledges[path_str] = {}
+
+                for key, value in path_data.items():
+                    all_knowledges[path_str][key] = value
+
+        # No knowledge found
+        if not all_knowledges:
+            print("No knowledge extracted from the file")
+            return None
+
+        # Collect all reference sources in one pass
+        reference_source_names = set()
+        for knowledge in all_knowledges.values():
+            reference_source_names.update(knowledge.get("references", []))
+
+        # Get all sources in a single database query
+        source_map = {}
+        if reference_source_names:
+            with SessionLocal() as db:
+                sources = (
+                    db.query(SourceData)
+                    .where(SourceData.name.in_(list(reference_source_names)))
+                    .all()
+                )
+
+            # Create a lookup map for sources
+            source_map = {
+                source.name: {
+                    "id": source.id,
+                    "name": source.name,
+                    "link": source.link,
+                    "version": source.version,
+                    "content": source.content,
+                }
+                for source in sources
+            }
+
+        # Process each knowledge item
+        results = []
+        for knowledge in all_knowledges.values():
+            invalid_references = []
+            valid_references = []
+
+            if "references" in knowledge:
+                for reference in knowledge["references"]:
+                    if reference not in source_map:
+                        invalid_references.append(reference)
+                    else:
+                        valid_references.append(source_map[reference])
+
+            if invalid_references:
+                print(
+                    f"skip knowledge {knowledge}, caused by lack of references {invalid_references}"
+                )
+                continue
+
+            prompt_template = self.prompt_hub.get_prompt(
+                "from_knowledge_index_graph_extraction"
+            )
+            prompt = prompt_template.format(
+                knowledge=knowledge, reference_documents=valid_references
+            )
+            response = self.llm_client.generate(prompt)
+            return response
+            results.append(response)
+
+        # Return all results or first result to maintain backward compatibility
+        return results
