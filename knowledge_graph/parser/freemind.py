@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from typing import Dict, Any, Optional, List
 import json
+import re
 
 from .base import BaseParser, Index, FileData
 from .utils import read_file_content, extract_file_info
@@ -12,15 +13,28 @@ class FreemindParser(BaseParser):
     and provides a clean JSON representation of the mind map.
     """
 
+    def _clean_text(self, text):
+        """Clean text of all invisible characters and whitespace"""
+        # Remove all zero-width spaces and other invisible characters
+        cleaned = re.sub(
+            r"[\u200b\u200c\u200d\u2060\ufeff\u00a0\u2000-\u200f\u2028-\u202f]+",
+            "",
+            text,
+        )
+        # Then remove regular whitespace from ends
+        return cleaned.strip()
+
     def _parse_node(self, node_elem: ET.Element) -> Index:
         """
         Recursively parse an XML element representing a node into a Block.
         """
         text = node_elem.get("TEXT", "").strip()
+        # Clean the text of invisible characters
+        clean_text = self._clean_text(text)
 
         children = [self._parse_node(child) for child in node_elem.findall("node")]
 
-        return Index(name=text, children=children)
+        return Index(name=clean_text, children=children)
 
     def parse(self, path: str, **kwargs: Any) -> FileData:
         """
@@ -54,7 +68,7 @@ class FreemindParser(BaseParser):
             def index_to_dict(index: Index) -> Dict:
                 return {
                     "text": index.name,
-                    "children": [index_to_dict(index) for index in index.children],
+                    "children": [index_to_dict(child) for child in index.children],
                 }
 
             # Create a clean representation and convert to JSON
