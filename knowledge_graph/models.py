@@ -1,7 +1,4 @@
 import uuid
-from typing import Dict, List, Literal, Optional, Any, Union
-from dataclasses import dataclass, field
-from datetime import datetime
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -12,7 +9,6 @@ from sqlalchemy import (
     Enum,
     Index,
     JSON,
-    ForeignKeyConstraint,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.mysql import LONGTEXT
@@ -91,17 +87,6 @@ class KnowledgeBlock(Base):
         return f"<KnowledgeBlock(id={self.id}, name={self.name})>"
 
 
-# Define standard relation types
-STANDARD_RELATION_TYPES = [
-    "IS_CHILD_OF",
-    "EXPLAINS",
-    "DEPENDS_ON",
-    "REFERENCES",
-    "PART_OF",
-    "SIMILAR_TO",
-]
-
-
 class Concept(Base):
     """Core concept entity in the knowledge graph"""
 
@@ -112,7 +97,6 @@ class Concept(Base):
     definition = Column(Text, nullable=True)
     definition_vec = Column(VectorType(1536), nullable=True)
     version = Column(String(50), nullable=True)
-    knowledge_bundle = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
         DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
@@ -127,6 +111,17 @@ class Concept(Base):
         return f"<Concept(id={self.id}, name={self.name})>"
 
 
+# Define standard relation types
+STANDARD_RELATION_TYPES = [
+    "SOURCE_OF",
+    "EXPLAINS",
+    "DEPENDS_ON",
+    "REFERENCES",
+    "PART_OF",
+    "SIMILAR_TO",
+]
+
+
 class Relationship(Base):
     """Relationship between entities in the knowledge graph"""
 
@@ -138,7 +133,7 @@ class Relationship(Base):
     target_id = Column(String(36), nullable=False)
     target_type = Column(String(50), nullable=False)
     relationship_type = Column(String(255), nullable=False, default="REFERENCES")
-    relationship_desc = Column(Text, nullable=False)
+    relationship_desc = Column(Text, nullable=True)
     relationship_desc_vec = Column(
         VectorType(1536), nullable=True
     )  # Vector column for embeddings
@@ -150,17 +145,13 @@ class Relationship(Base):
     )
 
     __table_args__ = (
-        Index("idx_relationship_source", "source_id", "source_type"),
-        Index("idx_relationship_target", "target_id", "target_type"),
+        Index("idx_relationship_source", "source_type", "source_id"),
+        Index("idx_relationship_target", "target_type", "target_id"),
+        Index("idx_relationship_type", "relationship_type"),
     )
 
     def __repr__(self):
         return f"<Relationship(source={self.source_id}, target={self.target_id}, desc={self.relationship_desc})>"
-
-    @property
-    def is_standard_relation(self) -> bool:
-        """Check if the relation type is a standard type"""
-        return self.relationship_desc in STANDARD_RELATION_TYPES
 
 
 class BestPractice(Base):

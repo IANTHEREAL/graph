@@ -2,13 +2,13 @@ import json
 import copy
 from typing import Dict, List, Any, Union, Callable
 
-from knowledge_graph.models import Concept, KnowledgeBlock, SourceData, Relationship
+from knowledge_graph.models import Concept, Relationship, KnowledgeBlock, SourceData
 from knowledge_graph.utils import gen_situate_context
-from utils.json_utils import extract_json_array
+from utils.json_utils import extract_json_array, extract_json
 from utils.token import calculate_tokens
 from setting.db import SessionLocal
 from llm.factory import LLMInterface
-from knowledge_graph.parser import BaseParser, Block, get_parser
+from knowledge_graph.parser import Block, get_parser
 from knowledge_graph.prompts.hub import PromptHub
 
 
@@ -282,6 +282,8 @@ class KnowledgeBuilder:
         for knowledge in all_knowledges.values():
             reference_source_names.update(knowledge.get("references", []))
 
+        print("all knowledge", all_knowledges)
+
         # Get all sources in a single database query
         source_map = {}
         if reference_source_names:
@@ -303,6 +305,8 @@ class KnowledgeBuilder:
                 }
                 for source in sources
             }
+
+        print("source", source_map)
 
         # Process each knowledge item
         results = []
@@ -329,7 +333,168 @@ class KnowledgeBuilder:
             prompt = prompt_template.format(
                 knowledge=knowledge, reference_documents=valid_references
             )
+
             response = self.llm_client.generate(prompt)
+            subgraph_json_str = extract_json(response)
+            subgraph = json.loads(subgraph_json_str)
+
+            with SessionLocal() as db:
+                # First check if concepts with these names already exist
+                existing_concepts = {}
+                concept_names = [entity["name"] for entity in subgraph["entities"]]
+                if concept_names:
+                    for existing in (
+                        db.query(Concept).filter(Concept.name.in_(concept_names)).all()
+                    ):
+                        existing_concepts[existing.name] = existing
+
+                # Create new concepts only for those that don't exist
+                new_concepts = []
+                concept_map = (
+                    {}
+                )  # Will map concept names to their IDs (either existing or new)
+
+                for entity in subgraph["entities"]:
+                    if entity["name"] in existing_concepts:
+                        # Use existing concept
+                        concept = existing_concepts[entity["name"]]
+                        concept_map[entity["name"]] = concept.id
+                        print(f"Using existing concept: {entity['name']}")
+                    else:
+                        # Create new concept
+                        concept = Concept(
+                            name=entity["name"],
+                            definition=entity["definition"],
+                            definition_vec=self.embedding_func(entity["definition"]),
+                            version="1.0",
+                        )
+                        new_concepts.append(concept)
+                        print(f"Creating new concept: {entity['name']}")
+
+                # Add new concepts to database
+                if new_concepts:
+                    db.add_all(new_concepts)
+                    db.flush()
+                    # Update concept_map with IDs of new concepts
+                    for concept in new_concepts:
+                        concept_map[concept.name] = concept.id
+
+                # Check for existing concept->source relationships
+                existing_relationships = {}
+                concept_ids = list(concept_map.values())
+                source_ids = [source["id"] for source in valid_references]
+
+                if concept_ids and source_ids:
+                    for rel in (
+                        db.query(Relationship)
+                        .filter(
+                            Relationship.source_id.in_(concept_ids),
+                            Relationship.source_type == "Concept",
+                            Relationship.target_id.in_(source_ids),
+                            Relationship.target_type == "SourceData",
+                            Relationship.relationship_type == "SOURCE_OF",
+                        )
+                        .all()
+                    ):
+                        # Key by (source_id, target_id) tuple
+                        existing_relationships[(rel.source_id, rel.target_id)] = rel
+
+                # Create only new relationships
+                source_rel = []
+                for concept_name, concept_id in concept_map.items():
+                    for source in valid_references:
+                        if (concept_id, source["id"]) not in existing_relationships:
+                            print(
+                                f"Creating new relationship: {concept_name} -> {source['name']}"
+                            )
+                            rel = Relationship(
+                                source_id=concept_id,
+                                source_type="Concept",
+                                target_id=source["id"],
+                                target_type="SourceData",
+                                relationship_type="SOURCE_OF",
+                            )
+                            source_rel.append(rel)
+                        else:
+                            print(
+                                f"Relationship already exists: {concept_name} -> {source['name']}"
+                            )
+
+                if source_rel:
+                    db.add_all(source_rel)
+
+                # Check for existing concept-to-concept relationships
+                concept_to_concept_rels = {}
+                if concept_ids:
+                    for rel in (
+                        db.query(Relationship)
+                        .filter(
+                            Relationship.source_id.in_(concept_ids),
+                            Relationship.source_type == "Concept",
+                            Relationship.target_id.in_(concept_ids),
+                            Relationship.target_type == "Concept",
+                        )
+                        .all()
+                    ):
+                        # Key by (source_id, target_id, relationship_type) tuple to handle different relationship types
+                        concept_to_concept_rels[
+                            (rel.source_id, rel.target_id, rel.relationship_type)
+                        ] = rel
+
+                # Create new concept-to-concept relationships
+                concept_rels = []
+                for relationship in subgraph["relationships"]:
+                    source_name = relationship["source_entity"]
+                    target_name = relationship["target_entity"]
+                    rel_type = relationship.get("relationship_type", "REFERENCES")
+                    rel_desc = relationship.get("definition", None)
+
+                    # Skip if either concept is missing
+                    if source_name not in concept_map or target_name not in concept_map:
+                        print(
+                            f"Skipping relationship: {source_name} -> {target_name} (missing concept)"
+                        )
+                        continue
+
+                    source_id = concept_map[source_name]
+                    target_id = concept_map[target_name]
+
+                    # Check if this relationship already exists
+                    if (source_id, target_id, rel_type) not in concept_to_concept_rels:
+                        print(
+                            f"Creating new concept relationship: {source_name} ({rel_type}) -> {target_name}"
+                        )
+                        rel = Relationship(
+                            source_id=source_id,
+                            source_type="Concept",
+                            target_id=target_id,
+                            target_type="Concept",
+                            relationship_type=rel_type,
+                            relationship_desc=rel_desc,
+                            relationship_desc_vec=(
+                                self.embedding_func(rel_desc) if rel_desc else None
+                            ),
+                            knowledge_bundle=[
+                                {
+                                    "id": k["id"],
+                                    "name": k["name"],
+                                    "link": k["link"],
+                                    "version": k["version"],
+                                }
+                                for k in valid_references
+                            ],
+                        )
+                        concept_rels.append(rel)
+                    else:
+                        print(
+                            f"Relationship already exists: {source_name} ({rel_type}) -> {target_name}"
+                        )
+
+                if concept_rels:
+                    db.add_all(concept_rels)
+
+                db.commit()
+
             return response
             results.append(response)
 
