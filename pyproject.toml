@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "graph"
+version = "0.0.1"
+description = ""
+authors = ["Ian <ArGregoryIan@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openpyxl = "^3.1.5"
+sqlalchemy = "^2.0.40"
+pymysql = "^1.1.1"
+tidb-vector = "^0.0.14"
+boto3 = "^1.37.30"
+loguru = "^0.7.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
