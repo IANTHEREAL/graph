@@ -52,15 +52,28 @@ class KnowledgeBuilder:
                     f"Section '{block.name}' including parent context has {tokens} tokens, exceeding 4096. Please restructure the document."
                 )
 
-        # Generate situated context for each section
+        # Generate situated context for each section\
+        # Add document and knowledge blocks to database
         section_context = {}
-        for block in blocks:
-            # gen_situate_context expects the original doc and the specific block content
-            # We provide the full content of the section (including parent context) as the "block"
-            # This assumes gen_situate_context can handle this structure appropriately
-            section_context[block.name] = gen_situate_context(
-                full_content, block.content
+        with SessionLocal() as db:
+            source_data = (
+                db.query(SourceData)
+                .filter(
+                    SourceData.link == doc_link and SourceData.version == doc_version
+                )
+                .first()
             )
+            if not source_data:
+                for block in blocks:
+                    # gen_situate_context expects the original doc and the specific block content
+                    # We provide the full content of the section (including parent context) as the "block"
+                    # This assumes gen_situate_context can handle this structure appropriately
+                    section_context[block.name] = gen_situate_context(
+                        full_content, block.content
+                    )
+            else:
+                print(f"Source data already exists for {path}, id: {source_data.id}")
+                return blocks
 
         # Add document and knowledge blocks to database
         with SessionLocal() as db:
@@ -80,10 +93,18 @@ class KnowledgeBuilder:
                 db.flush()  # Flush to get the ID
                 source_data_id = source_data.id
                 print(f"Source data created for {path}, id: {source_data_id}")
-            else:
-                # Optionally update existing source data content/version/attributes if needed
-                print(f"Source data already exists for {path}, id: {source_data.id}")
+            elif source_data.version != doc_version:
+                print(f"Update source data - path: {path}, id: {source_data.id}")
+                source_data.content = full_content
+                source_data.version = doc_version
+                source_data.attributes = attributes
+                db.add(source_data)
+                db.flush()
                 source_data_id = source_data.id
+            else:
+                raise ValueError(
+                    f"Source data already exists for {path}, id: {source_data.id}"
+                )
 
             # Check if knowledge blocks for this version already exist
             existing_kbs = (
