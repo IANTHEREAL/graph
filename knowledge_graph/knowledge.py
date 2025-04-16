@@ -516,7 +516,6 @@ class KnowledgeBuilder:
 
                 db.commit()
 
-            return response
             results.append(response)
 
         # Return all results or first result to maintain backward compatibility
