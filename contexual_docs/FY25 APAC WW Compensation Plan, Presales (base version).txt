@@ -1,4 +1,8 @@
+<doc_link>[FY25 APAC WW Compensation Plan, Presales (base version)](https://drive.google.com/file/d/1ofbUMue8sj7HXWMR82uYBt2ZfTY8rT3N/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the introductory section of a compensation plan document for APAC Presales staff, outlining the basic structure of the plan including quota details, commission multipliers based on attainment ranges, how quota attainment is calculated using Wetech and Others targets, and the contribution rate mechanism. It establishes the foundation for the more detailed calculation examples and payment terms explained in later sections.</context>
+
 # WW Compensation Plan FY25, APAC Presales (base version)
 
 ## 1 Overview of Your Compensation Plan
@@ -27,7 +31,11 @@ Quota - Regional Setup Annual Target Variable Weight: gg%
 
 
 ######
+<doc_link>[FY25 APAC WW Compensation Plan, Presales (base version)](https://drive.google.com/file/d/1ofbUMue8sj7HXWMR82uYBt2ZfTY8rT3N/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the detailed calculation methodology for the Target Bonus in the APAC Presales compensation plan, including a step-by-step cheat sheet for determining bonuses and practical examples showing how Bucket 1 bonuses are calculated based on quota attainment and contribution rates across quarters.</context>
+
 # WW Compensation Plan FY25, APAC Presales (base version)
 
 ## 2 Target Bonus Calculation
@@ -83,7 +91,11 @@ Q2:
 Note:Within the above calculation, all data is sample for reference only.
 
 ######
+<doc_link>[FY25 APAC WW Compensation Plan, Presales (base version)](https://drive.google.com/file/d/1ofbUMue8sj7HXWMR82uYBt2ZfTY8rT3N/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This section outlines the structure of the APAC Presales compensation plan, explaining how On-Target Earnings (OTE) are split between base salary and variable pay, and detailing the quota composition across different product lines including TiDB Cloud, PingCAP Enterprise Subscription, and Enterprise Services. It defines how different types of deals are counted toward quota attainment.</context>
+
 # WW Compensation Plan FY25, APAC Presales (base version)
 
 ## 3 OTE & Quota
@@ -111,7 +123,11 @@ Note:
 
 
 ######
+<doc_link>[FY25 APAC WW Compensation Plan, Presales (base version)](https://drive.google.com/file/d/1ofbUMue8sj7HXWMR82uYBt2ZfTY8rT3N/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the final section of the compensation plan document, detailing payment schedules and policies for Presales employees, including rules for compensation in cases of role transfers or resignation from the company. It follows sections covering plan overview, bonus calculation methods, and OTE/quota definitions.</context>
+
 # WW Compensation Plan FY25, APAC Presales (base version)
 
 ## 4 Compensation & Bonus Payment

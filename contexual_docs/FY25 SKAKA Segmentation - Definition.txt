@@ -1,4 +1,8 @@
+<doc_link>[FY25 SKA/KA Segmentation - Definition](https://pingcap.feishu.cn/wiki/VOxbwhAJiiXwdnk1ibzc5a8Hnbg)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the introduction and main criteria definitions for PingCAP's FY25 Strategic Key Account (SKA) and Key Account (KA) segmentation, establishing the revenue/employee thresholds and ICP industry requirements that are further detailed in the remainder of the document.</context>
+
 # FY25 SKA/KA Segmentation - Definition
 
 Draft by: Business Enabling and Operation
@@ -20,7 +24,11 @@ These are the accounts **to be focused in your target market in FY25**.
 - **$250K+ ARR with PingCAP**  
 
 ######
+<doc_link>[FY25 SKA/KA Segmentation - Definition](https://pingcap.feishu.cn/wiki/VOxbwhAJiiXwdnk1ibzc5a8Hnbg)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the core definition of SKA/KA customer segmentation criteria at PingCAP, including the detailed classification based on company scale (revenue/employee size) combined with ICP industry verticals, and revenue contribution thresholds. It provides the comprehensive ICP vertical table showing all qualified industries across FSI, DNB, and ISV/SaaS categories.</context>
+
 # FY25 SKA/KA Segmentation - Definition
 
 Draft by: Business Enabling and Operation
@@ -110,7 +118,11 @@ These verticals are with priority or with a use case in your region.
 ---
 
 ######
+<doc_link>[FY25 SKA/KA Segmentation - Definition](https://pingcap.feishu.cn/wiki/VOxbwhAJiiXwdnk1ibzc5a8Hnbg)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the document title and introduction, followed by procedures for updating inaccurate segmentation tags and the exception approval process for SKA/KA accounts. It appears out of order as it combines the document's beginning with content that should follow after the SKA/KA criteria definitions and ICP verticals sections.</context>
+
 # FY25 SKA/KA Segmentation - Definition
 
 Draft by: Business Enabling and Operation

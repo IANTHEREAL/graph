@@ -1,4 +1,8 @@
+<doc_link>[Salesforce MFA Instructions_Jan 2022.docx](https://pingcap.feishu.cn/wiki/wikcnfXalN00VANvPK1AgGBwmJh?useNewLarklet=1)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This is the introductory section of a guide on Salesforce Authenticator, covering the initial registration process for multi-factor authentication. The document continues with login procedures and special installation instructions for Android users in China.</context>
+
 # How to Register and Use Salesforce Authenticator for Multi-Factor Authentication (MFA) Logins
 
 ## Register Salesforce Authenticator
@@ -19,7 +23,11 @@ To register Salesforce Authenticator the first time you log in after MFA is turn
 8. Complete Registration: In the Salesforce Authenticator app, verify the connection details and tap Connect. ✅ You’re done! You are now logged in and the app is registered.
 
 ######
+<doc_link>[Salesforce MFA Instructions_Jan 2022.docx](https://pingcap.feishu.cn/wiki/wikcnfXalN00VANvPK1AgGBwmJh?useNewLarklet=1)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk describes the process for logging into Salesforce using the Authenticator app after it has been registered, following the initial setup instructions provided earlier in the document. It's part of a guide on using Salesforce Authenticator for multi-factor authentication (MFA).</context>
+
 # How to Register and Use Salesforce Authenticator for Multi-Factor Authentication (MFA) Logins
 
 ## How to Log in with Salesforce Authenticator
@@ -30,7 +38,11 @@ To register Salesforce Authenticator the first time you log in after MFA is turn
 4. Approve the Login Request: In the Salesforce Authenticator app, verify that the login request details are correct. Then tap Approve.
 
 ######
+<doc_link>[Salesforce MFA Instructions_Jan 2022.docx](https://pingcap.feishu.cn/wiki/wikcnfXalN00VANvPK1AgGBwmJh?useNewLarklet=1)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This section provides specific installation instructions for Salesforce Authenticator on Android devices in China where Google Play is unavailable, including system requirements and step-by-step download procedures, as part of the overall guide on setting up multi-factor authentication for Salesforce.</context>
+
 # How to Register and Use Salesforce Authenticator for Multi-Factor Authentication (MFA) Logins
 
 ## Tips for Android Users in China

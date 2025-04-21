@@ -1,0 +1,124 @@
+<doc_link>[FY25 Net ARR Reference - For Sales Manager](https://pingcap.feishu.cn/wiki/Ruu6wc0vUi0N3xkjw6ecRQIYnwd)</doc_link>
+<doc_version>mgr_v1.0</doc_version>
+
+<context>This is the introduction section of a document about Net ARR for sales managers, which precedes sections covering the formula, calculation methods, and various customer scenarios. It establishes the definition of Net ARR as a key SaaS metric before the document delves into specific calculation examples and special cases.</context>
+
+# FY25 Net ARR Reference - For Sales Manager
+
+This document focuses on FY25 Net ARR reference for sales managers, introducing the definition, formula, and calculation of Net ARR, along with various scenarios and special cases. 
+
+## Net ARR Definition
+
+Net ARR (Net Annual Recurring Revenue) is a key metric for SaaS companies, reflecting the total recurring revenue generated on an annual basis, after accounting for factors such as customer churn, expansions, downgrades, and renewals. It provides a comprehensive view of the recurring revenue health of a SaaS business, considering both losses and gains in the customer base.
+
+######
+<doc_link>[FY25 Net ARR Reference - For Sales Manager](https://pingcap.feishu.cn/wiki/Ruu6wc0vUi0N3xkjw6ecRQIYnwd)</doc_link>
+<doc_version>mgr_v1.0</doc_version>
+
+<context>This chunk contains the core content of the document, covering the Net ARR formula, baseline calculation rules, and four detailed case scenarios with examples showing how Net ARR is calculated under different customer commitment situations. It follows the initial definition section and represents the main instructional content for sales managers.</context>
+
+# FY25 Net ARR Reference - For Sales Manager
+
+This document focuses on FY25 Net ARR reference for sales managers, introducing the definition, formula, and calculation of Net ARR, along with various scenarios and special cases. 
+
+## Net ARR Formula and Calculation
+
+### Formula for Net ARR
+
+Net ARR = Ending ARR - Baseline ARR (Standard Calculation)
+
+The baseline for the customer will be set as:
+- Prior Quarter Ending ARR
+- FY24 Commitment, if it is greater than the FY24 Ending ARR entering FY25. FY24 Commitment will be the baseline until the Ending ARR exceeds the Commitment or the opportunity is renewed.
+
+For multiple year commitment contracts, baseline equals current year/half year(x2) commitment value.
+
+### Net ARR Scenarios
+
+Apply to TiDB Cloud and TiDB Self Host (Consumption Base), examples with values of K$USD
+
+##### Case 1: Customers with new commitment plan in FY25 without Ending ARR from prior quarter
+
+|                      | FY24Q4 | FY25Q1 | FY25Q2 | FY25Q3 | FY25Q4 |
+|----------------------|--------|--------|--------|--------|--------|
+| **Baseline - greater of ending ARR or commitment amount** | 0      | 0      | 150    | 250    | 200    |
+| **Ending ARR**       | 0      | 150    | 250    | 200    | 250    |
+| **Commit**           |        |        |        | 250    |        |
+| **Net ARR (for quota credit and commissions)** |        | **150** | 100    | -50    | 50     |
+
+**Explain** : Customers with new commitment plan in FY25 Net ARR follows standard calculation **Ending ARR - Baseline ARR**
+
+##### Case 2: Customers with new commitment plan in FY25 with Ending ARR from prior quarter
+
+|                                      | FY24Q4 | FY25Q1 | FY25Q2 | FY25Q3 | FY25Q4 |
+|--------------------------------------|--------|--------|--------|--------|--------|
+| **Baseline - greater of ending ARR or commitment amount** | 0      | 50     | 150    | 250    | 200    |
+| **Ending ARR**                       | 50     | 150    | 250    | 200    | 250    |
+| **Commit**                           |        | 200    |        |        |        |
+| **Net ARR (for quota credit and commissions)** |        | 100    | 100    | -50    | 50     |
+
+
+**Explain** : Customers with new commitment plan in FY25 Net ARR follows standard calculation **Ending ARR - Baseline ARR**
+
+##### Case 3: Customers with FY24 commitment higher than FY24 Ending ARR
+
+- 📅 FY24Q4
+    - **Ending ARR**: 120
+    - **Commitment**: 200
+    - **Net ARR**: N/A
+    - **Baseline for FY26Q1**: 200 (because commitment > ending ARR)
+    - **Explanation**:  The customer had a FY24 commitment higher than the FY24 ending ARR. 👉 Therefore, the **prior commitment amount (200)** will serve as the **baseline for FY26Q1**.
+
+- 📅 FY25Q1
+    - **Baseline**: 200  
+    - **Ending ARR**: 180  
+    - **Commitment**: N/A  
+    - **Net ARR**: **0**  
+    - **Explanation**: Since the ending ARR (180) is **lower than the baseline (200)** and the customer did **not renew**, 👉 In this case, **Net ARR = 0** on all non-renewing quarters
+
+- 📅 FY25Q2
+    - **Baseline**: 200  
+    - **Ending ARR**: 220  
+    - **Commitment**: N/A  
+    - **Net ARR**: **20**  
+    - **Explanation**:  The ending ARR (220) **exceeds the baseline (200)**.  👉 **Net ARR = Ending ARR - Baseline = 220 - 200 = 20**
+
+- 📅 FY25Q3
+    - **Baseline**: 220  
+    - **Ending ARR**: 250  
+    - **Commitment**: N/A  
+    - **Net ARR**: **30**  
+    - **Explanation**:  
+    The ending ARR (250) **exceeds the baseline (220)**.  👉 **Net ARR = 250 - 220 = 30**
+
+- 📅 FY25Q4
+    - **Baseline**: 250
+    - **Ending ARR**: 270
+    - **Commitment**: 300 (renewal)  
+    - **Net ARR**: **20**  
+    - **Explanation**:  The opportunity is **renewed** in this quarter.  👉 In renewal quarters, Net ARR follows the **standard calculation**:  **Net ARR = Ending ARR - Starting ARR = 270 - 250 = 20**
+
+##### Case 4: Customers with FY24 commitment higher than FY24 Ending ARR, Churn is applied in the renewing quarter.
+
+- 📅 FY25Q4
+    - **Ending ARR**: 120  
+    - **Commitment**: 200  
+    - **Net ARR**: N/A  
+    - **Baseline for FY26Q1**: 200 (greater of ending ARR or commitment)  
+    - **Explanation**:  The customer had a FY25 commitment (200) higher than the FY24 ending ARR (120).  👉 Therefore, the **baseline for FY26Q1 is set to 200**.
+
+- 📅 FY26Q1
+    - **Baseline**: 200  
+    - **Ending ARR**: 180  
+    - **Commitment**: N/A  
+    - **Net ARR**: **0**  
+    - **Explanation**:   Since the ending ARR (180) is **lower than the baseline (200)** and the customer did **not renew**,  👉 **Net ARR = 0**
+
+- ...
+
+- 📅 FY26Q4
+    - **Baseline**: 200  
+    - **Ending ARR**: 190  
+    - **Commitment**: 150 (renewal)  
+    - **Net ARR**: **-10**  
+    - **Explanation**: This is a **renewal quarter**, and churn is applied.  👉 **Net ARR = Ending ARR - Starting ARR = 190 - 200 = -10**

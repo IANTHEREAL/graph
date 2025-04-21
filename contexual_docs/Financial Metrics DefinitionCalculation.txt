@@ -1,4 +1,8 @@
+<doc_link>[Financial Metrics Definition/Calculation](https://pingcap.feishu.cn/docx/M2eddodkGojkfKxkGaRcGkNqnxh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This is the introductory section of the Financial Metrics Definition/Calculation policy document, providing basic information about the policy including its type, name, scope, effective date and review cycle, before the document proceeds to define specific financial metrics like ACV, ARR, Revenue, RPO/Backlog and NRR.</context>
+
 # Financial Metrics Definition/Calculation 
 
 ## Basic Information
@@ -11,7 +15,11 @@
 - Next Review Time｜2026/1/1
 
 ######
+<doc_link>[Financial Metrics Definition/Calculation](https://pingcap.feishu.cn/docx/M2eddodkGojkfKxkGaRcGkNqnxh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk defines ACV (Annual Contract Value) as part of a financial metrics policy document that also covers ARR, Revenue, RPO/Backlog, and NRR. It explains how ACV is calculated for different contract types, including handling of free service periods and backdated contracts.</context>
+
 # Financial Metrics Definition/Calculation 
 
 ## ACV 
@@ -32,7 +40,11 @@
     - ACV is only recognized at the contract signature date (i.e. No ACV will be recorded for prior fiscal year or quarter)
 
 ######
+<doc_link>[Financial Metrics Definition/Calculation](https://pingcap.feishu.cn/docx/M2eddodkGojkfKxkGaRcGkNqnxh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk details the ARR (Annual Recurring Revenue) metric definition, calculation methods across different product types, recognition timing rules, and includes an example table showing revenue vs ARR recognition for a backdated contract. It appears as the second major financial metric section in PingCAP's Financial Metrics policy document, following the ACV section and preceding sections on Revenue, RPO/Backlog, and NRR.</context>
+
 # Financial Metrics Definition/Calculation 
 
 ## ARR
@@ -66,7 +78,11 @@ Example for recognition:
 | ARR     |        |        | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 | $2,400 |
 
 ######
+<doc_link>[Financial Metrics Definition/Calculation](https://pingcap.feishu.cn/docx/M2eddodkGojkfKxkGaRcGkNqnxh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk appears in the middle of a financial policy document that defines various financial metrics for PingCAP employees. It follows sections on ACV and ARR calculations and precedes sections on RPO/Backlog and NRR metrics. The document provides standardized definitions and calculation methods for key financial performance indicators used by the company.</context>
+
 # Financial Metrics Definition/Calculation 
 
 ## Revenue
@@ -76,7 +92,11 @@ Example for recognition:
 3. Revenue should be prorated across both paid and free service periods.
 
 ######
+<doc_link>[Financial Metrics Definition/Calculation](https://pingcap.feishu.cn/docx/M2eddodkGojkfKxkGaRcGkNqnxh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk defines RPO/Backlog as a financial metric that represents future contractual obligations, appearing after sections on ACV, ARR, and Revenue, and before the NRR section in a policy document that outlines various financial metrics definitions and calculation methods used at PingCAP.</context>
+
 # Financial Metrics Definition/Calculation 
 
 ## RPO/Backlog
@@ -85,7 +105,11 @@ Example for recognition:
 2. RPO = TCV minus revenue recognition to-date
 
 ######
+<doc_link>[Financial Metrics Definition/Calculation](https://pingcap.feishu.cn/docx/M2eddodkGojkfKxkGaRcGkNqnxh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk defines Net Revenue Retention (NRR) as the final financial metric in a policy document that explains various financial metrics used at PingCAP, including ACV, ARR, Revenue, and RPO/Backlog. NRR measures customer contract renewal success and additional revenue generation from existing customers, with calculation examples and industry benchmarks.</context>
+
 # Financial Metrics Definition/Calculation 
 
 ## NRR 

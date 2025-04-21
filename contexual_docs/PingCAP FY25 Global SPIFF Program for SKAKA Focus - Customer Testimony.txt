@@ -1,4 +1,8 @@
+<doc_link>[PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony](https://pingcap.feishu.cn/wiki/CKDKwR466ilCISkmEabcFHkenJd)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the complete PingCAP FY25 Global SPIFF Program document detailing incentives for sales representatives who obtain customer testimonials from Strategic Key Accounts (SKA) and Key Accounts (KA). It covers the program duration, qualification criteria, testimony levels, bonus structure, application process, and contact information.</context>
+
 # PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony
 
 The PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony is designed as an incentive for Sales Rep to Customer Testimony from SKA/KA customers.

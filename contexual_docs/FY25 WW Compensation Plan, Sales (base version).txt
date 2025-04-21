@@ -1,4 +1,8 @@
+<doc_link>[FY25 WW Compensation Plan, Sales (base version)](https://drive.google.com/file/d/1VTEpzzoBtorcai1l-orCWL0R2r7CCpXf/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the introduction section of a sales compensation plan document that outlines the three main compensation buckets: New & Expansion ACV, Renewal ACV, and MBO. It establishes the commission structure, quota attainment ranges, and personal commission rates for each bucket, serving as the foundation for the detailed calculation methods and payment terms explained in later sections.</context>
+
 # Compensation Plan FY25 (April 1, 2024-March 31, 2025)
 
 
@@ -45,7 +49,11 @@ Quota - Regional Setup Annual Target Variable Weight: gg%
 
 
 ######
+<doc_link>[FY25 WW Compensation Plan, Sales (base version)](https://drive.google.com/file/d/1VTEpzzoBtorcai1l-orCWL0R2r7CCpXf/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk outlines the OTE (On-Target Earnings) structure and quota composition for sales compensation, explaining how base salary and variable pay work, and detailing what products and services count toward different sales buckets (new/expansion vs. renewal) with specific rules for calculating ACV across TiDB Cloud and Enterprise products.</context>
+
 # Compensation Plan FY25 (April 1, 2024-March 31, 2025)
 
 
@@ -86,7 +94,11 @@ Note:
 
 
 ######
+<doc_link>[FY25 WW Compensation Plan, Sales (base version)](https://drive.google.com/file/d/1VTEpzzoBtorcai1l-orCWL0R2r7CCpXf/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This section details the bonus calculation methodology for sales compensation, explaining how to classify transactions by bucket type, calculate ACV, determine commission rates based on quota attainment, handle accelerators, and process multi-year orders. It includes calculation examples for both new/expansion and renewal deals, complementing the compensation plan structure outlined in earlier sections.</context>
+
 # Compensation Plan FY25 (April 1, 2024-March 31, 2025)
 
 
@@ -206,7 +218,11 @@ Notes:
 
 
 ######
+<doc_link>[FY25 WW Compensation Plan, Sales (base version)](https://drive.google.com/file/d/1VTEpzzoBtorcai1l-orCWL0R2r7CCpXf/view)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the final section of the compensation plan document that details the payment schedule and conditions for sales commissions, including revenue recognition requirements, payment triggers for different product types, and rules governing compensation when a salesperson changes roles or leaves the company.</context>
+
 # Compensation Plan FY25 (April 1, 2024-March 31, 2025)
 
 

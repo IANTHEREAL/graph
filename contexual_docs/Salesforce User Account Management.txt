@@ -1,4 +1,8 @@
+<doc_link>[Salesforce User Account Management](https://pingcap.feishu.cn/wiki/HAWWwWntGiyl76kkTsKcYRn8nqc)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk covers the first half of the document, focusing on Salesforce account activation processes for different teams and the approval workflow. The document continues with sections on account deactivation procedures and ongoing account management practices.</context>
+
 # Salesforce User Account Management
 
 ## Account Activation
@@ -24,7 +28,11 @@
 2. Filling the fields and submitting for approval (Direct Manager's approval is required)
 
 ######
+<doc_link>[Salesforce User Account Management](https://pingcap.feishu.cn/wiki/HAWWwWntGiyl76kkTsKcYRn8nqc)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk covers the deactivation procedures for Salesforce user accounts, appearing after the account activation section and before the account management section. It details how accounts are deactivated during employee offboarding and how temporary accounts are reclaimed after their fixed terms expire.</context>
+
 # Salesforce User Account Management
 
 ## Account Deactivation
@@ -38,7 +46,11 @@ Deactivation Process: HR sends offboarding approval notifications (excluding CBG
 For accounts activated “on-demand,” if the account is for fixed-term use, admin to deactivate it once the term ends.
 
 ######
+<doc_link>[Salesforce User Account Management](https://pingcap.feishu.cn/wiki/HAWWwWntGiyl76kkTsKcYRn8nqc)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk appears at the end of the document, covering the final section on Account Management which includes policies for handling inactive accounts and user seat purchases. It follows sections on Account Activation and Account Deactivation processes.</context>
+
 # Salesforce User Account Management
 
 ## Account Management

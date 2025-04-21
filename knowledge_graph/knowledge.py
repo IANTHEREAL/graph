@@ -236,17 +236,15 @@ class KnowledgeBuilder:
         # find suitable parser to parse knowledge
         parser = get_parser(path)
         kb = parser.parse(path, **kwargs)
-
+        
         def get_node_attributes(node):
             references = []
             for child in node.children:
                 if len(child.children) > 0:
-                    raise ValueError(
-                        "Reference node should be the leaf node without any children"
-                    )
-
+                    raise ValueError("Reference node should be the leaf node without any children")
+                
                 references.append(child.name)
-
+            
             return references
 
         def depth_traversal(root, current_path: list):
@@ -255,6 +253,8 @@ class KnowledgeBuilder:
                     {
                         "path": copy.deepcopy(current_path),
                         "references": get_node_attributes(root),
+                        "source_link": doc_link,  # Add source link
+                        "source_version": doc_version,  # Add source version
                     }
                 ]
             elif root.name == "Definition":
@@ -262,6 +262,8 @@ class KnowledgeBuilder:
                     {
                         "path": copy.deepcopy(current_path),
                         "definition": get_node_attributes(root),
+                        "source_link": doc_link,  # Add source link
+                        "source_version": doc_version,  # Add source version
                     }
                 ]
             elif root.name == "Annotation":
@@ -269,6 +271,8 @@ class KnowledgeBuilder:
                     {
                         "path": copy.deepcopy(current_path),
                         "annotation": get_node_attributes(root),
+                        "source_link": doc_link,  # Add source link
+                        "source_version": doc_version,  # Add source version
                     }
                 ]
 
@@ -501,6 +505,8 @@ class KnowledgeBuilder:
                                     "name": k["name"],
                                     "link": k["link"],
                                     "version": k["version"],
+                                    "source_link": knowledge.get("source_link", doc_link),  # Include original source link
+                                    "source_version": knowledge.get("source_version", doc_version),  # Include original source version
                                 }
                                 for k in valid_references
                             ],

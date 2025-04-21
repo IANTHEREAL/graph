@@ -1,11 +1,19 @@
+<doc_link>[Account Creation Approval Process for Sales](https://pingcap.feishu.cn/wiki/PaadwLg1DiXfBPkQvZ7cmbSzn8g)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>Introduction to the new account creation workflow that addresses data quality issues by implementing a structured review and approval process for converting leads to accounts, which is detailed in the subsequent sections.</context>
+
 ## Account Creation Process - Publish to Sales
 
 
 Currently, we have no review process on account creation, and account data is of lower quality and without compliance check. To ensure account data is clean and accurate and with a purpose of all new account creation should be reviewed and approved. We re-designed the account creation process via the route from Lead Conversion. Below guideline is provided to frontline team for reference.
 
 ######
+<doc_link>[Account Creation Approval Process for Sales](https://pingcap.feishu.cn/wiki/PaadwLg1DiXfBPkQvZ7cmbSzn8g)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk outlines the workflow procedure for account creation through lead conversion, detailing the two main paths: creating a new account (requiring approvals from sales managers, regional operations, and potentially legal) or choosing an existing account. It serves as the high-level overview before the document explains each step in detail.</context>
+
 ## The overview of the Workflow procedure
 
 
@@ -35,7 +43,11 @@ All new accounts will be created from Leads, follow the workflow procedure below
       - After submitting, the Lead converted to an account status is reached.
 
 ######
+<doc_link>[Account Creation Approval Process for Sales](https://pingcap.feishu.cn/wiki/PaadwLg1DiXfBPkQvZ7cmbSzn8g)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk provides the detailed step-by-step workflow procedure for creating new accounts from leads in Salesforce, including the mandatory fields, approval process by Regional Ops/Sales Manager, legal review requirements, and final conversion to active account status.</context>
+
 ## The Detail of the Workflow procedure
 
 1. Sales create a New lead, click Save - same as before. (Lead: Name, Title, Email and Company here are mandatory if you are to convert to an account later. Suggest to fill these info at this stage.)

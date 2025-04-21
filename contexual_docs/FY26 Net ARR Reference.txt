@@ -1,4 +1,8 @@
+<doc_link>[FY26 Net ARR Reference](https://pingcap.feishu.cn/wiki/Rn0owRr55i3DJvkXDCzcQHMNnPf)</doc_link>
+<doc_version>fy26_v1.0</doc_version>
+
 <context>This is the introduction and definition section of the document, explaining Net ARR fundamentals, including its definition, formula, and baseline calculation methods. It precedes detailed case scenarios for different customer types in TiDB Cloud and TiDB Self Host environments.</context>
+
 # FY26 Net ARR Reference
 
 This article focuses on FY26 Net ARR reference for business enabling and operation, including the definition, formula, calculation scenarios of Net ARR for different customer cases in TiDB Cloud, TiDB Self Host (Consumption Base) and TiDB Self Host (Subscription Base), along with a special case. Key points include: ​
@@ -27,7 +31,11 @@ The baseline for the customer will be set as:
 For multiple year commitment contracts, baseline equals current year/half year(x2) commitment value.
 
 ######
+<doc_link>[FY26 Net ARR Reference](https://pingcap.feishu.cn/wiki/Rn0owRr55i3DJvkXDCzcQHMNnPf)</doc_link>
+<doc_version>fy26_v1.0</doc_version>
+
 <context>This chunk contains the document introduction and the main section on Net ARR scenarios, covering calculation examples for different customer cases across TiDB Cloud, TiDB Self Host (Consumption Base), and TiDB Self Host (Subscription Base). It includes detailed case studies with tables and step-by-step explanations of how Net ARR is calculated in various business situations, along with the special case regarding Cloud CP shortfall true-up revenue.</context>
+
 # FY26 Net ARR Reference
 
 This article focuses on FY26 Net ARR reference for business enabling and operation, including the definition, formula, calculation scenarios of Net ARR for different customer cases in TiDB Cloud, TiDB Self Host (Consumption Base) and TiDB Self Host (Subscription Base), along with a special case. Key points include: ​
@@ -239,7 +247,11 @@ For Booking ACV larger than Ending ARR, we use the Booking ACV as the baseline.
 - For Cloud CP shortfall true-up revenue, it will not be counted in ARR. i.e. Commitment Plan 100K, but only with 90K spending, the 10K will not be counted in ARR.
 
 ######
+<doc_link>[FY26 Net ARR Reference](https://pingcap.feishu.cn/wiki/Rn0owRr55i3DJvkXDCzcQHMNnPf)</doc_link>
+<doc_version>fy26_v1.0</doc_version>
+
 <context>This chunk contains the introduction and summary of the FY26 Net ARR Reference document, outlining the key points about Net ARR definition, formula, calculation scenarios for different customer cases, and special considerations. It also includes the reference section at the end of the document, providing a link to additional financial metrics definitions.</context>
+
 # FY26 Net ARR Reference
 
 This article focuses on FY26 Net ARR reference for business enabling and operation, including the definition, formula, calculation scenarios of Net ARR for different customer cases in TiDB Cloud, TiDB Self Host (Consumption Base) and TiDB Self Host (Subscription Base), along with a special case. Key points include: ​

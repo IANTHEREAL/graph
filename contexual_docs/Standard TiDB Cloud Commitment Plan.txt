@@ -1,11 +1,19 @@
+<doc_link>[Standard TiDB Cloud Commitment Plan](https://pingcap.feishu.cn/wiki/Prm7wdf4ci8PIekpjzncQ2t6nEh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This is the document title and metadata section that introduces the Standard TiDB Cloud Commitment Plan document, which outlines rules for service periods, commitment requirements, discount approvals, and other guidelines for TiDB Cloud subscription plans.</context>
+
 ## Standard TiDB Cloud Commitment Plan
 
 Draft by: Commerical Operation
 Last Update: April 23, 2024
 
 ######
+<doc_link>[Standard TiDB Cloud Commitment Plan](https://pingcap.feishu.cn/wiki/Prm7wdf4ci8PIekpjzncQ2t6nEh)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This chunk contains the main body of the TiDB Cloud Commitment Plan document, outlining the core service period and commitment rules including service duration options, discount approvals, commitment terms, support requirements, minimum commitment amounts, multi-year plan structures, consumption requirements, and special rules for renewals.</context>
+
 ## Service Period and Commitment Rules
 
 1. **Service Period** = 1, 2, or 3 Years.

@@ -1,4 +1,8 @@
+<doc_link>[PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Expansion](https://pingcap.feishu.cn/wiki/Lq5Ow2BY1iksXuksPUic83eZnec)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the complete SPIFF program document outlining incentives for expanding TiDB usage in existing customers, including program duration, qualifications, bonus structure based on renewal/expansion values, payment timing, tracking methods, and contact information.</context>
+
 # PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Expansion
 
 ## Overview

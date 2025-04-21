@@ -1,4 +1,8 @@
+<doc_link>[PingCAP FY25 Global SPIFF Program List](https://pingcap.feishu.cn/wiki/L6BcwjWfdirsBXkMIwCcms7vn2e)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the first section of the PingCAP FY25 Global SPIFF Program List document, introducing the SKA/KA Focus - Expansion incentive program for project teams, detailing criteria, payout tiers based on renewal ACV amounts, and additional bonuses for expansion revenue.</context>
+
 # PingCAP FY25 Global SPIFF Program List
 
 ## SPIFF - SKA/KA Focus - Expansion
@@ -17,7 +21,11 @@ More details: [#PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Expansion](
 
 
 ######
+<doc_link>[PingCAP FY25 Global SPIFF Program List](https://pingcap.feishu.cn/wiki/L6BcwjWfdirsBXkMIwCcms7vn2e)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk details the second SPIFF program (Customer Testimony) within PingCAP's FY25 Global SPIFF Program List, describing incentives for sales representatives who secure customer testimonials at three different levels, with specific payout amounts, limitations per customer, regional quotas, and a special bonus for the first three sales reps who achieve multiple testimonials from different customers.</context>
+
 # PingCAP FY25 Global SPIFF Program List
 
 ## SPIFF - SKA/KA Focus - Customer Testimony
@@ -43,7 +51,11 @@ Special incentive only for First 3 Sales Reps (first come first served): First 3
 More details: [PingCAP FY25 Global SPIFF Program for SKA/KA Focus - Customer Testimony](https://pingcap.feishu.cn/wiki/CKDKwR466ilCISkmEabcFHkenJd)
 
 ######
+<doc_link>[PingCAP FY25 Global SPIFF Program List](https://pingcap.feishu.cn/wiki/L6BcwjWfdirsBXkMIwCcms7vn2e)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk describes the MySQL Family Capture Program SPIFF, which is the third of five SPIFF programs outlined in the document. It offers a $3,000 one-time incentive to project teams who replace existing MySQL clusters with ARR increases of at least $100k.</context>
+
 # PingCAP FY25 Global SPIFF Program List
 
 ## SPIFF - MySQL Family Capture Program
@@ -57,7 +69,11 @@ SPIFF:  One-time incentive of $3,000 (once per customer in FY25)
 More details: [PingCAP FY25 Global SPIFF Program - MySQL Family Capture](https://pingcap.feishu.cn/wiki/SbeRwVObliKN6pkYKwhcrCgBn44)
 
 ######
+<doc_link>[PingCAP FY25 Global SPIFF Program List](https://pingcap.feishu.cn/wiki/L6BcwjWfdirsBXkMIwCcms7vn2e)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the fourth section of the PingCAP FY25 Global SPIFF Program List document, detailing the Cloud Commitment Plan incentive program that offers 2% of ACV as SPIFF for contracts meeting standard conditions, with special provisions for renewal cases based on incremental ACV growth.</context>
+
 # PingCAP FY25 Global SPIFF Program List
 
 ## SPIFF - Cloud Commitment Plan 
@@ -73,7 +89,11 @@ SPIFF is based on Incremental ACV growth * x% as above.
 Incremental ACV growth = New Commitment Plan ACV - 4 * the customer's total spending on TiDB Cloud in the previous quarter.
 
 ######
+<doc_link>[PingCAP FY25 Global SPIFF Program List](https://pingcap.feishu.cn/wiki/L6BcwjWfdirsBXkMIwCcms7vn2e)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This is the final SPIFF program in the document, focused on incentivizing multi-year OP contracts with higher rewards for longer commitments (3% for 2-year contracts and 6% for 3-year contracts), applicable only to new opportunities that meet high-quality criteria.</context>
+
 # PingCAP FY25 Global SPIFF Program List
 
 ## SPIFF - OP Multi-Year Contract 

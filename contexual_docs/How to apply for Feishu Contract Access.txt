@@ -1,4 +1,8 @@
+<doc_link>[How to apply for Feishu Contract Access](https://pingcap.feishu.cn/docx/E2YodoEYEohXqaxJnM3cJ01enEe)</doc_link>
+<doc_version>general_v1.0</doc_version>
+
 <context>This document provides instructions for requesting Feishu Contract Access in LARK, including the step-by-step application process and a link to the comprehensive user guide.</context>
+
 ## How to apply for Feishu Contract Access
 
 If you have the need to submit, review and approve contracts in LARK, you will have to apply for the Feishu Contract Access with the steps listed below:

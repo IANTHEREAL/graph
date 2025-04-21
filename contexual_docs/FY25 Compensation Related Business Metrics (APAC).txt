@@ -1,4 +1,8 @@
+<doc_link>[FY25 Compensation Related Business Metrics (APAC)](https://pingcap.feishu.cn/wiki/QZIYwkXjmirBAHkoHFGccQY4nph)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This document defines business metrics for APAC compensation in FY25, beginning with document metadata and a change log. The first section establishes criteria for "Brand New Cloud Customer" classification, including a definition of brand new customers (no Cloud Payment before FY25 with specific exceptions listed) and the threshold for Cloud Customer status (Quarterly Ending ARR >= $100K). This is followed by sections on High-Quality OP, SKA/KA segmentation, ATR (Available to Renew), Net ARR, and TiDB Cloud ACV calculation.</context>
+
 # FY25 Compensation Related Business Metrics (APAC)
 **Drafted by:** BE&O
 **Last Update:** May 21st, 2024
@@ -24,7 +28,11 @@
 ---
 
 ######
+<doc_link>[FY25 Compensation Related Business Metrics (APAC)](https://pingcap.feishu.cn/wiki/QZIYwkXjmirBAHkoHFGccQY4nph)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the document header and the definition of High-Quality OP (Opportunity) criteria for APAC compensation metrics, appearing early in a document that also covers Brand New Cloud Customer definitions, SKA/KA segmentation criteria, ATR (Available to Renew) metrics, and TiDB Cloud ACV calculation references.</context>
+
 # FY25 Compensation Related Business Metrics (APAC)
 **Drafted by:** BE&O
 **Last Update:** May 21st, 2024
@@ -41,7 +49,11 @@
 
 ---
 ######
+<doc_link>[FY25 Compensation Related Business Metrics (APAC)](https://pingcap.feishu.cn/wiki/QZIYwkXjmirBAHkoHFGccQY4nph)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the title and document metadata followed by the SKA/KA section which defines Strategic Key Account and Key Account criteria for PingCAP's APAC business. It appears in the middle of a document that outlines various business metrics related to compensation, including definitions for cloud customers, high-quality operations, ATR (Available to Renew), Net ARR, and TiDB Cloud ACV calculation.</context>
+
 # FY25 Compensation Related Business Metrics (APAC)
 **Drafted by:** BE&O
 **Last Update:** May 21st, 2024
@@ -70,7 +82,11 @@
 ---
 
 ######
+<doc_link>[FY25 Compensation Related Business Metrics (APAC)](https://pingcap.feishu.cn/wiki/QZIYwkXjmirBAHkoHFGccQY4nph)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the document header with metadata and update history, followed by the ATR (Available to Renew) definition section which explains how renewals are calculated for compensation purposes, including rules for early renewals and expansions.</context>
+
 # FY25 Compensation Related Business Metrics (APAC)
 **Drafted by:** BE&O
 **Last Update:** May 21st, 2024
@@ -88,7 +104,11 @@ No quota attainment. If it's renewal with expansion, the expansion part can be c
 ---
 
 ######
+<doc_link>[FY25 Compensation Related Business Metrics (APAC)](https://pingcap.feishu.cn/wiki/QZIYwkXjmirBAHkoHFGccQY4nph)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the document header with title, author information, and update history, followed by the Net ARR section which provides a reference link to the Sales documentation on Net ARR metrics. The document overall covers various business metrics related to compensation for the APAC region in FY25, including definitions for brand new cloud customers, high-quality operations, customer segmentation, and ATR (Available to Renew).</context>
+
 # FY25 Compensation Related Business Metrics (APAC)
 **Drafted by:** BE&O
 **Last Update:** May 21st, 2024
@@ -104,7 +124,11 @@ No quota attainment. If it's renewal with expansion, the expansion part can be c
 ---
 
 ######
+<doc_link>[FY25 Compensation Related Business Metrics (APAC)](https://pingcap.feishu.cn/wiki/QZIYwkXjmirBAHkoHFGccQY4nph)</doc_link>
+<doc_version>fy25_v1.0</doc_version>
+
 <context>This chunk contains the document header with title, drafting information, and update history, along with the final section about TiDB Cloud ACV Calculation which provides a link to metrics definitions for global business. It serves as both the introduction and conclusion to a document covering compensation-related business metrics for APAC region in FY25.</context>
+
 # FY25 Compensation Related Business Metrics (APAC)
 **Drafted by:** BE&O
 **Last Update:** May 21st, 2024

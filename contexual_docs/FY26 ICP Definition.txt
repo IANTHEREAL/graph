@@ -1,4 +1,8 @@
+<doc_link>[FY26 ICP Definition](https://pingcap.feishu.cn/wiki/G0Bywpo9aitj4vkPic2caRksnud)</doc_link>
+<doc_version>fy26_v1.0</doc_version>
+
 <context>This document defines PingCAP's 10 Ideal Customer Profiles (ICPs) for FY26, listing industry verticals with their hierarchical classifications and examples. It includes SFDC tagging guidelines for proper account categorization in the CRM system.</context>
+
 ## FY26 ICP Definition
 
 Draft by: Business Enabling and Operation
