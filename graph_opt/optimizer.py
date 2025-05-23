@@ -615,11 +615,19 @@ def process_redundancy_relationship_issue(llm_client, relationship_model, row_ke
             if len(entity_pairs) != 1 and len(entity_pairs) != 2:
                 print(f"skip, incapabble to merge relationship between different entities - ({row_key}) {relationships}")
                 return True
-                
-            chunk_ids = [r['chunk_id'] for r in relationships.values() if r.get('chunk_id') is not None]
+            
+            documents_set = set()
+            chunks_set = set()
+            for relationship in relationships.values():
+                print(f"relationship: {relationship}")
+                if relationship.get('document_id') is not None:
+                    documents_set.add(relationship['document_id'])
+                if relationship.get('chunk_id') is not None:
+                    chunks_set.add(relationship['chunk_id'])
+
             chunks = []
-            if len(chunk_ids) > 0:
-                chunks = get_chunks_by_ids(session, chunk_ids)
+            if len(chunks_set) > 0:
+                chunks = get_chunks_by_ids(session, list(chunks_set))
             
             merged_relationship = merge_relationship(llm_client, row_issue, [], relationships, chunks)
             print("merged relationship", merged_relationship)
@@ -631,6 +639,14 @@ def process_redundancy_relationship_issue(llm_client, relationship_model, row_ke
                     description=merged_relationship["description"],
                     description_vec=get_text_embedding(merged_relationship["description"]),
                 )
+                new_meta = next(iter(relationships.values())).get('meta', {})
+                if len(documents_set) > 0:
+                    new_meta['document_ids'] = list(documents_set)
+                    new_relationship.document_id = list(documents_set)[0]
+                if len(chunks_set) > 0:
+                    new_meta['chunk_ids'] = list(chunks_set)
+                    new_relationship.chunk_id = list(chunks_set)[0]
+                new_relationship.meta = new_meta
                 session.add(new_relationship)
                 session.flush()
                 merged_relationship_id = new_relationship.id

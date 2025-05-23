@@ -51,6 +51,12 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
     if os.path.exists(tmp_test_data_file):
         issue_df = pd.read_pickle(tmp_test_data_file)
     else:
+        issue_df = pd.DataFrame(columns=['graph', 'question', 'issue', 'confidence', 'sonnet-3.7-critic', 'deepseek-R1-critic', 'gemini-2.5-pro-critic', 'resolved'])
+
+    new_issue_list = []
+    # if having unresolved issue, we need to handle these issue first
+    if issue_df[(issue_df['resolved'] == False) & (issue_df['confidence'] >= 1.8)].shape[0] == 0:
+        print("no unresolved issue, we need to retrieve new issues")
         retrieval_results = graph_retrieve(
             sonnet_critic_client,
             knowledge_client,
@@ -71,7 +77,6 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
 
         analysis_list = extract_issues(response)
         print("analysis:", analysis_list)
-        issue_list = []
         for analysis in analysis_list.values():
                 for issue in analysis:
                     issue_data = {
@@ -84,16 +89,14 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                         'gemini-2.5-pro-critic': None,
                         'resolved': False
                     }
-                    issue_list.append(issue_data)
+                    new_issue_list.append(issue_data)
 
-        if len(issue_list) == 0:
-            print("No issue found")
-            exit(0)
+        if len(new_issue_list) > 0:
+            issue_df = pd.concat([issue_df, pd.DataFrame(new_issue_list)])
 
-        issue_df = pd.DataFrame(issue_list)
-        issue_df.to_pickle(tmp_test_data_file)
+    issue_df.to_pickle(tmp_test_data_file)
 
-    print(f"Found issues {issue_df.shape[0]}")
+    print(f"Found new issues {len(new_issue_list)}, total issues {issue_df.shape[0]}")
 
     for index, row in issue_df.iterrows():
         print(index, row['issue'])
@@ -233,7 +236,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
             }
 
             issue_key = get_issue_key(redundancy_entity_issue)
-            if pending_redundancy_entity_issue_list.get(issue_key, None) is not None:
+            if pending_redundancy_entity_issue_list.get(issue_key, None) is not None or issue_cache.get(issue_key, False):
                 continue
             
             redundancy_entity_issue['issue_key'] = issue_key
@@ -272,6 +275,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 success = future.result()
                 if success:
                     issue = batch_issues[issue_key]
+                    issue_cache[issue_key] = True
                     row_indexes = issue['row_indexes']
                     for row_index in row_indexes:
                         issue_df.at[row_index, 'resolved'] = True
@@ -395,7 +399,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
             }
 
             issue_key = get_issue_key(redundancy_relationship_issue)
-            if pending_redundancy_relationships_issue_list.get(issue_key, None) is not None:
+            if pending_redundancy_relationships_issue_list.get(issue_key, None) is not None or issue_cache.get(issue_key, False):
                 continue
             
             redundancy_relationship_issue['issue_key'] = issue_key
@@ -435,6 +439,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 success = future.result()
                 if success:
                     issue = batch_issues[issue_key]
+                    issue_cache[issue_key] = True
                     row_indexes = issue['row_indexes']
                     for row_index in row_indexes:
                         issue_df.at[row_index, 'resolved'] = True

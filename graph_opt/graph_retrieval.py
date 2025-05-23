@@ -58,7 +58,7 @@ def get_relationship_by_ids(db: Session, relationship_ids: list[int]):
             source_entity.id as source_entity_id,
             target_entity.name as target_entity_name,
             target_entity.id as target_entity_id,
-            rel.description, rel.chunk_id
+            rel.description, rel.chunk_id, rel.meta, rel.document_id
         FROM relationships_210001 as rel
         LEFT JOIN entities_210001 as source_entity ON rel.source_entity_id = source_entity.id
         LEFT JOIN entities_210001 as target_entity ON rel.target_entity_id = target_entity.id
@@ -85,6 +85,9 @@ def get_relationship_by_ids(db: Session, relationship_ids: list[int]):
     return background_relationships
 
 def get_chunks_by_ids(db: Session, chunk_ids: list[int]):
+    if len(chunk_ids) == 0:
+        return []
+
     sql = text(f"""
         SELECT id, text, source_uri, document_id from chunks_210001 where id in :chunk_ids
     """)
