@@ -6,7 +6,9 @@ embedding_model = openai.OpenAI()
 
 def get_text_embedding(text: str, model="text-embedding-3-small"):
     text = text.replace("\n", " ")
-    return embedding_model.embeddings.create(input=[text], model=model).data[0].embedding
+    return (
+        embedding_model.embeddings.create(input=[text], model=model).data[0].embedding
+    )
 
 
 def get_entity_description_embedding(name: str, description: str):
