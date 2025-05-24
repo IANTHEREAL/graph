@@ -4,26 +4,40 @@ import logging
 from setting.db import SessionLocal
 from utils.json_utils import extract_json
 from utils.token import calculate_tokens
-from graph_opt.graph_retrieval import query_entities_by_ids, get_relationship_by_entity_ids, get_chunks_by_ids, get_relationship_by_ids
-from llm.embedding import get_entity_description_embedding, get_entity_metadata_embedding, get_text_embedding
+from graph_opt.graph_retrieval import (
+    query_entities_by_ids,
+    get_relationship_by_entity_ids,
+    get_chunks_by_ids,
+    get_relationship_by_ids,
+)
+from llm.embedding import (
+    get_entity_description_embedding,
+    get_entity_metadata_embedding,
+    get_text_embedding,
+)
 
 ##### refine entity
+
 
 def refine_entity(llm_client, issue, entity, relationships, chunks):
 
     format_relationships = []
+    consumed_tokens = 0
     for relationship in relationships.values():
-        format_relationships.append(f"""
-        {relationship['source_entity_name']} -> {relationship['target_entity_name']}: {relationship['description']}
-        """)
+        relationship_str = f"""{relationship['source_entity_name']} -> {relationship['target_entity_name']}: {relationship['description']}"""
+        consumed_tokens += calculate_tokens(relationship_str)
+        if consumed_tokens > 30000:
+            break
+        format_relationships.append(relationship_str)
 
     consumed_tokens = calculate_tokens(json.dumps(format_relationships, indent=2))
 
     # make the token won't exceed 65536
     selected_chunks = []
     for chunk in chunks:
-        consumed_tokens += calculate_tokens(chunk['text'])
-        if consumed_tokens > 65536:
+        consumed_tokens += calculate_tokens(chunk["text"])
+        if consumed_tokens > 70000:
+            selected_chunks = selected_chunks[:-1]
             break
         selected_chunks.append(chunk)
 
@@ -117,7 +131,9 @@ Based on all the provided information and guidelines, exercising your expert jud
 
     try:
         token_count = calculate_tokens(improve_entity_quality_prompt)
-        response = llm_client.generate(improve_entity_quality_prompt, max_tokens=token_count+1024)
+        response = llm_client.generate(
+            improve_entity_quality_prompt, max_tokens=token_count + 1024
+        )
         json_str = extract_json(response)
         json_str = "".join(
             char for char in json_str if ord(char) >= 32 or char in "\r\t"
@@ -127,82 +143,122 @@ Based on all the provided information and guidelines, exercising your expert jud
         print("Failed to improve entity quality", e)
         return None
 
-def process_entity_quality_issue(llm_client, entity_model, relationship_model, row_index, row_issue):
+
+def process_entity_quality_issue(
+    llm_client, entity_model, relationship_model, row_index, row_issue
+):
     print(f"start to process entity {row_index}")
     with SessionLocal() as session:
         try:
-            for affected_id in row_issue['affected_ids']:
+            for affected_id in row_issue["affected_ids"]:
                 entity_quality_issue = {
-                    'issue_type': row_issue['issue_type'],
-                    'reasoning': row_issue['reasoning'],
-                    'affected_ids': [affected_id],
+                    "issue_type": row_issue["issue_type"],
+                    "reasoning": row_issue["reasoning"],
+                    "affected_ids": [affected_id],
                 }
 
                 print(f"process entity({row_index}), {entity_quality_issue}")
 
-                entities = query_entities_by_ids(session, entity_quality_issue['affected_ids'])
+                entities = query_entities_by_ids(
+                    session, entity_quality_issue["affected_ids"]
+                )
                 print(f"Pendding entities({row_index})", entities)
                 if len(entities) == 0:
                     print(f"Failed to find entity({row_index}) {affected_id}")
                     return False
-                    
-                relationships = get_relationship_by_entity_ids(session, entity_quality_issue['affected_ids'])        
-                chunk_ids = [r['chunk_id'] for r in relationships.values() if r.get('chunk_id') is not None]
-                chunks = get_chunks_by_ids(session, chunk_ids)
-                
-                updated_entity = refine_entity(llm_client,entity_quality_issue, entities, relationships, chunks)
-                print("updated entity", updated_entity)
-                
-                if updated_entity is not None and isinstance(updated_entity,dict) and "name" in updated_entity and "description" in updated_entity and "meta" in updated_entity:
-                        existing_entity = session.query(entity_model).filter(entity_model.id == affected_id).first()
-                        if existing_entity is not None:
-                            existing_entity.name = updated_entity["name"]
-                            existing_entity.description = updated_entity["description"]
-                            existing_entity.meta = updated_entity.get("meta", {})
-                            existing_entity.description_vec = get_entity_description_embedding(updated_entity["name"], updated_entity["description"])
-                            existing_entity.meta_vec = get_entity_metadata_embedding(updated_entity.get("meta", {}))
-                            session.add(existing_entity)
-                        else:
-                            new_entity = entity_model(
-                                id=affected_id,
-                                name=updated_entity["name"],
-                                description=updated_entity["description"],
-                                meta=updated_entity.get("meta", {}),
-                                description_vec=get_entity_description_embedding(updated_entity["name"], updated_entity["description"]),
-                                meta_vec=get_entity_metadata_embedding(updated_entity.get("meta", {}))
-                            )
-                            session.add(new_entity)
 
-                        print(f"Success update entity({row_index}) {affected_id} to {updated_entity}")
+                relationships = get_relationship_by_entity_ids(
+                    session, entity_quality_issue["affected_ids"]
+                )
+                chunk_ids = [
+                    r["chunk_id"]
+                    for r in relationships.values()
+                    if r.get("chunk_id") is not None
+                ]
+                chunks = get_chunks_by_ids(session, chunk_ids)
+
+                updated_entity = refine_entity(
+                    llm_client, entity_quality_issue, entities, relationships, chunks
+                )
+                print("updated entity", updated_entity)
+
+                if (
+                    updated_entity is not None
+                    and isinstance(updated_entity, dict)
+                    and "name" in updated_entity
+                    and "description" in updated_entity
+                    and "meta" in updated_entity
+                ):
+                    existing_entity = (
+                        session.query(entity_model)
+                        .filter(entity_model.id == affected_id)
+                        .first()
+                    )
+                    if existing_entity is not None:
+                        existing_entity.name = updated_entity["name"]
+                        existing_entity.description = updated_entity["description"]
+                        existing_entity.meta = updated_entity.get("meta", {})
+                        existing_entity.description_vec = (
+                            get_entity_description_embedding(
+                                updated_entity["name"], updated_entity["description"]
+                            )
+                        )
+                        existing_entity.meta_vec = get_entity_metadata_embedding(
+                            updated_entity.get("meta", {})
+                        )
+                        session.add(existing_entity)
+                    else:
+                        new_entity = entity_model(
+                            id=affected_id,
+                            name=updated_entity["name"],
+                            description=updated_entity["description"],
+                            meta=updated_entity.get("meta", {}),
+                            description_vec=get_entity_description_embedding(
+                                updated_entity["name"], updated_entity["description"]
+                            ),
+                            meta_vec=get_entity_metadata_embedding(
+                                updated_entity.get("meta", {})
+                            ),
+                        )
+                        session.add(new_entity)
+
+                    print(
+                        f"Success update entity({row_index}) {affected_id} to {updated_entity}"
+                    )
                 else:
-                    print(f"Failed to refine entity({row_index}), which is invalid or empty.")
+                    print(
+                        f"Failed to refine entity({row_index}), which is invalid or empty."
+                    )
                     return False
             session.commit()
         except Exception as e:
             logging.error(f"Failed to refine entity {row_index}: {e}", exc_info=True)
             session.rollback()
             return False
-            
+
     return True
 
 
 ##### merge entities
 
+
 def merge_entity(llm_client, issue, entities, relationships, chunks):
 
     format_relationships = []
+    consumed_tokens = 0
     for relationship in relationships.values():
-        format_relationships.append(f"""
-        {relationship['source_entity_name']} -> {relationship['target_entity_name']}: {relationship['description']}
-        """)
-
-    consumed_tokens = calculate_tokens(json.dumps(format_relationships, indent=2))
+        relationship_str = f"""{relationship['source_entity_name']} -> {relationship['target_entity_name']}: {relationship['description']}"""
+        consumed_tokens += calculate_tokens(relationship_str)
+        if consumed_tokens > 30000:
+            break
+        format_relationships.append(relationship_str)
 
     # make the token won't exceed 65536
     selected_chunks = []
     for chunk in chunks:
-        consumed_tokens += calculate_tokens(chunk['text'])
+        consumed_tokens += calculate_tokens(chunk["text"])
         if consumed_tokens > 70000:
+            selected_chunks = selected_chunks[:-1]
             break
         selected_chunks.append(chunk)
 
@@ -290,6 +346,8 @@ def merge_entity(llm_client, issue, entities, relationships, chunks):
     """
 
     try:
+        token_count = calculate_tokens(merge_entity_prompt)
+        print(f"merge entity prompt token count: {token_count}")
         response = llm_client.generate(merge_entity_prompt, max_tokens=8192)
         json_str = extract_json(response)
         json_str = "".join(
@@ -299,57 +357,82 @@ def merge_entity(llm_client, issue, entities, relationships, chunks):
     except Exception as e:
         print("Failed to merge entity", e)
         return None
-    
-def process_redundancy_entity_issue(llm_client, entity_model, relationship_model, row_key, row_issue):
+
+
+def process_redundancy_entity_issue(
+    llm_client, entity_model, relationship_model, row_key, row_issue
+):
     print(f"start to merge entity({row_key}) for {row_issue}")
     with SessionLocal() as session:
         try:
-            entities = query_entities_by_ids(session, row_issue['affected_ids'])
+            entities = query_entities_by_ids(session, row_issue["affected_ids"])
             print(f"pending entities({row_key})", entities)
             if len(entities) == 0:
                 print(f"Failed to find entity({row_key}) {row_issue['affected_ids']}")
                 return False
-                
-            relationships = get_relationship_by_entity_ids(session, row_issue['affected_ids'])        
-            chunk_ids = [r['chunk_id'] for r in relationships.values() if r.get('chunk_id') is not None]
+
+            relationships = get_relationship_by_entity_ids(
+                session, row_issue["affected_ids"]
+            )
+            chunk_ids = [
+                r["chunk_id"]
+                for r in relationships.values()
+                if r.get("chunk_id") is not None
+            ]
             chunks = get_chunks_by_ids(session, chunk_ids)
-            
-            merged_entity = merge_entity(llm_client, row_issue, entities, relationships, chunks)
+
+            merged_entity = merge_entity(
+                llm_client, row_issue, entities, relationships, chunks
+            )
             print(f"merged entity({row_key}) {merged_entity}")
-            
-            if merged_entity is not None and isinstance(merged_entity,dict) and "name" in merged_entity and "description" in merged_entity and "meta" in merged_entity:
+
+            if (
+                merged_entity is not None
+                and isinstance(merged_entity, dict)
+                and "name" in merged_entity
+                and "description" in merged_entity
+                and "meta" in merged_entity
+            ):
                 new_entity = entity_model(
                     name=merged_entity["name"],
                     description=merged_entity["description"],
                     meta=merged_entity.get("meta", {}),
-                    description_vec=get_entity_description_embedding(merged_entity["name"], merged_entity["description"]),
-                    meta_vec=get_entity_metadata_embedding(merged_entity.get("meta", {}))
+                    description_vec=get_entity_description_embedding(
+                        merged_entity["name"], merged_entity["description"]
+                    ),
+                    meta_vec=get_entity_metadata_embedding(
+                        merged_entity.get("meta", {})
+                    ),
                 )
                 session.add(new_entity)
                 session.flush()
                 merged_entity_id = new_entity.id
-                print(f"Merged entity({row_key}) created with ID: {new_entity.name}({merged_entity_id})")
-                original_entity_ids = {entity['id'] for entity in entities.values()}
-                 # Step 2: Update relationships to reference the merged entity
+                print(
+                    f"Merged entity({row_key}) created with ID: {new_entity.name}({merged_entity_id})"
+                )
+                original_entity_ids = {entity["id"] for entity in entities.values()}
+                # Step 2: Update relationships to reference the merged entity
                 # Bulk update source entity IDs
                 session.execute(
-                    relationship_model.__table__.update().where(
-                        relationship_model.source_entity_id.in_(original_entity_ids)
-                    ).values(source_entity_id=merged_entity_id)
+                    relationship_model.__table__.update()
+                    .where(relationship_model.source_entity_id.in_(original_entity_ids))
+                    .values(source_entity_id=merged_entity_id)
                 )
 
                 # Bulk update target entity IDs
                 session.execute(
-                    relationship_model.__table__.update().where(
-                        relationship_model.target_entity_id.in_(original_entity_ids)
-                    ).values(target_entity_id=merged_entity_id)
+                    relationship_model.__table__.update()
+                    .where(relationship_model.target_entity_id.in_(original_entity_ids))
+                    .values(target_entity_id=merged_entity_id)
                 )
 
-                print(f"Relationships updated for merged entity({row_key}) {merged_entity_id}")
+                print(
+                    f"Relationships updated for merged entity({row_key}) {merged_entity_id}"
+                )
 
                 session.commit()  # Commit the relationship updates
                 print(f"Merged entity({row_key}) processing complete.")
-                return True   
+                return True
             else:
                 print(f"Failed to merge entity({row_key}), which is invalid or empty.")
                 return False
@@ -357,24 +440,29 @@ def process_redundancy_entity_issue(llm_client, entity_model, relationship_model
             logging.error(f"Failed to merge entity({row_key}): {e}", exc_info=True)
             session.rollback()
             return False
-        
+
+
 ##### refine relationship quality
+
 
 def refine_relationship_quality(llm_client, issue, entities, relationships, chunks):
     format_relationships = []
+    consumed_tokens = 0
     for relationship in relationships.values():
-        format_relationships.append(f"""
-        {relationship['source_entity_name']} -> {relationship['target_entity_name']}: {relationship['description']}
-        """)
+        relationship_str = f"""{relationship['source_entity_name']} -> {relationship['target_entity_name']}: {relationship['description']}"""
+        consumed_tokens += calculate_tokens(relationship_str)
+        if consumed_tokens > 30000:
+            break
+        format_relationships.append(relationship_str)
 
     consumed_tokens = calculate_tokens(json.dumps(format_relationships, indent=2))
     selected_chunks = []
     for chunk in chunks:
-        consumed_tokens += calculate_tokens(chunk['text'])
-        if consumed_tokens > 65536:
+        consumed_tokens += calculate_tokens(chunk["text"])
+        if consumed_tokens > 70000:
+            selected_chunks = selected_chunks[:-1]
             break
         selected_chunks.append(chunk)
-    
 
     refine_relationship_quality_prompt = f"""You are an expert assistant specializing in database technologies and knowledge graph curation, tasked with rectifying quality issues within a single relationship to ensure its meaning is clear, accurate, and truthful by providing an improved description.
 
@@ -444,7 +532,7 @@ Return a single JSON object representing the improved relationship. The structur
 
 Based on all the provided information and guidelines, exercising your expert judgment with a strict adherence to truthfulness, generate **only the new, improved relationship description string.**
 """
-    
+
     try:
         response = llm_client.generate(refine_relationship_quality_prompt)
         json_str = extract_json(response)
@@ -456,68 +544,103 @@ Based on all the provided information and guidelines, exercising your expert jud
         print("Failed to refine relationship quality", e)
         return None
 
-def process_relationship_quality_issue(llm_client, relationship_model, row_key, row_issue):
+
+def process_relationship_quality_issue(
+    llm_client, relationship_model, row_key, row_issue
+):
     print(f"start to process relationship({row_key})")
     with SessionLocal() as session:
         try:
-            for affected_id in row_issue['affected_ids']:
+            for affected_id in row_issue["affected_ids"]:
                 relationship_quality_issue = {
-                    'issue_type': row_issue['issue_type'],
-                    'reasoning': row_issue['reasoning'],
-                    'affected_ids': [affected_id],
+                    "issue_type": row_issue["issue_type"],
+                    "reasoning": row_issue["reasoning"],
+                    "affected_ids": [affected_id],
                 }
 
                 print(f"process relationship({row_key}), {relationship_quality_issue}")
 
-                relationships = get_relationship_by_ids(session, relationship_quality_issue['affected_ids'])        
+                relationships = get_relationship_by_ids(
+                    session, relationship_quality_issue["affected_ids"]
+                )
                 print(f"Pendding relationships({row_key})", relationships)
                 if len(relationships) == 0:
                     print(f"Failed to find relationship({row_key}) {affected_id}")
                     return False
-                         
-                chunk_ids = [r['chunk_id'] for r in relationships.values() if r.get('chunk_id') is not None]
+
+                chunk_ids = [
+                    r["chunk_id"]
+                    for r in relationships.values()
+                    if r.get("chunk_id") is not None
+                ]
                 chunks = get_chunks_by_ids(session, chunk_ids)
-                
-                updated_relationship = refine_relationship_quality(llm_client, relationship_quality_issue, [], relationships, chunks)
+
+                updated_relationship = refine_relationship_quality(
+                    llm_client, relationship_quality_issue, [], relationships, chunks
+                )
                 print("updated relationship", updated_relationship)
-                
-                if updated_relationship is not None and isinstance(updated_relationship,dict) and "description" in updated_relationship:
-                        existing_relationship = session.query(relationship_model).filter(relationship_model.id == affected_id).first()
-                        if existing_relationship is not None:
-                            existing_relationship.description = updated_relationship["description"]
-                            existing_relationship.description_vec = get_text_embedding(updated_relationship["description"])
-                            session.add(existing_relationship)
-                            print(f"Success update relationship({row_key}) {affected_id} to {updated_relationship}")
-                        else:
-                            print(f"Failed to find relationship({row_key}) {affected_id}")
-                            return False
+
+                if (
+                    updated_relationship is not None
+                    and isinstance(updated_relationship, dict)
+                    and "description" in updated_relationship
+                ):
+                    existing_relationship = (
+                        session.query(relationship_model)
+                        .filter(relationship_model.id == affected_id)
+                        .first()
+                    )
+                    if existing_relationship is not None:
+                        existing_relationship.description = updated_relationship[
+                            "description"
+                        ]
+                        existing_relationship.description_vec = get_text_embedding(
+                            updated_relationship["description"]
+                        )
+                        session.add(existing_relationship)
+                        print(
+                            f"Success update relationship({row_key}) {affected_id} to {updated_relationship}"
+                        )
+                    else:
+                        print(f"Failed to find relationship({row_key}) {affected_id}")
+                        return False
                 else:
-                    print(f"Failed to refine relationship({row_key}), which is invalid or empty.")
+                    print(
+                        f"Failed to refine relationship({row_key}), which is invalid or empty."
+                    )
                     return False
             session.commit()
         except Exception as e:
-            logging.error(f"Failed to refine relationship {row_key}: {e}", exc_info=True)
+            logging.error(
+                f"Failed to refine relationship {row_key}: {e}", exc_info=True
+            )
             session.rollback()
             return False
-            
+
     return True
+
 
 ##### merge redundancy relationship
 
+
 def merge_relationship(llm_client, issue, entities, relationships, chunks):
     format_relationships = []
+    consumed_tokens = 0
     for relationship in relationships.values():
-        format_relationships.append(f"""
-        {relationship['source_entity_name']}(source_entity_id={relationship['source_entity_id']}) -> {relationship['target_entity_name']}(target_entity_id={relationship['target_entity_id']}): {relationship['description']}
-        """)
+        relationship_str = f"""{relationship['source_entity_name']}(source_entity_id={relationship['source_entity_id']}) -> {relationship['target_entity_name']}(target_entity_id={relationship['target_entity_id']}): {relationship['description']}"""
+        consumed_tokens += calculate_tokens(relationship_str)
+        if consumed_tokens > 30000:
+            break
+        format_relationships.append(relationship_str)
 
     consumed_tokens = calculate_tokens(json.dumps(format_relationships, indent=2))
 
     # make the token won't exceed 65536
     selected_chunks = []
     for chunk in chunks:
-        consumed_tokens += calculate_tokens(chunk['text'])
+        consumed_tokens += calculate_tokens(chunk["text"])
         if consumed_tokens > 70000:
+            selected_chunks = selected_chunks[:-1]
             break
         selected_chunks.append(chunk)
 
@@ -584,7 +707,7 @@ The structure MUST be as follows:
 
 Based on all the provided information and guidelines, exercising your expert judgment to infer and synthesize within the given constraints, generate the merged relationship.
 """
-    
+
     try:
         response = llm_client.generate(merge_relationship_prompt, max_tokens=8192)
         json_str = extract_json(response)
@@ -595,63 +718,102 @@ Based on all the provided information and guidelines, exercising your expert jud
     except Exception as e:
         print("Failed to merge relationship", e)
         return None
-    
-def process_redundancy_relationship_issue(llm_client, relationship_model, row_key, row_issue):
+
+
+def process_redundancy_relationship_issue(
+    llm_client, relationship_model, row_key, row_issue
+):
     print(f"start to merge relationships {row_key} for {row_issue}")
     with SessionLocal() as session:
         try:
-            relationships = get_relationship_by_ids(session, row_issue['affected_ids'])        
+            relationships = get_relationship_by_ids(session, row_issue["affected_ids"])
             print(f"pending relationships({row_key})", relationships)
             if len(relationships) < 2:
-                print(f"skip, not enough relationships to merge - ({row_key}) {row_issue['affected_ids']}")
+                print(
+                    f"skip, not enough relationships to merge - ({row_key}) {row_issue['affected_ids']}"
+                )
                 return True
-            
+
             entity_pairs = set()
             for relationship in relationships.values():
                 print(f"relationship: {relationship}")
-                entity_pairs.add(relationship['source_entity_id'])
-                entity_pairs.add(relationship['target_entity_id'])
-            
+                entity_pairs.add(relationship["source_entity_id"])
+                entity_pairs.add(relationship["target_entity_id"])
+
             if len(entity_pairs) != 1 and len(entity_pairs) != 2:
-                print(f"skip, incapabble to merge relationship between different entities - ({row_key}) {relationships}")
+                print(
+                    f"skip, incapabble to merge relationship between different entities - ({row_key}) {relationships}"
+                )
                 return True
-            
+
             documents_set = set()
             chunks_set = set()
             for relationship in relationships.values():
                 print(f"relationship: {relationship}")
-                if relationship.get('document_id') is not None:
-                    documents_set.add(relationship['document_id'])
-                if relationship.get('chunk_id') is not None:
-                    chunks_set.add(relationship['chunk_id'])
+                if relationship.get("document_id") is not None:
+                    documents_set.add(relationship["document_id"])
+                if relationship.get("chunk_id") is not None:
+                    chunks_set.add(relationship["chunk_id"])
 
             chunks = []
             if len(chunks_set) > 0:
                 chunks = get_chunks_by_ids(session, list(chunks_set))
-            
-            merged_relationship = merge_relationship(llm_client, row_issue, [], relationships, chunks)
+
+            merged_relationship = merge_relationship(
+                llm_client, row_issue, [], relationships, chunks
+            )
             print("merged relationship", merged_relationship)
-            
-            if merged_relationship is not None and isinstance(merged_relationship,dict) and "description" in merged_relationship and "source_entity_id" in merged_relationship and "target_entity_id" in merged_relationship:
+
+            # Get the actual entity IDs from the original relationships (they should all be the same)
+            first_relationship = next(iter(relationships.values()))
+
+            if (
+                merged_relationship is not None
+                and isinstance(merged_relationship, dict)
+                and "description" in merged_relationship
+            ):
+                candidate_source_entity_id = first_relationship["source_entity_id"]
+                candidate_target_entity_id = first_relationship["target_entity_id"]
+
+                actual_source_entity_id = candidate_source_entity_id
+                if merged_relationship[
+                    "source_entity_id"
+                ] is not None and merged_relationship["source_entity_id"] in (
+                    candidate_source_entity_id,
+                    candidate_target_entity_id,
+                ):
+                    actual_source_entity_id = merged_relationship["source_entity_id"]
+
+                # other candidate entity id
+                actual_target_entity_id = candidate_target_entity_id
+                if actual_source_entity_id == candidate_target_entity_id:
+                    actual_target_entity_id = candidate_source_entity_id
+
                 new_relationship = relationship_model(
-                    source_entity_id=merged_relationship["source_entity_id"],
-                    target_entity_id=merged_relationship["target_entity_id"],
+                    source_entity_id=actual_source_entity_id,
+                    target_entity_id=actual_target_entity_id,
                     description=merged_relationship["description"],
-                    description_vec=get_text_embedding(merged_relationship["description"]),
+                    description_vec=get_text_embedding(
+                        merged_relationship["description"]
+                    ),
                 )
-                new_meta = next(iter(relationships.values())).get('meta', {})
+                new_meta = next(iter(relationships.values())).get("meta", {})
                 if len(documents_set) > 0:
-                    new_meta['document_ids'] = list(documents_set)
+                    new_meta["document_ids"] = list(documents_set)
                     new_relationship.document_id = list(documents_set)[0]
                 if len(chunks_set) > 0:
-                    new_meta['chunk_ids'] = list(chunks_set)
+                    new_meta["chunk_ids"] = list(chunks_set)
                     new_relationship.chunk_id = list(chunks_set)[0]
                 new_relationship.meta = new_meta
                 session.add(new_relationship)
                 session.flush()
                 merged_relationship_id = new_relationship.id
-                print(f"Merged relationship created with ID: {new_relationship.source_entity_id} -> {new_relationship.target_entity_id}({merged_relationship_id})")
-                original_relationship_ids = {relationship['id'] for relationship in relationships.values()}
+                print(
+                    f"Merged relationship created with ID: {new_relationship.source_entity_id} -> {new_relationship.target_entity_id}({merged_relationship_id})"
+                )
+                original_relationship_ids = {
+                    relationship["id"] for relationship in relationships.values()
+                }
                 # remove the original relationships
                 session.execute(
                     relationship_model.__table__.delete().where(
@@ -662,9 +824,11 @@ def process_redundancy_relationship_issue(llm_client, relationship_model, row_ke
                 print(f"Deleted {len(original_relationship_ids)} relationships")
                 session.commit()  # Commit the relationship updates
                 print(f"Merged relationship {row_key} processing complete.")
-                return True   
+                return True
             else:
-                print(f"Failed to merge relationship({row_key}), which is invalid or empty.")
+                print(
+                    f"Failed to merge relationship({row_key}), which is invalid or empty."
+                )
                 return False
         except Exception as e:
             logging.error(f"Failed to merge relationship {row_key}: {e}", exc_info=True)
