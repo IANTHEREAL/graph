@@ -152,6 +152,8 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
         .any()
     ):
         issue_df = evaluate_issue(critic_clients, issue_df)
+
+    issue_df.to_pickle(tmp_test_data_file)
     print(f"Identified {issue_df[issue_df['confidence'] >= 1.8].shape[0]} valid issues")
 
     issue_cache = {}
@@ -236,7 +238,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 futures[
                     executor.submit(
                         process_entity_quality_issue,
-                        optimization_llm_client,
+                        sonnet_critic_client,
                         Entity,
                         Relationship,
                         row_issue["row_index"],
@@ -366,7 +368,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 futures[
                     executor.submit(
                         process_redundancy_entity_issue,
-                        optimization_llm_client,
+                        sonnet_critic_client,
                         Entity,
                         Relationship,
                         row_issue["issue_key"],
@@ -452,7 +454,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 futures[
                     executor.submit(
                         process_relationship_quality_issue,
-                        optimization_llm_client,
+                        sonnet_critic_client,
                         Relationship,
                         row_issue["row_index"],
                         row_issue,
@@ -586,7 +588,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 futures[
                     executor.submit(
                         process_redundancy_relationship_issue,
-                        optimization_llm_client,
+                        sonnet_critic_client,
                         Relationship,
                         row_issue["issue_key"],
                         row_issue,
