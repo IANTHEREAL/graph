@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime
 
 from setting.db import SessionLocal
 from utils.json_utils import extract_json
@@ -416,14 +417,20 @@ def process_redundancy_entity_issue(
                 session.execute(
                     relationship_model.__table__.update()
                     .where(relationship_model.source_entity_id.in_(original_entity_ids))
-                    .values(source_entity_id=merged_entity_id)
+                    .values(
+                        source_entity_id=merged_entity_id,
+                        last_modified_at=datetime.now(),
+                    )
                 )
 
                 # Bulk update target entity IDs
                 session.execute(
                     relationship_model.__table__.update()
                     .where(relationship_model.target_entity_id.in_(original_entity_ids))
-                    .values(target_entity_id=merged_entity_id)
+                    .values(
+                        target_entity_id=merged_entity_id,
+                        last_modified_at=datetime.now(),
+                    )
                 )
 
                 print(
@@ -597,6 +604,7 @@ def process_relationship_quality_issue(
                         existing_relationship.description_vec = get_text_embedding(
                             updated_relationship["description"]
                         )
+                        existing_relationship.last_modified_at = datetime.now()
                         session.add(existing_relationship)
                         print(
                             f"Success update relationship({row_key}) {affected_id} to {updated_relationship}"
@@ -796,8 +804,22 @@ def process_redundancy_relationship_issue(
                     description_vec=get_text_embedding(
                         merged_relationship["description"]
                     ),
+                    last_modified_at=datetime.now(),
                 )
-                new_meta = next(iter(relationships.values())).get("meta", {})
+                # Handle meta field properly - ensure it's a dictionary
+                raw_meta = next(iter(relationships.values())).get("meta", {})
+                if isinstance(raw_meta, str):
+                    try:
+                        import json
+
+                        new_meta = json.loads(raw_meta)
+                    except (json.JSONDecodeError, ValueError):
+                        new_meta = {}
+                elif isinstance(raw_meta, dict):
+                    new_meta = raw_meta.copy()
+                else:
+                    new_meta = {}
+
                 if len(documents_set) > 0:
                     new_meta["document_ids"] = list(documents_set)
                     new_relationship.document_id = list(documents_set)[0]
