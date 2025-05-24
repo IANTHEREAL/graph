@@ -17,7 +17,7 @@ def evaluate_issue(critic_clients, issue_df):
                     if critique_json_str is not None:
                         try:
                             json.loads(critique_json_str)
-                            print(f"skip processed issue {index} for {critic_name}", issue['issue_type'], issue['affected_ids'], row['confidence'])
+                            # print(f"skip processed issue {index} for {critic_name}", issue['issue_type'], issue['affected_ids'], row['confidence'])
                         except:
                             print(f"Failed to parse critique for {index} for {critic_name}", issue['issue_type'], issue['affected_ids'], row['confidence'])
                             skip = False

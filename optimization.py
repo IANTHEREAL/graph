@@ -140,7 +140,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
     print(f"Found new issues {len(new_issue_list)}, total issues {issue_df.shape[0]}")
 
     for row in new_issue_list:
-        print(index, row["issue"])
+        print(row["issue"])
 
     print("=" * 60)
 
@@ -199,6 +199,9 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 issue_cache.get(issue_key, False)
                 or pending_entity_quality_issue_list.get(issue_key, None) is not None
             ):
+                logger.info(f"Entity quality issue {index} already processed or pending, marking as resolved")
+                issue_df.at[index, "resolved"] = True
+                issue_df.to_pickle(tmp_test_data_file)
                 continue
             issue["issue_key"] = issue_key
             pending_entity_quality_issue_list[issue_key] = issue
@@ -323,6 +326,9 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
             if pending_redundancy_entity_issue_list.get(
                 issue_key, None
             ) is not None or issue_cache.get(issue_key, False):
+                logger.info(f"Redundancy entity issue {index} already processed or pending, marking as resolved")
+                issue_df.at[index, "resolved"] = True
+                issue_df.to_pickle(tmp_test_data_file)
                 continue
 
             redundancy_entity_issue["issue_key"] = issue_key
@@ -406,6 +412,9 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
                 or pending_relationship_quality_issue_list.get(issue_key, None)
                 is not None
             ):
+                logger.info(f"Relationship quality issue {index} already processed or pending, marking as resolved")
+                issue_df.at[index, "resolved"] = True
+                issue_df.to_pickle(tmp_test_data_file)
                 continue
             issue["issue_key"] = issue_key
             pending_relationship_quality_issue_list[issue_key] = issue
@@ -533,6 +542,9 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
             if pending_redundancy_relationships_issue_list.get(
                 issue_key, None
             ) is not None or issue_cache.get(issue_key, False):
+                logger.info(f"Redundancy relationship issue {index} already processed or pending, marking as resolved")
+                issue_df.at[index, "resolved"] = True
+                issue_df.to_pickle(tmp_test_data_file)
                 continue
 
             redundancy_relationship_issue["issue_key"] = issue_key
