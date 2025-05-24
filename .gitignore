@@ -5,4 +5,6 @@ test.md
 *_dev.ipynb
 .DS_Store
 docs
+logs
 contexual_docs
+test.py
