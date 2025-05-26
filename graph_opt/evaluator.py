@@ -4,19 +4,15 @@ from utils.json_utils import extract_json
 
 
 def evaluate_issue(critic_clients, issue_df):
+    print(f"evaluating {len(issue_df)} issues")
     for critic_name in critic_clients.keys():
+        print(f"Using {critic_name} to evaluate issues")
         critic_client = critic_clients[critic_name]
         for index, row in issue_df.iterrows():
             if "issue" in row:
                 issue = row["issue"]
             else:
                 issue = row
-
-            if row['confidence'] >= 1.8:
-                continue
-
-            if row['resolved'] is True:
-                continue
 
             if row[critic_name] is not None:
                 skip = True
