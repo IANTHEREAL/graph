@@ -154,10 +154,9 @@ def evaluate_issue(critic_clients, issue_df):
                             issue_df.at[index, "confidence"] + 0.9
                         )
                     issue_df.at[index, critic_name] = response
-                    continue
                 except:
                     print(
-                        f"Failed to parse critique for {row} in {critic_name}, response: {response}"
+                        f"Failed To Parse Critique for {row} in {critic_name}, response: {response}, error: {e}"
                     )
 
     return issue_df
