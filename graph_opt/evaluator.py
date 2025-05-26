@@ -30,6 +30,7 @@ def evaluate_issue(critic_clients, issue_df):
                                 issue["issue_type"],
                                 issue["affected_ids"],
                                 row["confidence"],
+                                critique_json_str
                             )
                             skip = False
 
