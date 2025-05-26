@@ -24,9 +24,9 @@ def evaluate_issue(critic_clients, issue_df):
                     critique_json_str = extract_json(row[critic_name])
                     if critique_json_str is not None:
                         try:
-                            critique_json_res = "".join(
+                            critique_json_str = "".join(
                                 char
-                                for char in critique_json_res
+                                for char in critique_json_str
                                 if ord(char) >= 32 or char in "\r\t"
                             )
                             json.loads(critique_json_str)
