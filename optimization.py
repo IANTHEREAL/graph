@@ -151,7 +151,7 @@ def improve_graph(query: str, tmp_test_data_file: str = "test_data.pkl"):
         .any()
         .any()
     ):
-        issue_df = evaluate_issue(critic_clients, issue_df)
+        issue_df = evaluate_issue(critic_clients, issue_df, tmp_test_data_file)
 
     issue_df.to_pickle(tmp_test_data_file)
     print(f"Identified {issue_df[issue_df['confidence'] >= 1.8].shape[0]} valid issues")

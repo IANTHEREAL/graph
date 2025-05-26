@@ -3,7 +3,7 @@ import json
 from utils.json_utils import extract_json
 
 
-def evaluate_issue(critic_clients, issue_df):
+def evaluate_issue(critic_clients, issue_df, df_file):
     print(f"evaluating {len(issue_df)} issues")
     for critic_name in critic_clients.keys():
         print(f"Using {critic_name} to evaluate issues")
@@ -150,6 +150,7 @@ def evaluate_issue(critic_clients, issue_df):
                             issue_df.at[index, "confidence"] + 0.9
                         )
                     issue_df.at[index, critic_name] = response
+                    issue_df.to_pickle(df_file)
                 except:
                     print(
                         f"Failed To Parse Critique for {row} in {critic_name}, response: {response}, error: {e}"
