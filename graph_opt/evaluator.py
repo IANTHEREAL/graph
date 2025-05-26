@@ -11,6 +11,13 @@ def evaluate_issue(critic_clients, issue_df):
                 issue = row["issue"]
             else:
                 issue = row
+
+            if row['confidence'] >= 1.8:
+                continue
+
+            if row['resolved'] is True:
+                continue
+
             if row[critic_name] is not None:
                 skip = True
                 if row[critic_name] is not None:
@@ -133,7 +140,6 @@ def evaluate_issue(critic_clients, issue_df):
                 )
                 continue
 
-            print(response)
             critique_json_res = extract_json(response)
             if critique_json_res is not None:
                 try:
