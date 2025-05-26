@@ -138,3 +138,53 @@ def get_documents_by_ids(db: Session, document_ids: list[int]):
     except Exception as e:
         print("Failed to get documents", e)
         return []
+
+
+def query_entities_before_date(
+    last_modified_before: str, limit: int = 10, table_name: str = "entities_210001"
+) -> list[dict]:
+    """
+    Query entities modified before a specific date.
+
+    Args:
+        last_modified_before: Date string in format "YYYY-MM-DD HH:MM:SS"
+        limit: Maximum number of results to return (default: 10)
+        table_name: Name of the entities table (default: "entities_210001")
+
+    Returns:
+        List of dictionaries containing entity name and description
+
+    Example:
+        entities = query_entities_before_date("2025-05-26 03:40:00", limit=10)
+        for entity in entities:
+            print(f"Name: {entity['name']}, Description: {entity['description']}")
+    """
+
+    sql_query = f"""
+    SELECT name, description
+    FROM {table_name}
+    WHERE last_modified_at < :last_modified_before
+    ORDER BY last_modified_at ASC
+    LIMIT :limit
+    """
+
+    try:
+        with SessionLocal() as db:
+            sql = text(sql_query)
+            result = db.execute(
+                sql, {"last_modified_before": last_modified_before, "limit": limit}
+            )
+
+            entities = []
+            for row in result.fetchall():
+                entity_data = {"name": row.name, "description": row.description}
+                entities.append(entity_data)
+
+            print(
+                f"Found {len(entities)} entities modified before {last_modified_before}"
+            )
+            return entities
+
+    except Exception as e:
+        print(f"Failed to query entities: {e}")
+        return []
