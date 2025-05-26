@@ -165,8 +165,8 @@ def process_entity_quality_issue(
                 )
                 print(f"Pendding entities({row_index})", entities)
                 if len(entities) == 0:
-                    print(f"Failed to find entity({row_index}) {affected_id}")
-                    return False
+                    print(f"Skip it, failed to find entity({row_index}) {affected_id}")
+                    return True
 
                 relationships = get_relationship_by_entity_ids(
                     session, entity_quality_issue["affected_ids"]
@@ -369,8 +369,8 @@ def process_redundancy_entity_issue(
             entities = query_entities_by_ids(session, row_issue["affected_ids"])
             print(f"pending entities({row_key})", entities)
             if len(entities) == 0:
-                print(f"Failed to find entity({row_key}) {row_issue['affected_ids']}")
-                return False
+                print(f"Skip it, failed to find entity({row_key}) {row_issue['affected_ids']}")
+                return True
 
             relationships = get_relationship_by_entity_ids(
                 session, row_issue["affected_ids"]
