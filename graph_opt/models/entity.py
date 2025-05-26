@@ -36,7 +36,7 @@ def get_entity_model(table_name: str = "entities", vector_length: int = 1536):
 
         __table_args__ = (
             Index("idx_entity_type", "entity_type"),
-            {"extend_existing": True}  # Enable reentrant behavior
+            {"extend_existing": True},  # Enable reentrant behavior
         )
 
         def __hash__(self):

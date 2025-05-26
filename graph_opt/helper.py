@@ -104,6 +104,7 @@ your detailed reasoning trajectories for graph here
 
 Now, Please take more time to think and be comprehensive in your issue, ensure your output is valid, complete, and follows the required structure exactly."""
 
+
 def extract_issues(response: str):
     response_json_str = extract_json(response)
     if response_json_str is None or response_json_str == "":
