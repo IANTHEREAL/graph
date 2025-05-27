@@ -67,18 +67,23 @@ class MetaGraph:
         - Maintain a logically consistent, clear, and concise graph structure.
         """
 
-        # Generate graph components using LLM
-        response = self.llm_client.generate(prompt)
-        graph_components = json.loads(extract_json(response))
+        response = None
+        try:
+            # Generate graph components using LLM
+            response = self.llm_client.generate(prompt)
+            graph_components = json.loads(extract_json(response))
 
-        for entity in graph_components["entities"]:
-            self.add_entity(entity)
+            for entity in graph_components["entities"]:
+                self.add_entity(entity)
 
-        # Add relationships
-        for rel in graph_components["relationships"]:
-            self.add_relationship(rel)
+            # Add relationships
+            for rel in graph_components["relationships"]:
+                self.add_relationship(rel)
 
-        self.initial_queries = graph_components["initial_queries"]
+            self.initial_queries = graph_components["initial_queries"]
+        except Exception as e:
+            logger.error(f"Error generating meta-graph for query: {query}, response: {response}, error: {e}")
+            self.initial_queries = [query]
 
     def add_entity(self, entity):
         self.entities[entity["name"]] = entity
