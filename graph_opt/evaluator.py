@@ -151,7 +151,7 @@ def evaluate_issue(critic_clients, issue_df, df_file):
                         )
                     issue_df.at[index, critic_name] = response
                     issue_df.to_pickle(df_file)
-                except:
+                except Exception as e:
                     print(
                         f"Failed To Parse Critique for {row} in {critic_name}, response: {response}, error: {e}"
                     )
