@@ -115,7 +115,20 @@ def extract_issues(response: str):
             "relationship_quality_issues": [],
             "missing_relationship_issues": [],
         }
-    analysis_tags = json.loads(response_json_str)
+    try:
+      response_json_str = "".join(
+            char for char in response_json_str if ord(char) >= 32 or char in "\r\t"
+        )
+      analysis_tags = json.loads(response_json_str)
+    except Exception as e:
+      print(f"Failed to extract issues in extract_issues, response: {response_json_str}", e)
+      return {
+          "entity_redundancy_issues": [],
+          "relationship_redundancy_issues": [],
+          "entity_quality_issues": [],
+          "relationship_quality_issues": [],
+          "missing_relationship_issues": [],
+      }
 
     entity_redundancy_issues = []
     relationship_redundancy_issues = []
